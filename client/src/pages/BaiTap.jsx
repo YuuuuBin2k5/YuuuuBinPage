@@ -27,6 +27,19 @@ function BaiTap() {
               HTML5 and CSS3
             </a>
           </li>
+          <li className="mb-5">
+            <a href="#" target="_blank">
+              Bài Tập Buổi 2
+            </a>
+          </li>
+        </ul>
+        <h2 className="text-3xl font-bold mb-5 ml-2">Tuần 3</h2>
+        <ul className="p-10 border border-x-blue-600 border-y-violet-900 rounded-2xl">
+          <li className="mb-5">
+            <a href="#" target="_blank">
+              .....
+            </a>
+          </li>
         </ul>
       </div>
     </div>
