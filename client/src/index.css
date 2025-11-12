@@ -1,0 +1,56 @@
+@import url("https://fonts.googleapis.com/css2?family=Bitcount+Grid+Single:wght@100..900&family=Coiny&family=Rubik+80s+Fade&family=Sono:wght@200..800&display=swap");
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==Hiệu ứng animtion động== */
+/* hiệu ứng chữ phát sáng tím */
+@keyframes subtle-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.4),
+      0 0 10px rgba(138, 43, 226, 0.6); /* Tím nhẹ */
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
+      0 0 20px rgba(138, 43, 226, 1); /* Tím mạnh hơn */
+  }
+}
+.logo-glow {
+  animation: subtle-glow 3s infinite alternate;
+}
+
+/* hiệu ứng chuyển ảnh avatar */
+.animation-avatar {
+  background-position: center;
+  border: 1px solid black; /* Để dễ nhìn */
+  background-size: 100% 100%;
+  box-shadow: 20px 20px 10px gray;
+  animation: slider 13s linear infinite;
+}
+@keyframes slider {
+  0% {
+    background-image: url("images/avatar.jpg");
+  }
+
+  30% {
+    background-image: url("images/avatar2.png");
+  }
+
+  60% {
+    background-image: url("images/avatar3.jpg");
+  }
+
+  100% {
+    background-image: url("images/avatar4.jpg");
+  }
+}
