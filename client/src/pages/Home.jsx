@@ -7,7 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 function Home() {
   return (
     <ProfileCard
-      name="YUUUUBIN"
+      name="Đào Nguyễn Nhật Anh"
       role="Full-stack Developer | Java & React"
       avatarSrc={[
         "/images/avatar.jpg",
