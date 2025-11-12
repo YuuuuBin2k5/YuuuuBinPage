@@ -10,7 +10,7 @@ function BaiTap() {
       <p className="flex logo-glow justify-center uppercase text-3xl w-100 m-10">
         Danh Sách Bài Tập
       </p>
-      <div className="w-full mb-5">
+      <div className="w-full mb-5 ">
         <h2 className="text-3xl font-bold mb-5 ml-2">Tuần 1</h2>
         <ul className="p-10 border border-x-blue-600 border-y-violet-900 rounded-2xl">
           <li>
@@ -35,6 +35,16 @@ function BaiTap() {
         </ul>
         <h2 className="text-3xl font-bold mb-5 ml-2">Tuần 3</h2>
         <ul className="p-10 border border-x-blue-600 border-y-violet-900 rounded-2xl">
+          <li className="mb-5">
+            <a href="#" target="_blank">
+              .....
+            </a>
+          </li>
+          <li className="mb-5">
+            <a href="#" target="_blank">
+              .....
+            </a>
+          </li>
           <li className="mb-5">
             <a href="#" target="_blank">
               .....

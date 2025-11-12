@@ -33,7 +33,7 @@ function App() {
   return (
     <BrowserRouter>
       <body
-        className="app-container min-h-screen relative overflow-hidden"
+        className="app-container min-h-screen relative overflow-hidden overflow-y-auto"
         style={finalStyle}
       >
         {/* Header*/}
@@ -41,7 +41,7 @@ function App() {
 
         {/* Main */}
         <nav
-          className={`pt-[100px] min-h-screen transition-colors duration-700`}
+          className={`pt-[100px] min-h-screen transition-colors duration-700 overflow-y-auto`}
         >
           {/* Component AppRoutes quản lý tất cả các Routes */}
           <AppRoutes />

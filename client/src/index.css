@@ -10,6 +10,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --scrollbar-thumb: #6b46c1; /* Tím */
+  --scrollbar-track: #1f2937; /* Xám đậm */
 }
 
 /* ==Hiệu ứng animtion động== */
