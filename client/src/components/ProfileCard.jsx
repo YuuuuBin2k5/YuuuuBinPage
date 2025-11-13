@@ -95,8 +95,8 @@ function ProfileCard({
           style={BACKFACE_HIDDEN_STYLE}
         >
           <img
-            className="animation-avatar w-120 h-95 mr-4 mt-2 border-2 rounded-b-full rounded-l-full object-cover"
-            src="#"
+            className="animation-avatar w-80 h-55 mr-4 mt-2 border-2 rounded-full object-cover"
+            src=""
             alt="avatar"
           />
           {/* 2. Phần Thông tin Người dùng (Bên phải) */}
