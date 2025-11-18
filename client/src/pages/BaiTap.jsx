@@ -28,7 +28,7 @@ function BaiTap() {
             </a>
           </li>
           <li className="mb-5">
-            <a href="#" target="_blank">
+            <a href="https://tuan2-buoi2.onrender.com/" target="_blank">
               Bài Tập Buổi 2
             </a>
           </li>
