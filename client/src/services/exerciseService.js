@@ -86,11 +86,14 @@ export const exercisesAPI = {
   // Get exercises by week ID
   getByWeekId: async (weekId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/exercises/week/${weekId}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/exercises/week/${weekId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (!response.ok) throw new Error("Failed to fetch exercises for week");
       return await response.json();
     } catch (error) {

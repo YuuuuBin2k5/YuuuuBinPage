@@ -27,19 +27,18 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Gradient Orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl animate-pulse delay-700" />
-        <div className="absolute top-1/2 right-1/3 w-72 h-72 bg-blue-600/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/3 left-1/3 w-[600px] h-[600px] bg-indigo-600/15 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/3 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-3xl" />
 
         {/* Floating Particles */}
-        {[...Array(20)].map((_, i) => (
+        {[...Array(8)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-purple-400/50 rounded-full animate-float"
+            className="absolute w-1 h-1 bg-indigo-400/30 rounded-full animate-float"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -59,17 +58,15 @@ const HeroSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left: Avatar & Visual */}
           <div className="relative flex justify-center lg:justify-end">
-            {/* Decorative Rings */}
+            {/* Decorative Ring */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-[500px] h-[500px] border border-purple-500/20 rounded-full animate-spin-slow" />
-              <div className="absolute w-[450px] h-[450px] border border-emerald-500/20 rounded-full animate-spin-reverse" />
-              <div className="absolute w-[400px] h-[400px] border border-blue-500/20 rounded-full animate-spin-slow delay-500" />
+              <div className="w-[450px] h-[450px] border border-indigo-500/20 rounded-full animate-spin-slow" />
             </div>
 
             {/* Avatar Container */}
             <div className="relative z-10 group">
               {/* Glow Effect */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 via-pink-600 to-emerald-600 rounded-full opacity-75 blur-2xl group-hover:opacity-100 transition-opacity duration-500 animate-pulse" />
+              <div className="absolute -inset-4 bg-indigo-600/40 rounded-full opacity-60 blur-2xl group-hover:opacity-80 transition-opacity duration-700" />
 
               {/* Main Avatar */}
               <div className="relative w-80 h-80 rounded-full overflow-hidden border-4 border-white/10 shadow-2xl group-hover:scale-105 transition-transform duration-500">
@@ -78,19 +75,16 @@ const HeroSection = () => {
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
-
-                {/* Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-purple-600/30 via-transparent to-emerald-600/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
 
               {/* Floating Badge */}
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-emerald-600 text-white px-6 py-3 rounded-full shadow-2xl shadow-purple-500/50 animate-bounce-slow">
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-6 py-3 rounded-full shadow-lg shadow-indigo-500/30">
                 <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="animate-spin-slow" />
+                  <Sparkles size={16} />
                   <span className="font-bold text-sm">
                     {t("hero.availableForWork")}
                   </span>
-                  <Sparkles size={16} className="animate-spin-slow" />
+                  <Sparkles size={16} />
                 </div>
               </div>
             </div>
@@ -100,22 +94,22 @@ const HeroSection = () => {
           <div className="text-center lg:text-left space-y-8">
             {/* Greeting */}
             <div className="space-y-2">
-              <p className="text-emerald-400 font-semibold text-lg tracking-wider uppercase animate-fade-in">
+              <p className="text-slate-400 font-semibold text-lg tracking-wider uppercase animate-fade-in">
                 {t("hero.greeting")}
               </p>
               <h1 className="text-6xl md:text-7xl font-black text-white mb-4 animate-slide-up">
-                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-emerald-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-br from-slate-100 via-indigo-300 to-indigo-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(129,140,248,0.3)]">
                   {t("hero.name").split(" ")[0]} {t("hero.name").split(" ")[1]}
                 </span>
                 <br />
-                <span className="bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-br from-indigo-300 via-violet-400 to-slate-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(129,140,248,0.3)]">
                   {t("hero.name").split(" ")[2]} {t("hero.name").split(" ")[3]}
                 </span>
               </h1>
 
               {/* Typing Effect */}
               <div className="h-8 flex items-center justify-center lg:justify-start">
-                <p className="text-xl md:text-2xl text-purple-300 font-light">
+                <p className="text-xl md:text-2xl text-indigo-300 font-light">
                   {typedText}
                   <span className="animate-blink">|</span>
                 </p>
@@ -125,7 +119,7 @@ const HeroSection = () => {
             {/* Location & Summary */}
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-slate-300 justify-center lg:justify-start">
-                <MapPin size={20} className="text-emerald-400" />
+                <MapPin size={20} className="text-indigo-400" />
                 <span>{t("hero.location")}</span>
               </div>
 
@@ -136,15 +130,14 @@ const HeroSection = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-              <button className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-emerald-600 text-white font-semibold rounded-full overflow-hidden shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/80 transition-all duration-300">
+              <button className="group relative px-8 py-4 bg-indigo-600 text-white font-semibold rounded-full overflow-hidden shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:bg-indigo-500 transition-all duration-300">
                 <span className="relative z-10 flex items-center gap-2">
                   <Code size={20} />
                   {t("hero.ctaConsulting")}
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </button>
 
-              <button className="px-8 py-4 bg-white/5 backdrop-blur-sm text-white font-semibold rounded-full border border-white/10 hover:bg-white/10 hover:border-purple-500/50 transition-all duration-300">
+              <button className="px-8 py-4 bg-white/5 backdrop-blur-sm text-white font-semibold rounded-full border border-white/10 hover:bg-white/10 hover:border-indigo-500/50 transition-all duration-300">
                 {t("hero.ctaPortfolio")}
               </button>
             </div>
@@ -155,17 +148,17 @@ const HeroSection = () => {
                 {
                   icon: Github,
                   href: "https://github.com/YuuuuBin2k5",
-                  color: "hover:text-purple-400",
+                  color: "hover:text-indigo-400",
                 },
                 {
                   icon: Linkedin,
                   href: "https://www.linkedin.com/in/anh-nh%E1%BA%ADt-0b3ba0353/",
-                  color: "hover:text-blue-400",
+                  color: "hover:text-indigo-300",
                 },
                 {
                   icon: Mail,
                   href: "mailto:daonguyennhatanh0910@gmail.com",
-                  color: "hover:text-emerald-400",
+                  color: "hover:text-violet-400",
                 },
               ].map(({ icon: Icon, href, color }, i) => (
                 <a
