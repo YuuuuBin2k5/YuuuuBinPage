@@ -140,7 +140,7 @@ const FloatingStats = () => {
     setTimeout(() => clearInterval(timer), duration);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [stats]);
 
   // Auto-rotate timeline
   useEffect(() => {
@@ -149,7 +149,7 @@ const FloatingStats = () => {
     }, 5000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [timeline.length]);
 
   return (
     <div className="relative py-20 px-6 overflow-hidden">

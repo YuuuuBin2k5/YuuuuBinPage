@@ -10,8 +10,6 @@ const AdminLogin = ({ isOpen, onClose, onLogin }) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log("AdminLogin render - isOpen:", isOpen);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -46,11 +44,8 @@ const AdminLogin = ({ isOpen, onClose, onLogin }) => {
   };
 
   if (!isOpen) {
-    console.log("AdminLogin hidden - isOpen is false");
     return null;
   }
-
-  console.log("AdminLogin showing modal!");
 
   return (
     <div
