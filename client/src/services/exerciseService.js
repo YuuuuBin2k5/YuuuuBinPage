@@ -1,5 +1,6 @@
-const API_BASE_URL = "http://localhost:8081/api";
 import { getCachedData, setCachedData, clearCache } from "./cacheUtils";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com";
 
 // Combined Bai Tap API for better performance
 export const baiTapAPI = {
