@@ -1,6 +1,7 @@
 import { getCachedData, setCachedData, clearCache } from "./cacheUtils";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com";
 
 // Combined Bai Tap API for better performance
 export const baiTapAPI = {
@@ -14,7 +15,7 @@ export const baiTapAPI = {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/baitap/all`, {
+      const response = await fetch(`${API_BASE_URL}/api/baitap/all`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -50,7 +51,7 @@ export const exercisesAPI = {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/exercises`, {
+      const response = await fetch(`${API_BASE_URL}/api/exercises`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -69,7 +70,7 @@ export const exercisesAPI = {
   // Get exercise by ID
   getById: async (id) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/exercises/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/exercises/${id}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -85,7 +86,7 @@ export const exercisesAPI = {
   // Get exercises by week ID
   getByWeekId: async (weekId) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/exercises/week/${weekId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/exercises/week/${weekId}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -102,7 +103,7 @@ export const exercisesAPI = {
   getByCategory: async (category) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/exercises/category/${category}`,
+        `${API_BASE_URL}/api/exercises/category/${category}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -122,7 +123,7 @@ export const exercisesAPI = {
   getCountByWeek: async (weekId) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/exercises/week/${weekId}/count`,
+        `${API_BASE_URL}/api/exercises/week/${weekId}/count`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -140,7 +141,7 @@ export const exercisesAPI = {
   // Create new exercise
   create: async (exerciseData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/exercises`, {
+      const response = await fetch(`${API_BASE_URL}/api/exercises`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -163,7 +164,7 @@ export const exercisesAPI = {
   // Update exercise
   update: async (id, exerciseData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/exercises/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/exercises/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -186,7 +187,7 @@ export const exercisesAPI = {
   // Delete exercise
   delete: async (id) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/exercises/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/exercises/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

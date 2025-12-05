@@ -1,6 +1,7 @@
 import { getCachedData, setCachedData, clearCache } from "./cacheUtils";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com";
 
 // Project API Functions
 export const projectAPI = {
@@ -14,7 +15,7 @@ export const projectAPI = {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/projects`, {
+      const response = await fetch(`${API_BASE_URL}/api/projects`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -33,7 +34,7 @@ export const projectAPI = {
   // Get project by ID
   getById: async (id) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${id}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -78,7 +79,7 @@ export const projectAPI = {
   // Create new project
   create: async (projectData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/projects`, {
+      const response = await fetch(`${API_BASE_URL}/api/projects`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +101,7 @@ export const projectAPI = {
   // Update project
   update: async (id, projectData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

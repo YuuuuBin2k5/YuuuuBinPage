@@ -1,6 +1,7 @@
 import { getCachedData, setCachedData, clearCache } from "./cacheUtils";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com";
 
 // Weeks API Functions
 export const weeksAPI = {
@@ -14,7 +15,7 @@ export const weeksAPI = {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/weeks`, {
+      const response = await fetch(`${API_BASE_URL}/api/weeks`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -33,7 +34,7 @@ export const weeksAPI = {
   // Get week by ID
   getById: async (id) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/weeks/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/weeks/${id}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -49,7 +50,7 @@ export const weeksAPI = {
   // Get current weeks
   getCurrent: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/weeks/current`, {
+      const response = await fetch(`${API_BASE_URL}/api/weeks/current`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -65,7 +66,7 @@ export const weeksAPI = {
   // Get upcoming weeks
   getUpcoming: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/weeks/upcoming`, {
+      const response = await fetch(`${API_BASE_URL}/api/weeks/upcoming`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -81,7 +82,7 @@ export const weeksAPI = {
   // Create new week
   create: async (weekData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/weeks`, {
+      const response = await fetch(`${API_BASE_URL}/api/weeks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -104,7 +105,7 @@ export const weeksAPI = {
   // Update week
   update: async (id, weekData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/weeks/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/weeks/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -17,6 +17,8 @@ export {
 
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com",
+  BASE_URL:
+    import.meta.env.VITE_API_URL ||
+    "https://server-portfolio-dymu.onrender.com",
   CACHE_DURATION: 5 * 60 * 1000, // 5 minutes
 };

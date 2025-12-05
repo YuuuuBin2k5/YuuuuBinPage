@@ -1,6 +1,7 @@
 import { getCachedData, setCachedData, clearCache } from "./cacheUtils";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com";
 
 // Tech Stack API Functions
 export const techStackAPI = {
@@ -14,7 +15,7 @@ export const techStackAPI = {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/tech-stacks`, {
+      const response = await fetch(`${API_BASE_URL}/api/tech-stacks`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -33,7 +34,7 @@ export const techStackAPI = {
   // Get tech stack by ID
   getById: async (id) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/tech-stacks/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/tech-stacks/${id}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -49,7 +50,7 @@ export const techStackAPI = {
   // Create new tech stack
   create: async (techStackData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/tech-stacks`, {
+      const response = await fetch(`${API_BASE_URL}/api/tech-stacks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +72,7 @@ export const techStackAPI = {
   // Update tech stack
   update: async (id, techStackData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/tech-stacks/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/tech-stacks/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
