@@ -69,7 +69,14 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
   };
 
   const handleLogoClick = () => {
-    navigate("/");
+    // If already on home page, clear sessionStorage and reload to show intro
+    if (location.pathname === "/") {
+      sessionStorage.removeItem("hasVisited");
+      window.location.reload();
+    } else {
+      // Navigate to home normally
+      navigate("/");
+    }
   };
 
   // Navigation items with icons

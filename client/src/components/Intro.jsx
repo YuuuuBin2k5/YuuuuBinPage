@@ -11,7 +11,7 @@ const Intro = ({ onComplete }) => {
   useEffect(() => {
     // Logo appears
     setTimeout(() => setShowLogo(true), 300);
-    
+
     // Text appears
     setTimeout(() => setShowText(true), 800);
 
@@ -49,20 +49,18 @@ const Intro = ({ onComplete }) => {
         {/* Logo */}
         <div
           className={`transition-all duration-700 ${
-            showLogo
-              ? "opacity-100 scale-100"
-              : "opacity-0 scale-50"
+            showLogo ? "opacity-100 scale-100" : "opacity-0 scale-50"
           }`}
         >
           <div className="relative inline-block">
             {/* Glow effect */}
             <div className="absolute inset-0 bg-indigo-600/30 blur-2xl rounded-full scale-150" />
-            
+
             {/* Logo circle */}
             <div className="relative w-32 h-32 rounded-full bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-2xl shadow-indigo-500/50 p-6">
-              <img 
-                src={logoSvg} 
-                alt="Eagle Logo" 
+              <img
+                src={logoSvg}
+                alt="Eagle Logo"
                 className="w-full h-full object-contain filter brightness-0 invert"
               />
             </div>
@@ -72,9 +70,7 @@ const Intro = ({ onComplete }) => {
         {/* Brand name */}
         <div
           className={`transition-all duration-700 delay-300 ${
-            showText
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-4"
+            showText ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
           }`}
         >
           <h1 className="text-5xl font-black tracking-wider mb-2">
