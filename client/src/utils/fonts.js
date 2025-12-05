@@ -18,3 +18,9 @@ export const FONT_SONO = {
   fontStyle: "normal",
   fontVariationSettings: '"MONO" 1',
 };
+
+export const FONT_PROTEST_REVOLUTION = {
+  fontFamily: "Protest Revolution",
+  fontWeight: "400px",
+  fontStyle: "normal",
+};

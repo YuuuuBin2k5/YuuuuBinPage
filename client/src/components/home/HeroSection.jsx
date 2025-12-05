@@ -1,0 +1,313 @@
+import React, { useState, useEffect } from "react";
+import { Github, Linkedin, Mail, MapPin, Code, Sparkles } from "lucide-react";
+import { useTranslation } from "../../hooks/useTranslation";
+import avatarImg from "../../images/avatar.jpg";
+
+const HeroSection = () => {
+  const { t } = useTranslation();
+  const [isVisible, setIsVisible] = useState(false);
+  const [typedText, setTypedText] = useState("");
+  const fullText = t("hero.role");
+
+  useEffect(() => {
+    setIsVisible(true);
+
+    // Typing effect
+    let index = 0;
+    const typingInterval = setInterval(() => {
+      if (index <= fullText.length) {
+        setTypedText(fullText.slice(0, index));
+        index++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 80);
+
+    return () => clearInterval(typingInterval);
+  }, []);
+
+  return (
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Gradient Orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-600/20 rounded-full blur-3xl animate-pulse delay-700" />
+        <div className="absolute top-1/2 right-1/3 w-72 h-72 bg-blue-600/20 rounded-full blur-3xl animate-pulse delay-1000" />
+
+        {/* Floating Particles */}
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-purple-400/50 rounded-full animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${5 + Math.random() * 10}s`,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Main Content */}
+      <div
+        className={`relative z-10 w-full px-6 transition-all duration-1000 ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`}
+      >
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left: Avatar & Visual */}
+          <div className="relative flex justify-center lg:justify-end">
+            {/* Decorative Rings */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-[500px] h-[500px] border border-purple-500/20 rounded-full animate-spin-slow" />
+              <div className="absolute w-[450px] h-[450px] border border-emerald-500/20 rounded-full animate-spin-reverse" />
+              <div className="absolute w-[400px] h-[400px] border border-blue-500/20 rounded-full animate-spin-slow delay-500" />
+            </div>
+
+            {/* Avatar Container */}
+            <div className="relative z-10 group">
+              {/* Glow Effect */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 via-pink-600 to-emerald-600 rounded-full opacity-75 blur-2xl group-hover:opacity-100 transition-opacity duration-500 animate-pulse" />
+
+              {/* Main Avatar */}
+              <div className="relative w-80 h-80 rounded-full overflow-hidden border-4 border-white/10 shadow-2xl group-hover:scale-105 transition-transform duration-500">
+                <img
+                  src={avatarImg}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+
+                {/* Overlay Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-purple-600/30 via-transparent to-emerald-600/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </div>
+
+              {/* Floating Badge */}
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-emerald-600 text-white px-6 py-3 rounded-full shadow-2xl shadow-purple-500/50 animate-bounce-slow">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={16} className="animate-spin-slow" />
+                  <span className="font-bold text-sm">
+                    {t("hero.availableForWork")}
+                  </span>
+                  <Sparkles size={16} className="animate-spin-slow" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Text Content */}
+          <div className="text-center lg:text-left space-y-8">
+            {/* Greeting */}
+            <div className="space-y-2">
+              <p className="text-emerald-400 font-semibold text-lg tracking-wider uppercase animate-fade-in">
+                {t("hero.greeting")}
+              </p>
+              <h1 className="text-6xl md:text-7xl font-black text-white mb-4 animate-slide-up">
+                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-emerald-400 bg-clip-text text-transparent">
+                  {t("hero.name").split(" ")[0]} {t("hero.name").split(" ")[1]}
+                </span>
+                <br />
+                <span className="bg-gradient-to-r from-emerald-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  {t("hero.name").split(" ")[2]} {t("hero.name").split(" ")[3]}
+                </span>
+              </h1>
+
+              {/* Typing Effect */}
+              <div className="h-8 flex items-center justify-center lg:justify-start">
+                <p className="text-xl md:text-2xl text-purple-300 font-light">
+                  {typedText}
+                  <span className="animate-blink">|</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Location & Summary */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-slate-300 justify-center lg:justify-start">
+                <MapPin size={20} className="text-emerald-400" />
+                <span>{t("hero.location")}</span>
+              </div>
+
+              <p className="text-slate-400 text-lg leading-relaxed max-w-2xl">
+                {t("hero.description")}
+              </p>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+              <button className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-emerald-600 text-white font-semibold rounded-full overflow-hidden shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/80 transition-all duration-300">
+                <span className="relative z-10 flex items-center gap-2">
+                  <Code size={20} />
+                  {t("hero.ctaConsulting")}
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </button>
+
+              <button className="px-8 py-4 bg-white/5 backdrop-blur-sm text-white font-semibold rounded-full border border-white/10 hover:bg-white/10 hover:border-purple-500/50 transition-all duration-300">
+                {t("hero.ctaPortfolio")}
+              </button>
+            </div>
+
+            {/* Social Links */}
+            <div className="flex gap-4 justify-center lg:justify-start">
+              {[
+                {
+                  icon: Github,
+                  href: "https://github.com/YuuuuBin2k5",
+                  color: "hover:text-purple-400",
+                },
+                {
+                  icon: Linkedin,
+                  href: "https://www.linkedin.com/in/anh-nh%E1%BA%ADt-0b3ba0353/",
+                  color: "hover:text-blue-400",
+                },
+                {
+                  icon: Mail,
+                  href: "mailto:daonguyennhatanh0910@gmail.com",
+                  color: "hover:text-emerald-400",
+                },
+              ].map(({ icon: Icon, href, color }, i) => (
+                <a
+                  key={i}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`p-3 bg-white/5 backdrop-blur-sm rounded-full border border-white/10 text-slate-400 ${color} hover:scale-110 hover:border-current transition-all duration-300`}
+                >
+                  <Icon size={24} />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Scroll Indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div className="w-6 h-10 border-2 border-purple-400/50 rounded-full flex justify-center pt-2">
+          <div className="w-1 h-2 bg-purple-400 rounded-full animate-scroll" />
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes float {
+          0%,
+          100% {
+            transform: translateY(0) translateX(0);
+          }
+          50% {
+            transform: translateY(-20px) translateX(10px);
+          }
+        }
+
+        @keyframes spin-slow {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        @keyframes spin-reverse {
+          from {
+            transform: rotate(360deg);
+          }
+          to {
+            transform: rotate(0deg);
+          }
+        }
+
+        @keyframes bounce-slow {
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+        }
+
+        @keyframes blink {
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0;
+          }
+        }
+
+        @keyframes scroll {
+          0% {
+            transform: translateY(0);
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+        }
+
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slide-up {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-float {
+          animation: float 15s infinite ease-in-out;
+        }
+        .animate-spin-slow {
+          animation: spin-slow 20s linear infinite;
+        }
+        .animate-spin-reverse {
+          animation: spin-reverse 15s linear infinite;
+        }
+        .animate-bounce-slow {
+          animation: bounce-slow 3s infinite ease-in-out;
+        }
+        .animate-blink {
+          animation: blink 1s infinite;
+        }
+        .animate-scroll {
+          animation: scroll 2s infinite;
+        }
+        .animate-fade-in {
+          animation: fade-in 1s ease-out;
+        }
+        .animate-slide-up {
+          animation: slide-up 1s ease-out;
+        }
+        .delay-500 {
+          animation-delay: 0.5s;
+        }
+        .delay-700 {
+          animation-delay: 0.7s;
+        }
+        .delay-1000 {
+          animation-delay: 1s;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default HeroSection;

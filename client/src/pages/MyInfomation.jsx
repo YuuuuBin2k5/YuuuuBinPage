@@ -8,8 +8,9 @@ function MyInfomation() {
       style={FONT_COINY}
     >
       <div className="flex">
-        <div className="flex w-200">hello</div>
-        <div className="flex w-full">hello</div>
+        <div className="avatar">
+          <img src="" alt="" />
+        </div>
       </div>
     </div>
   );
