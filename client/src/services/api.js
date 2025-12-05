@@ -17,6 +17,6 @@ export {
 
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: "http://localhost:8081/api",
+  BASE_URL: import.meta.env.VITE_API_URL || "http://localhost:8081/api",
   CACHE_DURATION: 5 * 60 * 1000, // 5 minutes
 };
