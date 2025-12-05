@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "../../hooks/useTranslation";
+import logo from "../../assets/logo.svg";
 import {
   Github,
   Linkedin,
@@ -72,11 +73,13 @@ function Footer() {
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-emerald-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
-                <div className="relative w-12 h-12 bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900 rounded-2xl flex items-center justify-center border border-purple-500/30">
-                  <span className="text-2xl font-black bg-gradient-to-br from-purple-300 via-pink-200 to-cyan-300 bg-clip-text text-transparent">
-                    Y
-                  </span>
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
+                <div className="relative w-12 h-12 bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900 rounded-2xl flex items-center justify-center border border-purple-500/30 p-2.5">
+                  <img
+                    src={logo}
+                    alt="Eagle Logo"
+                    className="w-full h-full object-contain filter brightness-0 invert"
+                  />
                 </div>
               </div>
               <div>

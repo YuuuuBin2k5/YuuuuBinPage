@@ -174,20 +174,18 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
                   {/* Main Logo Circle */}
                   <div
                     className={`relative rounded-full bg-gradient-to-br from-slate-900 via-purple-900/50 to-slate-900 flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-500 border border-purple-500/30 ${
-                      scrolled ? "w-8 h-8" : "w-9 h-9"
+                      scrolled ? "w-8 h-8 p-1.5" : "w-9 h-9 p-2"
                     }`}
                   >
                     {/* Inner Shine Effect */}
                     <div className="absolute inset-1 rounded-full bg-gradient-to-br from-purple-400/10 via-transparent to-cyan-400/10"></div>
 
-                    {/* Glowing Letter */}
-                    <span
-                      className={`relative font-black bg-gradient-to-br from-purple-300 via-pink-200 to-cyan-300 bg-clip-text text-transparent drop-shadow-[0_0_6px_rgba(168,85,247,0.7)] group-hover:drop-shadow-[0_0_10px_rgba(168,85,247,1)] transition-all duration-300 z-10 ${
-                        scrolled ? "text-lg" : "text-xl"
-                      }`}
-                    >
-                      Y
-                    </span>
+                    {/* Eagle Logo */}
+                    <img
+                      src={logo}
+                      alt="Eagle Logo"
+                      className="relative w-full h-full object-contain filter brightness-0 invert drop-shadow-[0_0_6px_rgba(168,85,247,0.7)] group-hover:drop-shadow-[0_0_10px_rgba(168,85,247,1)] transition-all duration-300 z-10"
+                    />
 
                     {/* Accent Light */}
                     <div className="absolute top-0.5 right-0.5 w-0.5 h-0.5 bg-cyan-400 rounded-full blur-[1px] opacity-60"></div>
