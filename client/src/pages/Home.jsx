@@ -31,6 +31,8 @@ function Home() {
   }, []);
 
   const handleIntroComplete = () => {
+    // Ensure page stays at top
+    window.scrollTo(0, 0);
     setShowIntro(false);
     // Trigger content animation after intro fades out
     setTimeout(() => {
@@ -46,18 +48,18 @@ function Home() {
       )}
 
       {/* Main Content - Hidden during loading to prevent animations */}
-      <div 
+      <div
         className={`bg-slate-900 -mt-24 transition-all duration-1000 ${
-          showIntro ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          showIntro ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
-        style={{ visibility: showIntro ? 'hidden' : 'visible' }}
+        style={{ visibility: showIntro ? "hidden" : "visible" }}
       >
         {/* Hero Section - First Impression with fade in animation */}
-        <div 
+        <div
           className={`transition-all duration-1000 ${
-            contentVisible 
-              ? 'opacity-100 translate-y-0' 
-              : 'opacity-0 translate-y-8'
+            contentVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-8"
           }`}
         >
           <HeroSection />
