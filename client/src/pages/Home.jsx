@@ -40,8 +40,13 @@ function Home() {
         <IntroLoader isLoading={isLoading} onComplete={handleIntroComplete} />
       )}
 
-      {/* Main Content */}
-      <div className="bg-slate-900 -mt-24">
+      {/* Main Content - Hidden during loading to prevent animations */}
+      <div 
+        className={`bg-slate-900 -mt-24 transition-opacity duration-500 ${
+          showIntro ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        }`}
+        style={{ visibility: showIntro ? 'hidden' : 'visible' }}
+      >
         {/* Hero Section - First Impression */}
         <HeroSection />
 
