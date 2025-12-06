@@ -147,7 +147,7 @@ const FloatingStats = () => {
                       </span>
                       , một sinh viên năm 3 ngành Công nghệ Phần mềm tại{" "}
                       <span className="text-emerald-400">
-                        Đại học Công Nghệ TP.HCM
+                        Đại học Sư Phạm Kỹ Thuật TP.HCM
                       </span>
                       .
                     </>
