@@ -14,11 +14,23 @@ import {
   Heart,
 } from "lucide-react";
 import { useTranslation } from "../../hooks/useTranslation";
+import { useScrollReveal } from "../../hooks/useScrollReveal";
+import { useParallax } from "../../hooks/useParallax";
 import FeaturedProjects from "./FeaturedProjects";
 
 const FloatingStats = () => {
   const { t } = useTranslation();
   const [activeTimeline, setActiveTimeline] = useState(0);
+
+  // Scroll reveal refs
+  const introReveal = useScrollReveal({ threshold: 0.2, rootMargin: "50px" });
+  const timelineReveal = useScrollReveal({
+    threshold: 0.15,
+    rootMargin: "50px",
+  });
+
+  // Parallax for background
+  const parallax = useParallax(0.4);
 
   const timeline = [
     {
@@ -77,8 +89,11 @@ const FloatingStats = () => {
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900" />
 
-      {/* Grid Background */}
-      <div className="absolute inset-0 opacity-20">
+      {/* Grid Background with Parallax */}
+      <div
+        className="absolute inset-0 opacity-20 transition-transform duration-0"
+        style={{ transform: `translateY(${parallax * 0.5}px)` }}
+      >
         <div
           className="absolute inset-0"
           style={{
@@ -102,13 +117,20 @@ const FloatingStats = () => {
         </div>
 
         {/* Personal Introduction */}
-        <div className="max-w-4xl mx-auto mb-20">
+        <div
+          ref={introReveal.ref}
+          className={`max-w-4xl mx-auto mb-20 transition-all duration-1000 ease-out ${
+            introReveal.isVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-10"
+          }`}
+        >
           <div className="relative group">
-            {/* Decorative background elements */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-indigo-600 to-emerald-600 rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
+            {/* Subtle Elevation Shadow */}
+            <div className="absolute -inset-1 bg-white/5 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
 
             {/* Main content card */}
-            <div className="relative p-8 md:p-12 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl">
+            <div className="relative p-8 md:p-12 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl group-hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)] group-hover:-translate-y-1 transition-all duration-500">
               {/* Quote icon */}
               <div className="absolute top-8 left-8 text-purple-500/20 text-6xl font-serif">
                 "
@@ -117,7 +139,7 @@ const FloatingStats = () => {
               <div className="relative space-y-6">
                 {/* Opening */}
                 <p className="text-xl md:text-2xl text-slate-300 leading-relaxed">
-                  {t("language") === "vi" ? (
+                  {(localStorage.getItem("language") || "en") === "vi" ? (
                     <>
                       Xin chào! Tôi là{" "}
                       <span className="font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
@@ -146,7 +168,7 @@ const FloatingStats = () => {
 
                 {/* Philosophy */}
                 <p className="text-lg text-slate-400 leading-relaxed pl-6 border-l-4 border-purple-500/30">
-                  {t("language") === "vi" ? (
+                  {(localStorage.getItem("language") || "en") === "vi" ? (
                     <>
                       Với tôi, lập trình không chỉ là công việc - đó là{" "}
                       <span className="text-indigo-300 font-semibold">
@@ -169,7 +191,7 @@ const FloatingStats = () => {
 
                 {/* Passion */}
                 <p className="text-lg text-slate-400 leading-relaxed">
-                  {t("language") === "vi" ? (
+                  {(localStorage.getItem("language") || "en") === "vi" ? (
                     <>
                       Tôi đam mê xây dựng những ứng dụng web hiện đại với{" "}
                       <span className="text-violet-400">React</span>,{" "}
@@ -203,7 +225,7 @@ const FloatingStats = () => {
                 <div className="flex items-center gap-3 pt-4">
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent" />
                   <p className="text-sm text-slate-500 italic">
-                    {t("language") === "vi"
+                    {(localStorage.getItem("language") || "en") === "vi"
                       ? '"Code với đam mê, sáng tạo không giới hạn"'
                       : '"Code with passion, create without limits"'}
                   </p>
@@ -222,7 +244,14 @@ const FloatingStats = () => {
         </div>
 
         {/* Timeline Section */}
-        <div className="mb-20">
+        <div
+          ref={timelineReveal.ref}
+          className={`mb-20 transition-all duration-1000 ease-out delay-200 ${
+            timelineReveal.isVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-10"
+          }`}
+        >
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold text-white mb-2">
               {t("timeline.title")}

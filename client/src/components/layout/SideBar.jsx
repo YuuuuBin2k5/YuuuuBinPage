@@ -33,6 +33,7 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
   const [scrolled, setScrolled] = useState(false);
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [hoveredItem, setHoveredItem] = useState(null);
 
   // Scroll detection with smart hide/show
   useEffect(() => {
@@ -79,6 +80,27 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
     }
   };
 
+  // Magnetic hover effect handler
+  const handleMouseMove = (e, itemPath) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    const distance = Math.sqrt(x * x + y * y);
+    const maxDistance = 50;
+
+    if (distance < maxDistance) {
+      const angle = Math.atan2(y, x);
+      const strength = (maxDistance - distance) / maxDistance;
+      const moveX = Math.cos(angle) * strength * 3;
+      const moveY = Math.sin(angle) * strength * 3;
+      e.currentTarget.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+    }
+  };
+
+  const handleMouseLeave = (e) => {
+    e.currentTarget.style.transform = "translate(0, 0) scale(1)";
+  };
+
   // Navigation items with icons
   const navItems = [
     { path: "/", label: t("nav.about"), icon: Home },
@@ -121,30 +143,46 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`group relative flex items-center gap-3 rounded-xl transition-all duration-300 ${
+                    onMouseMove={(e) => handleMouseMove(e, item.path)}
+                    onMouseEnter={() => setHoveredItem(item.path)}
+                    onMouseLeave={(e) => {
+                      handleMouseLeave(e);
+                      setHoveredItem(null);
+                    }}
+                    className={`group relative flex items-center gap-3 rounded-xl transition-all duration-200 ease-out overflow-hidden ${
                       scrolled ? "px-3 py-2" : "px-4 py-2.5"
                     } ${
                       isActive
-                        ? "bg-purple-600/20 text-purple-400 shadow-lg shadow-purple-500/20"
-                        : "text-slate-400 hover:text-white hover:bg-slate-800/50 hover:shadow-lg hover:shadow-slate-900/50"
+                        ? "bg-gradient-to-r from-white/15 to-white/5 text-white shadow-lg shadow-black/30"
+                        : "text-slate-400 hover:text-white"
                     }`}
                   >
+                    {/* Smooth slide background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+
+                    {/* Glow effect on hover */}
+                    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500"></div>
+
                     <IconComponent
-                      className={`transition-all duration-300 ${
+                      className={`relative z-10 transition-all duration-500 group-hover:rotate-6 ${
                         scrolled ? "w-3.5 h-3.5" : "w-4 h-4"
-                      }`}
+                      } ${hoveredItem === item.path ? "animate-float" : ""}`}
                     />
                     <span
-                      className={`font-medium tracking-wide transition-all duration-300 ${
+                      className={`relative z-10 font-medium tracking-wide transition-all duration-300 ${
                         scrolled ? "text-xs" : "text-sm"
                       }`}
                     >
                       {item.label}
                     </span>
 
+                    {/* Active underline with draw animation */}
                     {isActive && (
-                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-purple-400 rounded-full"></div>
+                      <div className="absolute -bottom-1 left-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-white/80 to-transparent rounded-full animate-drawLine origin-center"></div>
                     )}
+
+                    {/* Progressive hover underline */}
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-white/40 via-white/60 to-white/40 rounded-full group-hover:w-10 transition-all duration-500 ease-out"></div>
                   </Link>
                 );
               })}
@@ -160,23 +198,19 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
                 onClick={handleLogoClick}
                 className="group relative flex flex-col items-center p-1.5 rounded-xl transition-all duration-500"
               >
-                {/* Animated Outer Glow */}
+                {/* Subtle Static Glow */}
                 <div
                   className={`absolute inset-0 transition-all duration-500 ${
-                    scrolled ? "opacity-30" : "opacity-100"
+                    scrolled ? "opacity-0" : "opacity-30"
                   }`}
                 >
-                  <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-500 blur-lg opacity-20 group-hover:opacity-40 animate-pulse transition-opacity duration-700"></div>
+                  <div className="w-12 h-12 mx-auto rounded-full bg-white/10 blur-lg group-hover:opacity-60 transition-opacity duration-500"></div>
                 </div>
 
                 {/* Logo Container */}
                 <div className="relative mb-0.5">
-                  {/* Rotating Outer Ring */}
-                  <div
-                    className={`absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-pink-500 to-cyan-500 rounded-full opacity-50 group-hover:opacity-80 blur-[1px] transition-all duration-500 ${
-                      scrolled ? "animate-none" : "animate-spin-slow"
-                    }`}
-                  ></div>
+                  {/* Subtle Outer Ring */}
+                  <div className="absolute -inset-0.5 bg-white/10 rounded-full opacity-30 group-hover:opacity-60 blur-[1px] transition-all duration-500"></div>
 
                   {/* Main Logo Circle */}
                   <div
@@ -198,17 +232,11 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
                     <div className="absolute top-0.5 right-0.5 w-0.5 h-0.5 bg-cyan-400 rounded-full blur-[1px] opacity-60"></div>
                   </div>
 
-                  {/* Floating Particles */}
+                  {/* Static Accent Dots */}
                   <div
-                    className={`absolute -top-0.5 -right-0.5 w-0.5 h-0.5 bg-cyan-400 rounded-full transition-all duration-500 ${
-                      scrolled ? "animate-none opacity-0" : "animate-ping"
+                    className={`absolute -top-0.5 -right-0.5 w-1 h-1 bg-white/40 rounded-full transition-all duration-500 group-hover:bg-white/80 ${
+                      scrolled ? "opacity-0 scale-0" : "opacity-100 scale-100"
                     }`}
-                  ></div>
-                  <div
-                    className={`absolute -bottom-0.5 -left-0.5 w-0.5 h-0.5 bg-purple-400 rounded-full transition-all duration-500 ${
-                      scrolled ? "animate-none opacity-0" : "animate-ping"
-                    }`}
-                    style={{ animationDelay: "0.5s" }}
                   ></div>
                 </div>
 
@@ -248,30 +276,46 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`group relative flex items-center gap-3 rounded-xl transition-all duration-300 ${
+                    onMouseMove={(e) => handleMouseMove(e, item.path)}
+                    onMouseEnter={() => setHoveredItem(item.path)}
+                    onMouseLeave={(e) => {
+                      handleMouseLeave(e);
+                      setHoveredItem(null);
+                    }}
+                    className={`group relative flex items-center gap-3 rounded-xl transition-all duration-200 ease-out overflow-hidden ${
                       scrolled ? "px-3 py-2" : "px-4 py-2.5"
                     } ${
                       isActive
-                        ? "bg-purple-600/20 text-purple-400 shadow-lg shadow-purple-500/20"
-                        : "text-slate-400 hover:text-white hover:bg-slate-800/50 hover:shadow-lg hover:shadow-slate-900/50"
+                        ? "bg-gradient-to-r from-white/15 to-white/5 text-white shadow-lg shadow-black/30"
+                        : "text-slate-400 hover:text-white"
                     }`}
                   >
+                    {/* Smooth slide background */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+
+                    {/* Glow effect on hover */}
+                    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500"></div>
+
                     <IconComponent
-                      className={`transition-all duration-300 ${
+                      className={`relative z-10 transition-all duration-500 group-hover:rotate-6 ${
                         scrolled ? "w-3.5 h-3.5" : "w-4 h-4"
-                      }`}
+                      } ${hoveredItem === item.path ? "animate-float" : ""}`}
                     />
                     <span
-                      className={`font-medium tracking-wide transition-all duration-300 ${
+                      className={`relative z-10 font-medium tracking-wide transition-all duration-300 ${
                         scrolled ? "text-xs" : "text-sm"
                       }`}
                     >
                       {item.label}
                     </span>
 
+                    {/* Active underline with draw animation */}
                     {isActive && (
-                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-purple-400 rounded-full"></div>
+                      <div className="absolute -bottom-1 left-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-white/80 to-transparent rounded-full animate-drawLine origin-center"></div>
                     )}
+
+                    {/* Progressive hover underline */}
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-white/40 via-white/60 to-white/40 rounded-full group-hover:w-10 transition-all duration-500 ease-out"></div>
                   </Link>
                 );
               })}
@@ -279,30 +323,46 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
               {/* Contact */}
               <Link
                 to="/contact"
-                className={`group relative flex items-center gap-3 rounded-xl transition-all duration-300 ${
+                onMouseMove={(e) => handleMouseMove(e, "/contact")}
+                onMouseEnter={() => setHoveredItem("/contact")}
+                onMouseLeave={(e) => {
+                  handleMouseLeave(e);
+                  setHoveredItem(null);
+                }}
+                className={`group relative flex items-center gap-3 rounded-xl transition-all duration-200 ease-out overflow-hidden ${
                   scrolled ? "px-3 py-2" : "px-4 py-2.5"
                 } ${
                   isActivePath("/contact")
-                    ? "bg-purple-600/20 text-purple-400 shadow-lg shadow-purple-500/20"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/50 hover:shadow-lg hover:shadow-slate-900/50"
+                    ? "bg-gradient-to-r from-white/15 to-white/5 text-white shadow-lg shadow-black/30"
+                    : "text-slate-400 hover:text-white"
                 }`}
               >
+                {/* Smooth slide background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+
+                {/* Glow effect on hover */}
+                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500"></div>
+
                 <Mail
-                  className={`transition-all duration-300 ${
+                  className={`relative z-10 transition-all duration-500 group-hover:rotate-6 ${
                     scrolled ? "w-3.5 h-3.5" : "w-4 h-4"
-                  }`}
+                  } ${hoveredItem === "/contact" ? "animate-float" : ""}`}
                 />
                 <span
-                  className={`font-medium tracking-wide transition-all duration-300 ${
+                  className={`relative z-10 font-medium tracking-wide transition-all duration-300 ${
                     scrolled ? "text-xs" : "text-sm"
                   }`}
                 >
                   {t("nav.contact")}
                 </span>
 
+                {/* Active underline with draw animation */}
                 {isActivePath("/contact") && (
-                  <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-purple-400 rounded-full"></div>
+                  <div className="absolute -bottom-1 left-1/2 w-12 h-0.5 bg-gradient-to-r from-transparent via-white/80 to-transparent rounded-full animate-drawLine origin-center"></div>
                 )}
+
+                {/* Progressive hover underline */}
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-white/40 via-white/60 to-white/40 rounded-full group-hover:w-10 transition-all duration-500 ease-out"></div>
               </Link>
             </div>
 
@@ -365,20 +425,22 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
               {/* Theme Toggle */}
               <button
                 onClick={handleToggleDarkMode}
-                className={`bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600/30 text-slate-300 hover:text-white rounded-xl transition-all duration-300 group ${
+                className={`relative overflow-hidden bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-white/20 text-slate-300 hover:text-white rounded-xl transition-all duration-300 group hover:scale-105 hover:shadow-lg hover:shadow-black/30 ${
                   scrolled ? "p-2" : "p-3"
                 }`}
                 title={isDarkMode ? t("theme.lightMode") : t("theme.darkMode")}
               >
+                {/* Hover glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/0 group-hover:from-white/10 group-hover:to-transparent transition-all duration-500"></div>
                 {isDarkMode ? (
                   <Sun
                     size={scrolled ? 16 : 18}
-                    className="group-hover:scale-110 group-hover:rotate-180 transition-all duration-300"
+                    className="relative z-10 group-hover:scale-110 group-hover:rotate-180 transition-all duration-500 ease-out"
                   />
                 ) : (
                   <Moon
                     size={scrolled ? 16 : 18}
-                    className="group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300"
+                    className="relative z-10 group-hover:scale-110 group-hover:-rotate-12 transition-all duration-500 ease-out"
                   />
                 )}
               </button>
@@ -386,7 +448,7 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
               {/* Language Toggle */}
               <button
                 onClick={toggleLanguage}
-                className={`flex items-center space-x-2 bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-400 rounded-lg transition-all duration-300 group shadow-lg shadow-indigo-500/10 hover:shadow-indigo-500/20 ${
+                className={`relative overflow-hidden flex items-center space-x-2 bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-white/20 text-slate-300 hover:text-white rounded-lg transition-all duration-300 group hover:scale-105 hover:shadow-lg hover:shadow-black/30 ${
                   scrolled ? "px-2.5 py-1.5" : "px-3 py-2"
                 }`}
                 title={
@@ -395,12 +457,14 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
                     : "Chuyển sang Tiếng Việt"
                 }
               >
+                {/* Hover glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/0 to-white/0 group-hover:via-white/10 transition-all duration-500"></div>
                 <Globe
                   size={scrolled ? 14 : 16}
-                  className="group-hover:scale-110 transition-transform"
+                  className="relative z-10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 ease-out"
                 />
                 <span
-                  className={`font-medium transition-all duration-300 ${
+                  className={`relative z-10 font-medium transition-all duration-300 ${
                     scrolled ? "text-xs" : "text-sm"
                   }`}
                 >

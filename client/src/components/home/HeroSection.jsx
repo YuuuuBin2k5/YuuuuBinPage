@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Github, Linkedin, Mail, MapPin, Code, Sparkles } from "lucide-react";
 import { useTranslation } from "../../hooks/useTranslation";
+import { useParallax } from "../../hooks/useParallax";
 import avatarImg from "../../images/avatar.jpg";
 
 const HeroSection = () => {
@@ -8,6 +9,11 @@ const HeroSection = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [typedText, setTypedText] = useState("");
   const fullText = t("hero.role");
+
+  // Parallax effects with different speeds
+  const parallaxSlow = useParallax(0.3);
+  const parallaxMedium = useParallax(0.5);
+  const parallaxFast = useParallax(0.7);
 
   useEffect(() => {
     setIsVisible(true);
@@ -30,9 +36,15 @@ const HeroSection = () => {
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Gradient Orbs */}
-        <div className="absolute top-1/3 left-1/3 w-[600px] h-[600px] bg-indigo-600/15 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/3 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-3xl" />
+        {/* Gradient Orbs with Parallax */}
+        <div
+          className="absolute top-1/3 left-1/3 w-[600px] h-[600px] bg-indigo-600/15 rounded-full blur-3xl transition-transform duration-0"
+          style={{ transform: `translateY(${parallaxSlow}px)` }}
+        />
+        <div
+          className="absolute bottom-1/4 right-1/3 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-3xl transition-transform duration-0"
+          style={{ transform: `translateY(${parallaxMedium}px)` }}
+        />
 
         {/* Floating Particles */}
         {[...Array(8)].map((_, i) => (
@@ -183,7 +195,7 @@ const HeroSection = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes float {
           0%,
           100% {
