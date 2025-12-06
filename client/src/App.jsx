@@ -10,24 +10,9 @@ import {
 } from "./utils/background";
 import { TEXT_DARK_MODE, TEXT_LIGHT_MODE } from "./utils/text-font";
 import Footer from "./components/layout/Footer";
-import Intro from "./components/Intro";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
-  const [showIntro, setShowIntro] = useState(true);
-
-  // Check if user has visited before
-  useEffect(() => {
-    const hasVisited = sessionStorage.getItem("hasVisited");
-    if (hasVisited) {
-      setShowIntro(false);
-    }
-  }, []);
-
-  const handleIntroComplete = () => {
-    sessionStorage.setItem("hasVisited", "true");
-    setShowIntro(false);
-  };
 
   // Hàm chuyển đổi sẽ được truyền xuống SideBar
   const toggleDarkMode = () => {
@@ -49,9 +34,6 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        {/* Intro Screen */}
-        {showIntro && <Intro onComplete={handleIntroComplete} />}
-
         <div
           className="app-container min-h-screen relative overflow-hidden overflow-y-auto"
           style={finalStyle}
