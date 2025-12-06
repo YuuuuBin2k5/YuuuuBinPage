@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Code2, Database, Sparkles } from "lucide-react";
+import { Database, Sparkles } from "lucide-react";
+import logo from "../../assets/logo.svg";
 
 const IntroLoader = ({ isLoading, onComplete }) => {
   const [progress, setProgress] = useState(0);
@@ -70,13 +71,13 @@ const IntroLoader = ({ isLoading, onComplete }) => {
               <div className="w-28 h-28 border-2 border-transparent border-l-purple-400 border-b-emerald-400 rounded-full opacity-50" />
             </div>
 
-            {/* Center Icon with gradient background */}
+            {/* Center Logo with gradient background */}
             <div className="relative w-24 h-24 bg-gradient-to-br from-purple-600 via-emerald-600 to-cyan-600 rounded-full flex items-center justify-center shadow-2xl shadow-purple-500/30">
               <div className="absolute inset-0.5 bg-slate-900 rounded-full" />
-              <Code2
-                size={44}
-                className="relative z-10 text-white animate-pulse"
-                strokeWidth={2.5}
+              <img
+                src={logo}
+                alt="Logo"
+                className="relative z-10 w-14 h-14 object-contain filter brightness-0 invert drop-shadow-[0_0_10px_rgba(168,85,247,0.8)] animate-pulse"
               />
             </div>
 
