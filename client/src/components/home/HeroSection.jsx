@@ -7,8 +7,6 @@ import avatarImg from "../../images/avatar.jpg";
 const HeroSection = () => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
-  const [typedText, setTypedText] = useState("");
-  const fullText = t("hero.role");
 
   // Parallax effects with different speeds
   const parallaxSlow = useParallax(0.3);
@@ -17,19 +15,6 @@ const HeroSection = () => {
 
   useEffect(() => {
     setIsVisible(true);
-
-    // Typing effect
-    let index = 0;
-    const typingInterval = setInterval(() => {
-      if (index <= fullText.length) {
-        setTypedText(fullText.slice(0, index));
-        index++;
-      } else {
-        clearInterval(typingInterval);
-      }
-    }, 80);
-
-    return () => clearInterval(typingInterval);
   }, []);
 
   return (
@@ -119,11 +104,10 @@ const HeroSection = () => {
                 </span>
               </h1>
 
-              {/* Typing Effect */}
+              {/* Role Text */}
               <div className="h-8 flex items-center justify-center lg:justify-start">
                 <p className="text-xl md:text-2xl text-indigo-300 font-light">
-                  {typedText}
-                  <span className="animate-blink">|</span>
+                  {t("hero.role")}
                 </p>
               </div>
             </div>
