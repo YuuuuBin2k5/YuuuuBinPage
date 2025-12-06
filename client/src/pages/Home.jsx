@@ -8,6 +8,7 @@ import { projectAPI } from "../services/projectService";
 function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [showIntro, setShowIntro] = useState(true);
+  const [contentVisible, setContentVisible] = useState(false);
 
   useEffect(() => {
     // Preload critical data
@@ -31,6 +32,10 @@ function Home() {
 
   const handleIntroComplete = () => {
     setShowIntro(false);
+    // Trigger content animation after intro fades out
+    setTimeout(() => {
+      setContentVisible(true);
+    }, 100);
   };
 
   return (
@@ -42,13 +47,21 @@ function Home() {
 
       {/* Main Content - Hidden during loading to prevent animations */}
       <div 
-        className={`bg-slate-900 -mt-24 transition-opacity duration-500 ${
+        className={`bg-slate-900 -mt-24 transition-all duration-1000 ${
           showIntro ? 'opacity-0 pointer-events-none' : 'opacity-100'
         }`}
         style={{ visibility: showIntro ? 'hidden' : 'visible' }}
       >
-        {/* Hero Section - First Impression */}
-        <HeroSection />
+        {/* Hero Section - First Impression with fade in animation */}
+        <div 
+          className={`transition-all duration-1000 ${
+            contentVisible 
+              ? 'opacity-100 translate-y-0' 
+              : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <HeroSection />
+        </div>
 
         {/* Stats Section */}
         <FloatingStats />
