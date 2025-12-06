@@ -1,6 +1,7 @@
 package com.portfolio.api.service;
 
 import com.portfolio.api.dto.ProjectDTO;
+import com.portfolio.api.dto.TechStackDTO;
 import com.portfolio.api.entity.Project;
 import com.portfolio.api.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -93,6 +94,17 @@ public class ProjectService {
     }
     
     private ProjectDTO convertToDTO(Project project) {
+        List<TechStackDTO> techStackDTOs = project.getTechStacks() != null 
+            ? project.getTechStacks().stream()
+                .map(tech -> new TechStackDTO(
+                    tech.getId(),
+                    tech.getName(),
+                    tech.getCategory(),
+                    tech.getIconUrl()
+                ))
+                .collect(java.util.stream.Collectors.toList())
+            : new java.util.ArrayList<>();
+            
         return new ProjectDTO(
             project.getId(),
             project.getTitle(),
@@ -104,6 +116,7 @@ public class ProjectService {
             project.getDemoUrl(),
             project.getGithubUrl(),
             project.getCoverImage(),
+            techStackDTOs,
             project.getCreatedAt(),
             project.getUpdatedAt()
         );

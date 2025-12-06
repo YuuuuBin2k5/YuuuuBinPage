@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,6 +22,7 @@ public class ProjectDTO {
     private String demoUrl;
     private String githubUrl;
     private String coverImage;
+    private List<TechStackDTO> techStacks;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
