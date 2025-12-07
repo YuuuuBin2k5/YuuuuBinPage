@@ -86,6 +86,7 @@ public class ExerciseService {
                     existingExercise.setCategory(exerciseDTO.getCategory());
                     existingExercise.setDemoUrl(exerciseDTO.getDemoUrl());
                     existingExercise.setGithubUrl(exerciseDTO.getGithubUrl());
+                    existingExercise.setImageUrl(exerciseDTO.getImageUrl());
                     existingExercise.setEstimatedTime(exerciseDTO.getEstimatedTime());
                     existingExercise.setInstructions(exerciseDTO.getInstructions());
                     existingExercise.setHints(exerciseDTO.getHints());
@@ -128,6 +129,7 @@ public class ExerciseService {
         dto.setCategory(exercise.getCategory());
         dto.setDemoUrl(exercise.getDemoUrl());
         dto.setGithubUrl(exercise.getGithubUrl());
+        dto.setImageUrl(exercise.getImageUrl());
         dto.setEstimatedTime(exercise.getEstimatedTime());
         dto.setInstructions(exercise.getInstructions());
         dto.setHints(exercise.getHints());
@@ -150,6 +152,7 @@ public class ExerciseService {
         exercise.setCategory(dto.getCategory());
         exercise.setDemoUrl(dto.getDemoUrl());
         exercise.setGithubUrl(dto.getGithubUrl());
+        exercise.setImageUrl(dto.getImageUrl());
         exercise.setEstimatedTime(dto.getEstimatedTime());
         exercise.setInstructions(dto.getInstructions());
         exercise.setHints(dto.getHints());

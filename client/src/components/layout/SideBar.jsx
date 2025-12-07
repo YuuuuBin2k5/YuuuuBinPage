@@ -369,32 +369,52 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
             {/* Control Panel */}
             <div
               className={`flex items-center transition-all duration-500 ${
-                scrolled ? "space-x-2" : "space-x-4"
+                scrolled ? "gap-2" : "gap-3"
               }`}
             >
               {/* Admin Controls */}
               {isAdmin ? (
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-2 px-3 py-2 bg-emerald-600/20 border border-emerald-500/30 rounded-lg">
-                    <Settings size={16} className="text-emerald-400" />
-                    <span className="text-emerald-400 text-sm font-medium hidden sm:block">
-                      {t("nav.admin")}
+                <>
+                  {/* Admin Badge */}
+                  <div
+                    className={`group relative flex items-center gap-2 bg-slate-800/80 hover:bg-slate-800 backdrop-blur-sm border border-emerald-500/30 hover:border-emerald-400/50 rounded-xl transition-all duration-300 overflow-hidden ${
+                      scrolled ? "px-3 py-2" : "px-4 py-2.5"
+                    }`}
+                  >
+                    {/* Glow effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 via-emerald-500/10 to-emerald-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <Settings
+                      size={scrolled ? 14 : 16}
+                      className="relative z-10 text-emerald-400 group-hover:rotate-90 transition-transform duration-500"
+                    />
+                    <span
+                      className={`relative z-10 text-emerald-400 font-semibold hidden sm:block ${
+                        scrolled ? "text-xs" : "text-sm"
+                      }`}
+                    >
+                      Quản Trị
                     </span>
                   </div>
+
+                  {/* Logout Button */}
                   <button
                     onClick={() => {
                       logout();
                       navigate("/");
                     }}
-                    className="p-2 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 text-red-400 rounded-lg transition-colors group"
+                    className={`group relative bg-slate-800/80 hover:bg-red-600/20 backdrop-blur-sm border border-slate-700/50 hover:border-red-500/50 text-slate-400 hover:text-red-400 rounded-xl transition-all duration-300 overflow-hidden ${
+                      scrolled ? "p-2" : "p-2.5"
+                    }`}
                     title={t("nav.logout")}
                   >
+                    {/* Glow effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 to-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <LogOut
-                      size={16}
-                      className="group-hover:scale-110 transition-transform"
+                      size={scrolled ? 16 : 18}
+                      className="relative z-10 group-hover:scale-110 group-hover:translate-x-0.5 transition-transform duration-300"
                     />
                   </button>
-                </div>
+                </>
               ) : (
                 <button
                   onClick={(e) => {
@@ -402,54 +422,33 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
                     e.stopPropagation();
                     setShowLoginModal(true);
                   }}
-                  className={`flex items-center space-x-2 bg-gradient-to-r from-purple-600/20 to-emerald-600/20 hover:from-purple-600/30 hover:to-emerald-600/30 border border-purple-500/30 text-purple-400 rounded-lg transition-all duration-300 group shadow-lg shadow-purple-500/10 hover:shadow-purple-500/20 ${
-                    scrolled ? "px-3 py-1.5" : "px-4 py-2"
+                  className={`group relative flex items-center gap-2 bg-slate-800/80 hover:bg-slate-800 backdrop-blur-sm border border-purple-500/30 hover:border-purple-400/50 text-purple-400 hover:text-purple-300 rounded-xl transition-all duration-300 overflow-hidden ${
+                    scrolled ? "px-3 py-2" : "px-4 py-2.5"
                   }`}
                   title="Admin Login"
                   type="button"
                 >
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   <Shield
                     size={scrolled ? 14 : 16}
-                    className="group-hover:scale-110 transition-transform"
+                    className="relative z-10 group-hover:scale-110 transition-transform duration-300"
                   />
                   <span
-                    className={`font-medium hidden sm:block transition-all duration-300 ${
+                    className={`relative z-10 font-semibold hidden sm:block ${
                       scrolled ? "text-xs" : "text-sm"
                     }`}
                   >
-                    {t("nav.admin")}
+                    Quản Trị
                   </span>
                 </button>
               )}
 
-              {/* Theme Toggle */}
-              <button
-                onClick={handleToggleDarkMode}
-                className={`relative overflow-hidden bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-white/20 text-slate-300 hover:text-white rounded-xl transition-all duration-300 group hover:scale-105 hover:shadow-lg hover:shadow-black/30 ${
-                  scrolled ? "p-2" : "p-3"
-                }`}
-                title={isDarkMode ? t("theme.lightMode") : t("theme.darkMode")}
-              >
-                {/* Hover glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-white/0 group-hover:from-white/10 group-hover:to-transparent transition-all duration-500"></div>
-                {isDarkMode ? (
-                  <Sun
-                    size={scrolled ? 16 : 18}
-                    className="relative z-10 group-hover:scale-110 group-hover:rotate-180 transition-all duration-500 ease-out"
-                  />
-                ) : (
-                  <Moon
-                    size={scrolled ? 16 : 18}
-                    className="relative z-10 group-hover:scale-110 group-hover:-rotate-12 transition-all duration-500 ease-out"
-                  />
-                )}
-              </button>
-
               {/* Language Toggle */}
               <button
                 onClick={toggleLanguage}
-                className={`relative overflow-hidden flex items-center space-x-2 bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 hover:border-white/20 text-slate-300 hover:text-white rounded-lg transition-all duration-300 group hover:scale-105 hover:shadow-lg hover:shadow-black/30 ${
-                  scrolled ? "px-2.5 py-1.5" : "px-3 py-2"
+                className={`group relative flex items-center gap-2 bg-slate-800/80 hover:bg-slate-800 backdrop-blur-sm border border-slate-700/50 hover:border-cyan-500/50 text-slate-300 hover:text-cyan-300 rounded-xl transition-all duration-300 overflow-hidden ${
+                  scrolled ? "px-3 py-2" : "px-4 py-2.5"
                 }`}
                 title={
                   language === "vi"
@@ -457,14 +456,14 @@ function SideBar({ isDarkMode, onToggleDarkMode }) {
                     : "Chuyển sang Tiếng Việt"
                 }
               >
-                {/* Hover glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/0 to-white/0 group-hover:via-white/10 transition-all duration-500"></div>
+                {/* Glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/10 to-cyan-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <Globe
                   size={scrolled ? 14 : 16}
                   className="relative z-10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500 ease-out"
                 />
                 <span
-                  className={`relative z-10 font-medium transition-all duration-300 ${
+                  className={`relative z-10 font-semibold ${
                     scrolled ? "text-xs" : "text-sm"
                   }`}
                 >

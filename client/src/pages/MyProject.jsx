@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { FONT_COINY } from "../utils/fonts";
 import { useAuth } from "../contexts/AuthContext";
+import { useData } from "../contexts/DataContext";
 import { projectAPI } from "../services/api";
 import { useDebounce } from "../hooks/usePerformance";
 import {
@@ -29,6 +30,11 @@ import ProjectDetailModal from "../components/projects/ProjectDetailModal";
 
 function MyProject() {
   const { isAdmin } = useAuth();
+  const {
+    projects: cachedProjects,
+    loading: dataLoading,
+    refreshData,
+  } = useData();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -41,38 +47,27 @@ function MyProject() {
   // Debounce search term for better performance
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  // Load projects from API
-  const loadProjects = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await projectAPI.getAll();
-      console.log("Loaded projects:", data); // Debug log
-      setProjects(data || []);
-    } catch (error) {
-      console.error("Error loading projects:", error);
-      // Set empty array if backend fails
-      setProjects([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  // Use cached projects from context
   useEffect(() => {
-    loadProjects();
-  }, [loadProjects]);
+    setProjects(cachedProjects);
+    setLoading(dataLoading);
+  }, [cachedProjects, dataLoading]);
 
-  const handleCreateProject = useCallback(async (projectData) => {
-    try {
-      const newProject = await projectAPI.create(projectData);
-      setShowForm(false);
-      setEditingProject(null);
-      // Optimistically add to state instead of reloading
-      setProjects((prev) => [...prev, newProject]);
-    } catch (error) {
-      console.error("Error creating project:", error);
-      alert("Error creating project. Please try again.");
-    }
-  }, []);
+  const handleCreateProject = useCallback(
+    async (projectData) => {
+      try {
+        const newProject = await projectAPI.create(projectData);
+        setShowForm(false);
+        setEditingProject(null);
+        // Refresh cache after creating
+        await refreshData();
+      } catch (error) {
+        console.error("Error creating project:", error);
+        alert("Error creating project. Please try again.");
+      }
+    },
+    [refreshData]
+  );
 
   const handleEditProject = useCallback((project) => {
     setEditingProject(project);
@@ -84,22 +79,17 @@ function MyProject() {
       try {
         if (!editingProject?.id) return;
 
-        const updatedProject = await projectAPI.update(
-          editingProject.id,
-          projectData
-        );
+        await projectAPI.update(editingProject.id, projectData);
         setShowForm(false);
         setEditingProject(null);
-        // Optimistically update in state
-        setProjects((prev) =>
-          prev.map((p) => (p.id === editingProject.id ? updatedProject : p))
-        );
+        // Refresh cache after updating
+        await refreshData();
       } catch (error) {
         console.error("Error updating project:", error);
         alert("Error updating project. Please try again.");
       }
     },
-    [editingProject]
+    [editingProject, refreshData]
   );
 
   const handleDeleteProject = useCallback(
@@ -108,16 +98,16 @@ function MyProject() {
 
       try {
         await projectAPI.delete(id);
-        // Optimistically remove from state
-        setProjects((prev) => prev.filter((p) => p.id !== id));
+        // Refresh cache after deleting
+        await refreshData();
       } catch (error) {
         console.error("Error deleting project:", error);
         alert("Error deleting project. Please try again.");
-        // Reload on error
-        await loadProjects();
+        // Refresh cache on error
+        await refreshData();
       }
     },
-    [loadProjects]
+    [refreshData]
   );
 
   const handleViewProject = useCallback((project) => {
@@ -218,7 +208,7 @@ function MyProject() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/10 to-slate-900 px-6 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/10 to-slate-900 -mt-24 pt-24 px-6 py-8">
       {/* Header với hiệu ứng mystical */}
       <div className="max-w-7xl mx-auto">
         <div className="relative text-center mb-12">
@@ -226,15 +216,19 @@ function MyProject() {
             <div className="w-96 h-96 bg-gradient-to-r from-purple-600/10 via-cyan-600/10 to-purple-600/10 rounded-full blur-3xl animate-pulse"></div>
           </div>
           <div className="relative">
-            <h1
-              className="text-6xl font-bold bg-gradient-to-r from-purple-400 via-cyan-300 to-purple-400 bg-clip-text text-transparent mb-4 animate-pulse"
-              style={FONT_COINY}
-            >
-              ✨ MY PROJECTS ✨
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-purple-500/20 rounded-full mb-6">
+              <Sparkles className="w-4 h-4 text-purple-400" />
+              <span className="text-purple-400 text-sm font-bold uppercase tracking-wider">
+                Featured Projects
+              </span>
+            </div>
+
+            <h1 className="text-5xl md:text-7xl font-black mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-pink-200">
+              My Creative Journey
             </h1>
-            <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-              Khám phá những dự án huyền bí và sáng tạo trong hành trình coding
-              của tôi
+
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
+              Products crafted with passion and boundless creativity
             </p>
           </div>
         </div>

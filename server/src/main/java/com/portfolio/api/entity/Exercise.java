@@ -39,6 +39,9 @@ public class Exercise {
     @Column(name = "github_url")
     private String githubUrl;
     
+    @Column(name = "image_url")
+    private String imageUrl;
+    
     @Column(name = "estimated_time")
     private Integer estimatedTime; // in minutes
     

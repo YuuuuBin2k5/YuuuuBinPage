@@ -360,26 +360,6 @@ const FloatingStats = () => {
 
         {/* Featured Projects Showcase */}
         <FeaturedProjects />
-
-        {/* CTA Section */}
-        <div className="text-center">
-          <div className="inline-flex flex-col items-center gap-4 p-8 bg-gradient-to-r from-purple-600/20 to-emerald-600/20 backdrop-blur-sm rounded-2xl border border-purple-500/30">
-            <div className="flex items-center gap-3">
-              <Award size={32} className="text-emerald-400 animate-bounce" />
-              <h4 className="text-2xl font-bold text-white">
-                {t("cta.title")}
-              </h4>
-            </div>
-            <p className="text-slate-300 max-w-2xl">{t("cta.description")}</p>
-            <button className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-emerald-600 text-white font-semibold rounded-full overflow-hidden shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/80 transition-all duration-300">
-              <span className="relative z-10 flex items-center gap-2">
-                <Rocket size={20} />
-                {t("cta.button")}
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

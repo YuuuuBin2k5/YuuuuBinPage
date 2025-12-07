@@ -18,16 +18,18 @@ const ExerciseForm = ({
   showExerciseForm,
   setShowExerciseForm,
   currentWeekId,
+  exercise,
   onSubmit,
   loading,
 }) => {
   const [exerciseForm, setExerciseForm] = useState({
     title: "",
     description: "",
-    difficulty: "Beginner",
+    difficulty: "EASY",
     category: "Frontend",
     demoUrl: "",
     githubUrl: "",
+    imageUrl: "",
     instructions: "",
     hints: [],
     estimatedTime: 60,
@@ -35,13 +37,45 @@ const ExerciseForm = ({
 
   const [newHint, setNewHint] = useState("");
 
+  // Điền dữ liệu vào form khi edit
+  React.useEffect(() => {
+    if (exercise) {
+      setExerciseForm({
+        title: exercise.title || "",
+        description: exercise.description || "",
+        difficulty: exercise.difficulty || "EASY",
+        category: exercise.category || "Frontend",
+        demoUrl: exercise.demoUrl || "",
+        githubUrl: exercise.githubUrl || "",
+        imageUrl: exercise.imageUrl || "",
+        instructions: exercise.instructions || "",
+        hints: exercise.hints || [],
+        estimatedTime: exercise.estimatedTime || 60,
+      });
+    } else {
+      // Reset form khi tạo mới
+      setExerciseForm({
+        title: "",
+        description: "",
+        difficulty: "EASY",
+        category: "Frontend",
+        demoUrl: "",
+        githubUrl: "",
+        imageUrl: "",
+        instructions: "",
+        hints: [],
+        estimatedTime: 60,
+      });
+    }
+  }, [exercise, showExerciseForm]);
+
   const handleSubmit = (e) => {
     onSubmit(e, exerciseForm, currentWeekId);
     // Reset form after submission
     setExerciseForm({
       title: "",
       description: "",
-      difficulty: "Beginner",
+      difficulty: "EASY",
       category: "Frontend",
       demoUrl: "",
       githubUrl: "",
@@ -81,10 +115,12 @@ const ExerciseForm = ({
             </div>
             <div>
               <h2 className="text-2xl font-bold text-white">
-                Thêm Bài Tập Mới
+                {exercise ? "Chỉnh Sửa Bài Tập" : "Thêm Bài Tập Mới"}
               </h2>
               <p className="text-slate-400">
-                {currentWeekId
+                {exercise
+                  ? "Cập nhật thông tin bài tập"
+                  : currentWeekId
                   ? "Thêm vào tuần đã chọn"
                   : "Tạo bài tập độc lập"}
               </p>
@@ -155,9 +191,9 @@ const ExerciseForm = ({
                 }
                 className="w-full px-4 py-3 bg-slate-800/50 border border-blue-400/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="Beginner">Beginner</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Advanced">Advanced</option>
+                <option value="EASY">Easy</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HARD">Hard</option>
               </select>
             </div>
 
@@ -218,6 +254,25 @@ const ExerciseForm = ({
                   }))
                 }
                 placeholder="https://github.com/username/repo"
+                className="w-full px-4 py-3 bg-slate-800/50 border border-blue-400/30 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                <Globe className="w-4 h-4 inline mr-2" />
+                Image URL (tùy chọn)
+              </label>
+              <input
+                type="url"
+                value={exerciseForm.imageUrl}
+                onChange={(e) =>
+                  setExerciseForm((prev) => ({
+                    ...prev,
+                    imageUrl: e.target.value,
+                  }))
+                }
+                placeholder="https://via.placeholder.com/400x300"
                 className="w-full px-4 py-3 bg-slate-800/50 border border-blue-400/30 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -324,12 +379,12 @@ const ExerciseForm = ({
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Đang tạo...
+                  {exercise ? "Đang cập nhật..." : "Đang tạo..."}
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  Tạo Bài Tập
+                  {exercise ? "Cập Nhật" : "Tạo Bài Tập"}
                 </>
               )}
             </button>

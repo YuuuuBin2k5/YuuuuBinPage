@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import SideBar from "./components/layout/SideBar";
 import AppRoutes from "./routes/AppRoutes";
 import { AuthProvider } from "./contexts/AuthContext";
+import { DataProvider } from "./contexts/DataContext";
 import {
   BG_MIDNIGHT_MIST,
   BG_TOP_GRADIENT_RADIAL,
@@ -33,24 +34,29 @@ function App() {
 
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <div
-          className="app-container min-h-screen relative overflow-hidden overflow-y-auto"
-          style={finalStyle}
-        >
-          {/* Header*/}
-          <SideBar isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
+      <DataProvider>
+        <BrowserRouter>
+          <div
+            className="app-container min-h-screen relative"
+            style={finalStyle}
+          >
+            {/* Header*/}
+            <SideBar
+              isDarkMode={isDarkMode}
+              onToggleDarkMode={toggleDarkMode}
+            />
 
-          {/* Main */}
-          <main className="pt-24 min-h-screen transition-colors duration-700 overflow-y-auto w-full">
-            {/* Component AppRoutes quản lý tất cả các Routes */}
-            <AppRoutes />
-          </main>
+            {/* Main */}
+            <main className="pt-24 min-h-screen transition-colors duration-700 w-full">
+              {/* Component AppRoutes quản lý tất cả các Routes */}
+              <AppRoutes />
+            </main>
 
-          {/* Chân trang */}
-          <Footer />
-        </div>
-      </BrowserRouter>
+            {/* Chân trang */}
+            <Footer />
+          </div>
+        </BrowserRouter>
+      </DataProvider>
     </AuthProvider>
   );
 }

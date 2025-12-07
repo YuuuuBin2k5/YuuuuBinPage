@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   ExternalLink,
   Github,
@@ -9,53 +9,19 @@ import {
   Star,
 } from "lucide-react";
 import { useTranslation } from "../../hooks/useTranslation";
-import { projectAPI } from "../../services/projectService";
+import { useData } from "../../contexts/DataContext";
 
 const FeaturedProjects = () => {
   const { t } = useTranslation();
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { projects: allProjects, loading } = useData();
   const [hoveredProject, setHoveredProject] = useState(null);
   const [visibleCards, setVisibleCards] = useState([]);
   const cardRefs = useRef([]);
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        // Clear cache first
-        localStorage.removeItem("projects_all");
-
-        const data = await projectAPI.getAll();
-        console.log("=== FETCHED PROJECTS ===", data);
-
-        if (!data || data.length === 0) {
-          console.warn("No projects returned from API");
-          return;
-        }
-
-        // Map API response to component format
-        const mappedProjects = data.map((project) => {
-          const imageUrl = project.coverImage || project.imageUrl || "";
-          console.log(`📷 Project "${project.name}": Image = "${imageUrl}"`);
-
-          return {
-            ...project,
-            imageUrl: imageUrl,
-            liveUrl: project.demoUrl || project.liveUrl,
-          };
-        });
-
-        console.log("=== MAPPED PROJECTS ===", mappedProjects);
-        setProjects(mappedProjects.slice(0, 6));
-      } catch (error) {
-        console.error("❌ Error loading featured projects:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProjects();
-  }, []);
+  // Get featured projects (first 6)
+  const projects = useMemo(() => {
+    return allProjects.slice(0, 6);
+  }, [allProjects]);
 
   // Scroll Reveal Animation
   useEffect(() => {

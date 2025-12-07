@@ -17,6 +17,7 @@ public class ExerciseDTO {
     private String category;
     private String demoUrl;
     private String githubUrl;
+    private String imageUrl;
     private Integer estimatedTime;
     private String instructions;
     private List<String> hints;

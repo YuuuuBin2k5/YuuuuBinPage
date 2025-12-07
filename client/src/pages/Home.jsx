@@ -1,34 +1,26 @@
 import React, { useState, useEffect } from "react";
 import HeroSection from "../components/home/HeroSection";
 import FloatingStats from "../components/home/FloatingStats";
+import FeaturedExercises from "../components/home/FeaturedExercises";
 import SkillsShowcase from "../components/home/SkillsShowcase";
 import IntroLoader from "../components/common/IntroLoader";
-import { projectAPI } from "../services/projectService";
+import { useData } from "../contexts/DataContext";
 
 function Home() {
-  const [isLoading, setIsLoading] = useState(true);
   const [showIntro, setShowIntro] = useState(true);
   const [contentVisible, setContentVisible] = useState(false);
+  const { loading } = useData();
 
   useEffect(() => {
-    // Preload critical data
-    const preloadData = async () => {
-      try {
-        // Load projects to ensure database is ready
-        await projectAPI.getAll();
-
-        // Minimum loading time for smooth experience (1.5s)
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error preloading data:", error);
-        setIsLoading(false);
-      }
+    // Wait for data to be ready (either from cache or API)
+    const checkDataReady = async () => {
+      // Minimum loading time for smooth experience (1s if data is cached)
+      const minLoadTime = loading ? 1500 : 500;
+      await new Promise((resolve) => setTimeout(resolve, minLoadTime));
     };
 
-    preloadData();
-  }, []);
+    checkDataReady();
+  }, [loading]);
 
   const handleIntroComplete = () => {
     // Ensure page stays at top
@@ -44,7 +36,7 @@ function Home() {
     <>
       {/* Intro Loader */}
       {showIntro && (
-        <IntroLoader isLoading={isLoading} onComplete={handleIntroComplete} />
+        <IntroLoader isLoading={loading} onComplete={handleIntroComplete} />
       )}
 
       {/* Main Content - Hidden during loading to prevent animations */}
@@ -67,6 +59,9 @@ function Home() {
 
         {/* Stats Section */}
         <FloatingStats />
+
+        {/* Featured Exercises Section */}
+        <FeaturedExercises />
 
         {/* Skills Showcase */}
         <SkillsShowcase />
