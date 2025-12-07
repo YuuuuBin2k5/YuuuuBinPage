@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, memo } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { weeksAPI, exercisesAPI, baiTapAPI } from "../services";
+import { useViewedExercises } from "../hooks/useViewedExercises";
 import BaiTapHeader from "../components/exercises/BaiTapHeader";
 import ExerciseCard from "../components/exercises/ExerciseCard";
 import ExerciseDetailModal from "../components/exercises/ExerciseDetailModal";
@@ -14,35 +15,76 @@ import {
   Calendar,
 } from "lucide-react";
 
+// Memoized WeekButton component to prevent unnecessary re-renders
+const WeekButton = memo(({ week, isActive, exerciseCount, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`w-full text-left p-4 rounded transition-all duration-300 border-2 ${
+      isActive
+        ? "bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-blue-500/60 shadow-lg"
+        : "bg-slate-800/30 border-slate-700/30 hover:border-blue-500/60 hover:bg-slate-800/50"
+    }`}
+  >
+    <div className="flex items-center gap-3">
+      <div
+        className={`w-10 h-10 rounded flex items-center justify-center ${
+          isActive
+            ? "bg-gradient-to-br from-blue-500 to-cyan-500"
+            : "bg-slate-700/50"
+        }`}
+      >
+        <Brain className="w-5 h-5 text-white" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <h3
+          className={`font-bold truncate ${
+            isActive ? "text-white" : "text-slate-300"
+          }`}
+        >
+          {week.title}
+        </h3>
+        <p className="text-xs text-slate-400">
+          {exerciseCount} bài tập
+        </p>
+      </div>
+      {isActive && (
+        <div className="w-2 h-2 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full animate-pulse"></div>
+      )}
+    </div>
+  </button>
+));
+
+WeekButton.displayName = 'WeekButton';
+
 function BaiTap() {
   const { isAdmin } = useAuth();
+  const { markAsViewed } = useViewedExercises();
   const [weeks, setWeeks] = useState([]);
   const [exercises, setExercises] = useState([]);
   const [expandedWeek, setExpandedWeek] = useState(null);
+  const [viewMode, setViewMode] = useState("weeks");
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [showExerciseForm, setShowExerciseForm] = useState(false);
   const [currentWeekId, setCurrentWeekId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const exercisesPerPage = 9; // 9 bài tập mỗi trang (3x3 grid)
+  const [exercisesPerPage] = useState(9); // 9 bài tập mỗi trang (3x3 grid)
   
   // Ref for content header to scroll to
   const contentHeaderRef = React.useRef(null);
 
-  // Load all data in one request for better performance - Memoized
+  // Load all data in one request for better performance
   useEffect(() => {
-    let isMounted = true;
-    
     const loadData = async () => {
+      setIsInitialLoad(true);
       try {
         // Use combined API to reduce HTTP requests
         const data = await baiTapAPI.getAllData();
-        if (isMounted) {
-          setWeeks(data.weeks || []);
-          setExercises(data.exercises || []);
-        }
+        setWeeks(data.weeks || []);
+        setExercises(data.exercises || []);
       } catch (error) {
         console.error("Error loading bai tap data:", error);
         // Fallback to separate requests if combined API fails
@@ -51,25 +93,18 @@ function BaiTap() {
             weeksAPI.getAll(),
             exercisesAPI.getAll(),
           ]);
-          if (isMounted) {
-            setWeeks(weeksData || []);
-            setExercises(exercisesData || []);
-          }
+          setWeeks(weeksData || []);
+          setExercises(exercisesData || []);
         } catch (fallbackError) {
           console.error("Fallback loading also failed:", fallbackError);
-          if (isMounted) {
-            setWeeks([]);
-            setExercises([]);
-          }
+          setWeeks([]);
+          setExercises([]);
         }
+      } finally {
+        setIsInitialLoad(false);
       }
     };
-    
     loadData();
-    
-    return () => {
-      isMounted = false;
-    };
   }, []);
 
   // Load data functions for individual refresh
@@ -153,72 +188,102 @@ function BaiTap() {
     [loadExercises, selectedExercise]
   );
 
-  // Memoize exercises for selected week to prevent recalculation
+  // Get exercises for selected week
   const currentWeekExercises = useMemo(() => {
     if (!expandedWeek) return exercises;
     return exercises.filter((ex) => ex.weekId === expandedWeek);
   }, [exercises, expandedWeek]);
-
-  // Memoize current exercises for pagination
-  const currentExercises = useMemo(() => {
-    const indexOfLastExercise = currentPage * exercisesPerPage;
-    const indexOfFirstExercise = indexOfLastExercise - exercisesPerPage;
-    return currentWeekExercises.slice(indexOfFirstExercise, indexOfLastExercise);
-  }, [currentWeekExercises, currentPage, exercisesPerPage]);
-
-  // Memoize total pages
-  const totalPages = useMemo(() => {
-    return Math.ceil(currentWeekExercises.length / exercisesPerPage);
-  }, [currentWeekExercises.length, exercisesPerPage]);
 
   // Reset to page 1 when changing week
   useEffect(() => {
     setCurrentPage(1);
   }, [expandedWeek]);
 
-  // Memoize page change handler
+  // Pagination calculations
+  const totalPages = Math.ceil(currentWeekExercises.length / exercisesPerPage);
+  const indexOfLastExercise = currentPage * exercisesPerPage;
+  const indexOfFirstExercise = indexOfLastExercise - exercisesPerPage;
+  const currentExercises = currentWeekExercises.slice(
+    indexOfFirstExercise,
+    indexOfLastExercise
+  );
+
   const handlePageChange = useCallback((pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // Memoize current week info
+  // Get current week info
   const currentWeek = useMemo(() => {
     if (!expandedWeek) return null;
     return weeks.find((w) => w.id === expandedWeek);
   }, [weeks, expandedWeek]);
 
-  // Memoize week selection handler
+  // Memoize exercise counts per week to avoid recalculation
+  const exerciseCountsByWeek = useMemo(() => {
+    const counts = {};
+    exercises.forEach(ex => {
+      counts[ex.weekId] = (counts[ex.weekId] || 0) + 1;
+    });
+    return counts;
+  }, [exercises]);
+
+  // Handle week selection with smooth scroll - Optimized
   const handleWeekSelect = useCallback((weekId) => {
     setExpandedWeek(prevWeek => prevWeek === weekId ? null : weekId);
-    
-    // Scroll to content header after state update
-    setTimeout(() => {
-      if (contentHeaderRef.current) {
-        const headerRect = contentHeaderRef.current.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        
-        // Calculate optimal scroll position
-        const padding = 80; // Padding from top
-        const targetScroll = headerRect.top + scrollTop - padding;
-        
-        window.scrollTo({
-          top: Math.max(0, targetScroll),
-          behavior: 'smooth'
-        });
-      }
-    }, 100);
   }, []);
 
+  // Memoized exercise handlers
+  const handleExerciseClick = useCallback((exercise) => {
+    setSelectedExercise(exercise);
+    setShowDetailModal(true);
+  }, []);
+
+  const handleExerciseEdit = useCallback((exercise) => {
+    console.log("=== EDIT EXERCISE CLICKED ===");
+    console.log("Exercise:", exercise);
+    console.log("Exercise images:", exercise.images);
+    console.log("Images count:", exercise.images?.length || 0);
+    
+    setSelectedExercise(exercise);
+    setCurrentWeekId(exercise.weekId);
+    setShowExerciseForm(true);
+  }, []);
+
+  // Show loading skeleton on initial load
+  if (isInitialLoad) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/10 to-slate-900 -mt-24 pt-24">
+        <div className="px-6 py-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="h-32 bg-slate-800/50 rounded animate-pulse mb-6"></div>
+          </div>
+        </div>
+        <div className="px-6 pb-8">
+          <div className="lg:flex gap-6">
+            <div className="hidden lg:block w-80 shrink-0">
+              <div className="h-96 bg-slate-800/50 rounded animate-pulse"></div>
+            </div>
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-64 bg-slate-800/50 rounded animate-pulse"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/10 to-slate-900 -mt-24 pt-24 page-transition">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/10 to-slate-900 -mt-24 pt-24">
       {/* Header */}
-      <div className="px-6 py-8 text-reveal">
+      <div className="px-6 py-8">
         <BaiTapHeader totalWeeks={weeks.length} totalExercises={exercises.length} />
       </div>
 
       {/* Main Layout: Sidebar + Content */}
-      <div className="relative lg:flex gap-6 px-6 pb-8 card-slide-up">
+      <div className="relative lg:flex gap-6 px-6 pb-8">
         {/* Left Sidebar - Weeks Timeline (Desktop) */}
         <aside className="hidden lg:block w-80 shrink-0 sticky top-4 self-start h-fit max-h-[calc(100vh-2rem)] transition-all duration-300">
           <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-2 border-blue-600/25 hover:border-blue-500/50 transition-all duration-300 rounded p-6 backdrop-blur-xl shadow-2xl shadow-blue-500/10">
@@ -287,48 +352,16 @@ function BaiTap() {
 
                 {/* Week Items */}
                 {weeks.map((week) => {
-                  const weekExCount = exercises.filter(
-                    (ex) => ex.weekId === week.id
-                  ).length;
                   const isActive = expandedWeek === week.id;
 
                   return (
-                    <button
+                    <WeekButton
                       key={week.id}
+                      week={week}
+                      isActive={isActive}
+                      exerciseCount={exerciseCountsByWeek[week.id] || 0}
                       onClick={() => handleWeekSelect(week.id)}
-                      className={`w-full text-left p-4 rounded transition-all duration-300 border-2 ${
-                        isActive
-                          ? "bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-blue-500/60 shadow-lg"
-                          : "bg-slate-800/30 border-slate-700/30 hover:border-blue-500/60 hover:bg-slate-800/50"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-10 h-10 rounded flex items-center justify-center ${
-                            isActive
-                              ? "bg-gradient-to-br from-blue-500 to-cyan-500"
-                              : "bg-slate-700/50"
-                          }`}
-                        >
-                          <Brain className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3
-                            className={`font-bold truncate ${
-                              isActive ? "text-white" : "text-slate-300"
-                            }`}
-                          >
-                            {week.title}
-                          </h3>
-                          <p className="text-xs text-slate-400">
-                            {weekExCount} bài tập
-                          </p>
-                        </div>
-                        {isActive && (
-                          <div className="w-2 h-2 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full animate-pulse"></div>
-                        )}
-                      </div>
-                    </button>
+                    />
                   );
                 })}
               </div>
@@ -350,24 +383,18 @@ function BaiTap() {
               className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none cursor-pointer"
             >
               <option value="">Tất Cả Bài Tập ({exercises.length})</option>
-              {weeks.map((week) => {
-                const weekExCount = exercises.filter(
-                  (ex) => ex.weekId === week.id
-                ).length;
-                return (
-                  <option key={week.id} value={week.id}>
-                    {week.title} ({weekExCount} bài tập)
-                  </option>
-                );
-              })}
+              {weeks.map((week) => (
+                <option key={week.id} value={week.id}>
+                  {week.title} ({exerciseCountsByWeek[week.id] || 0} bài tập)
+                </option>
+              ))}
             </select>
           </div>
 
-          {/* Content Header - With Animation */}
+          {/* Content Header */}
           <div 
             ref={contentHeaderRef} 
-            key={`header-${expandedWeek || 'all'}`}
-            className="mb-6 scroll-mt-24 animate-in fade-in slide-in-from-top-4 duration-500"
+            className="mb-6 scroll-mt-24"
           >
             <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-2 border-blue-600/25 hover:border-blue-500/50 transition-all duration-300 rounded p-6 backdrop-blur-xl">
               <div className="flex items-center justify-between">
@@ -461,22 +488,15 @@ function BaiTap() {
           ) : (
             <>
               <div 
-                key={expandedWeek || 'all'} 
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               >
-                {currentExercises.map((exercise) => (
+                {currentExercises.map((exercise, index) => (
                   <ExerciseCard
                     key={exercise.id}
                     exercise={exercise}
-                    onClick={() => {
-                      setSelectedExercise(exercise);
-                      setShowDetailModal(true);
-                    }}
-                    onEdit={(exercise) => {
-                      setSelectedExercise(exercise);
-                      setCurrentWeekId(exercise.weekId);
-                      setShowExerciseForm(true);
-                    }}
+                    index={indexOfFirstExercise + index}
+                    onClick={handleExerciseClick}
+                    onEdit={handleExerciseEdit}
                     isAdmin={isAdmin}
                   />
                 ))}

@@ -386,32 +386,28 @@ const FeaturedExercises = () => {
                       {(exercise.demoUrl || exercise.githubUrl) && (
                         <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           {exercise.demoUrl && (
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleLinkClick(e, exercise.id);
-                                window.open(exercise.demoUrl, '_blank', 'noopener,noreferrer');
-                              }}
+                            <a
+                              href={exercise.demoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => handleLinkClick(e, exercise.id)}
                               className="p-2 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 hover:border-blue-500/50 rounded-lg text-blue-400 hover:text-blue-300 transition-all duration-300 hover:scale-110"
                               title="Demo"
                             >
                               <Globe className="w-4 h-4" />
-                            </button>
+                            </a>
                           )}
                           {exercise.githubUrl && (
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleLinkClick(e, exercise.id);
-                                window.open(exercise.githubUrl, '_blank', 'noopener,noreferrer');
-                              }}
+                            <a
+                              href={exercise.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => handleLinkClick(e, exercise.id)}
                               className="p-2 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 hover:border-slate-500/50 rounded-lg text-slate-400 hover:text-white transition-all duration-300 hover:scale-110"
                               title="GitHub"
                             >
                               <Github className="w-4 h-4" />
-                            </button>
+                            </a>
                           )}
                         </div>
                       )}

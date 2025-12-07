@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Clock,
   Globe,
   Github,
   Code2,
+  Star,
   Image as ImageIcon,
   ArrowRight,
+  Eye,
   CheckCircle2,
   Edit,
 } from "lucide-react";
 import { useViewedExercises } from "../../hooks/useViewedExercises";
 import ImageCarousel from "../common/ImageCarousel";
 
-const ExerciseCard = ({ exercise, onClick, onEdit, isAdmin }) => {
+const ExerciseCard = ({ exercise, index, onClick, onEdit, isAdmin }) => {
   const [imageError, setImageError] = useState(false);
   const { isViewed, getViewCount, markAsViewed } = useViewedExercises();
 
@@ -28,7 +30,7 @@ const ExerciseCard = ({ exercise, onClick, onEdit, isAdmin }) => {
   // Handler cho nút Chi Tiết
   const handleDetailClick = () => {
     markAsViewed(exercise.id);
-    onClick();
+    onClick(exercise);
   };
 
   // Unified color scheme for all badges - teal/emerald theme
@@ -186,12 +188,4 @@ const ExerciseCard = ({ exercise, onClick, onEdit, isAdmin }) => {
   );
 };
 
-// Memoize with custom comparison to prevent unnecessary re-renders
-export default React.memo(ExerciseCard, (prevProps, nextProps) => {
-  // Only re-render if these props change
-  return (
-    prevProps.exercise.id === nextProps.exercise.id &&
-    prevProps.index === nextProps.index &&
-    prevProps.isAdmin === nextProps.isAdmin
-  );
-});
+export default React.memo(ExerciseCard);

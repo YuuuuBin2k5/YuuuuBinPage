@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { FONT_COINY } from "../utils/fonts";
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
 import { projectAPI } from "../services/api";
@@ -6,8 +7,23 @@ import { useDebounce } from "../hooks/usePerformance";
 import { useTypewriter } from "../hooks/useTypewriter";
 import {
   Plus,
+  Edit,
+  Trash2,
+  ExternalLink,
+  Github,
+  Calendar,
+  User,
   Code,
   Sparkles,
+  Eye,
+  Clock,
+  Star,
+  Zap,
+  Layers,
+  Award,
+  Target,
+  BookOpen,
+  Briefcase,
 } from "lucide-react";
 import ProjectForm from "../components/admin/SimpleProjectForm";
 import ProjectCard from "../components/projects/ProjectCard";
@@ -32,20 +48,18 @@ function MyProject() {
   // Debounce search term for better performance
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  // Typewriter effect for dynamic text - Real project technologies from course
+  // Typewriter effect for dynamic text - Real project technologies
   const typewriterTexts = [
-    "Full-Stack Web Apps với Java & React",
-    "Servlet/JSP - JavaServer Pages Development",
-    "JSTL & Expression Language (EL) Integration",
-    "JPA/Hibernate - O/R Mapping & EntityManager",
-    "JDBC - PreparedStatement & Connection Pooling",
-    "Session Management - Cookies & URL Rewriting",
-    "JavaMail API - Email với SMTP Protocol",
-    "HTML5 Semantic Elements & CSS3 Styling",
-    "MySQL Database Design & SQL Queries",
-    "RESTful API với Spring Boot Framework",
-    "Responsive UI - Mobile-First Design",
-    "Security - SQL Injection Prevention"
+    "React + Spring Boot Full-Stack Apps",
+    "JavaServer Pages (JSP) & Servlets",
+    "JPA/Hibernate Database Integration",
+    "RESTful API với Spring Framework",
+    "MySQL Database Design & JDBC",
+    "Session Management & Cookies",
+    "JSTL & Expression Language (EL)",
+    "Email Integration với JavaMail API",
+    "Responsive UI với HTML5 & CSS3",
+    "Modern Web Development Stack"
   ];
   
   const typedText = useTypewriter(typewriterTexts, 70, 30, 2000);
@@ -59,7 +73,7 @@ function MyProject() {
   const handleCreateProject = useCallback(
     async (projectData) => {
       try {
-        await projectAPI.create(projectData);
+        const newProject = await projectAPI.create(projectData);
         setShowForm(false);
         setEditingProject(null);
         // Refresh cache after creating
@@ -122,6 +136,42 @@ function MyProject() {
     setSelectedProject(project);
     setShowDetailModal(true);
   }, []);
+
+  const getStatusColor = (status) => {
+    const colors = {
+      PLANNING:
+        "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border-yellow-400/40",
+      IN_PROGRESS:
+        "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-cyan-300 border-cyan-400/40",
+      COMPLETED:
+        "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-emerald-300 border-emerald-400/40",
+      ON_HOLD:
+        "bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-slate-300 border-slate-400/40",
+    };
+    return colors[status] || colors["IN_PROGRESS"];
+  };
+
+  const getStatusIcon = (status) => {
+    const icons = {
+      PLANNING: <Target className="w-4 h-4" />,
+      IN_PROGRESS: <Zap className="w-4 h-4" />,
+      COMPLETED: <Award className="w-4 h-4" />,
+      ON_HOLD: <Clock className="w-4 h-4" />,
+    };
+    return icons[status] || icons["IN_PROGRESS"];
+  };
+
+  const getCategoryIcon = (category) => {
+    const icons = {
+      WEB: <Code className="w-5 h-5" />,
+      FRONTEND: <Layers className="w-5 h-5" />,
+      BACKEND: <Briefcase className="w-5 h-5" />,
+      ALGORITHM: <BookOpen className="w-5 h-5" />,
+      AI: <Sparkles className="w-5 h-5" />,
+      RESEARCH: <Star className="w-5 h-5" />,
+    };
+    return icons[category] || <Code className="w-5 h-5" />;
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return "TBD";
@@ -288,7 +338,6 @@ function MyProject() {
                   </span>
                 ))}
               </div>
-              </div>
             </div>
             
             {/* Decorative Divider */}
@@ -316,6 +365,7 @@ function MyProject() {
                 ─── My Portfolio ───
               </span>
               <div className="flex-1 h-px bg-gradient-to-l from-transparent to-slate-700/50"></div>
+            </div>
             </div>
           </div>
         </div>

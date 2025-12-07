@@ -3,24 +3,20 @@ import { ChevronRight } from "lucide-react";
 import { useTypewriter } from "../../hooks/useTypewriter";
 
 const BaiTapHeader = ({ totalWeeks = 0, totalExercises = 0 }) => {
-  // Typewriter effect for dynamic text - Real learning content from course
+  // Typewriter effect for dynamic text - Real learning content
   const typewriterTexts = [
-    "Tuần 1 (06/11): Hosting - Triển khai ứng dụng với FTP",
-    "Tuần 2 (11/11): HTML5 & CSS3 - Semantic Elements",
-    "Tuần 2 (18/11): JavaServer Pages - JSP & JavaBeans",
-    "Tuần 3 (20/11): Sessions & Cookies - HTTP Stateless",
-    "Tuần 3 (25/11): Expression Language & JSTL Core",
-    "Tuần 4 (02/12): JDBC - PreparedStatement & SQL Injection",
-    "Tuần 5 (04/12): JPA - O/R Mapping với EntityManager",
-    "Tuần 5: JavaMail API - Gửi Email với SMTP",
-    "Chương 4: HTML Forms & CSS3 External Stylesheets",
-    "Chương 6: JSP - Expression Language ${attribute}",
-    "Chương 7: URL Rewriting & Hidden Fields",
-    "Chương 8: EL với Arrays, Lists, Maps & Operators",
-    "Chương 9: JSTL - <c:forEach>, <c:if>, <c:choose>",
-    "Chương 12: Connection Pooling với context.xml",
-    "Chương 13: persistence.xml & Hibernate/EclipseLink",
-    "Chương 14: MimeMessage & Transport - Gmail SMTP"
+    "Tuần 1: Hosting & Deployment với Servlet/JSP",
+    "Tuần 2: HTML5, CSS3 & JavaServer Pages (JSP)",
+    "Tuần 3: Sessions, Cookies & HTTP Protocol",
+    "Tuần 4: Expression Language (EL) & JSTL Core",
+    "Tuần 5: JDBC & Database Connection Pooling",
+    "Tuần 6: JPA (Java Persistence API) & O/R Mapping",
+    "Tuần 7: JavaMail API & Email Integration",
+    "Chương 8: Advanced Expression Language",
+    "Chương 9: JSTL - JSP Standard Tag Library",
+    "Chương 12: JDBC & PreparedStatement",
+    "Chương 13: JPA với Hibernate/EclipseLink",
+    "Chương 14: Gửi Email với JavaMail & SMTP"
   ];
   
   const typedText = useTypewriter(typewriterTexts, 70, 30, 2000);

@@ -1,27 +1,4 @@
 /* ============================================
-   GLOBAL PERFORMANCE SETTINGS - PRO OPTIMIZATION
-   ============================================ */
-
-/* Force GPU acceleration on all animated elements */
-* {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Optimize rendering for animated elements */
-[class*="animate-"],
-[class*="transition-"] {
-  backface-visibility: hidden;
-  transform: translateZ(0);
-}
-
-/* Prevent layout shifts */
-img,
-video {
-  content-visibility: auto;
-}
-
-/* ============================================
    GLOBAL ANIMATIONS - Reusable across app
    ============================================ */
 
@@ -323,104 +300,14 @@ video {
 }
 
 /* ============================================
-   PERFORMANCE OPTIMIZATIONS - PRO LEVEL
+   PERFORMANCE OPTIMIZATIONS
    ============================================ */
 
-/* GPU Acceleration - Force hardware acceleration */
+/* GPU Acceleration */
 .transform-gpu {
-  transform: translate3d(0, 0, 0);
+  transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
-}
-
-/* CSS Containment - Prevent layout thrashing */
-.contain-layout {
-  contain: layout;
-}
-
-.contain-paint {
-  contain: paint;
-}
-
-.contain-strict {
-  contain: strict;
-}
-
-/* Navbar Optimization - Only use will-change on interaction */
-nav {
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  contain: layout style;
-}
-
-nav a,
-nav button {
-  backface-visibility: hidden;
-}
-
-/* Only add will-change during interaction */
-nav a:hover,
-nav a:focus,
-nav button:hover,
-nav button:focus {
-  will-change: transform;
-}
-
-nav a:not(:hover):not(:focus),
-nav button:not(:hover):not(:focus) {
-  will-change: auto;
-}
-
-/* Reduce ALL animations on scroll and low-end devices */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-/* Disable heavy animations on low-end devices */
-@media (max-width: 768px) {
-  .animate-float-icon,
-  .animate-rotate-icon,
-  .animate-breathe,
-  .animate-tilt-card,
-  .animate-orbit,
-  .animate-wave-motion,
-  .animate-pulse-glow,
-  .animate-swing,
-  .animate-bounce-subtle,
-  .animate-wiggle,
-  .animate-morph,
-  .animate-spiral-rotate,
-  .animate-magnetic-pulse,
-  .animate-rainbow-glow,
-  .animate-levitate,
-  .animate-jello {
-    animation: none !important;
-  }
-}
-
-/* Reduce animations class - Applied by JS */
-.reduce-animations *,
-.reduce-animations *::before,
-.reduce-animations *::after {
-  animation-duration: 0.01ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
-}
-
-/* Performance mode - Disable all non-essential animations */
-.performance-mode [class*="animate-float"],
-.performance-mode [class*="animate-rotate"],
-.performance-mode [class*="animate-breathe"],
-.performance-mode [class*="animate-pulse"],
-.performance-mode [class*="animate-wave"],
-.performance-mode [class*="animate-bounce"] {
-  animation: none !important;
 }
 
 .will-change-transform {
@@ -431,42 +318,10 @@ nav button:not(:hover):not(:focus) {
   will-change: opacity;
 }
 
-/* Remove will-change after animation completes */
-.animation-complete {
-  will-change: auto;
-}
-
 /* Smooth Scrolling */
 .smooth-scroll {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-}
-
-/* ============================================
-   TAB SWITCHING OPTIMIZATION
-   ============================================ */
-
-/* Optimize page visibility changes */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
-}
-
-/* Pause animations when tab is hidden */
-@media (prefers-reduced-motion: no-preference) {
-  body:not(.tab-visible) [class*="animate-"] {
-    animation-play-state: paused !important;
-  }
-}
-
-/* Reduce GPU usage when tab is not visible */
-body:not(.tab-visible) {
-  will-change: auto !important;
-}
-
-body:not(.tab-visible) * {
-  will-change: auto !important;
 }
 
 /* ============================================
@@ -1034,46 +889,67 @@ body:not(.tab-visible) * {
   }
 }
 
-/* Utility classes for continuous animations - OPTIMIZED */
-/* Only use these on hover or when visible */
+/* Utility classes for continuous animations */
 .animate-float-icon {
-  animation: floatIcon 10s ease-in-out infinite;
+  animation: floatIcon 8s ease-in-out infinite;
 }
 
 .animate-rotate-icon {
-  animation: rotateIcon 20s linear infinite;
+  animation: rotateIcon 15s linear infinite;
 }
 
 .animate-breathe {
-  animation: breathe 5s ease-in-out infinite;
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.animate-tilt-card {
+  animation: tiltCard 6s ease-in-out infinite;
+}
+
+.animate-orbit {
+  animation: orbitIcon 10s linear infinite;
 }
 
 .animate-wave-motion {
-  animation: waveMotion 8s ease-in-out infinite;
+  animation: waveMotion 7s ease-in-out infinite;
 }
 
 .animate-pulse-glow {
-  animation: pulseGlow 4s ease-in-out infinite;
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.animate-swing {
+  animation: swing 2s ease-in-out infinite;
 }
 
 .animate-bounce-subtle {
-  animation: bounceSubtle 4s ease-in-out infinite;
+  animation: bounceSubtle 3s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 2.5s ease-in-out infinite;
+}
+
+.animate-morph {
+  animation: morph 8s ease-in-out infinite;
+}
+
+.animate-spiral-rotate {
+  animation: spiralRotate 12s linear infinite;
 }
 
 .animate-magnetic-pulse {
-  animation: magneticPulse 5s ease-in-out infinite;
+  animation: magneticPulse 4s ease-in-out infinite;
 }
 
-/* Only add will-change on hover to prevent constant GPU usage */
-.animate-float-icon:hover,
-.animate-rotate-icon:hover,
-.animate-breathe:hover,
-.animate-wave-motion:hover,
-.animate-bounce-subtle:hover,
-.animate-magnetic-pulse:hover {
-  will-change: transform;
+.animate-rainbow-glow {
+  animation: rainbowGlow 10s linear infinite;
 }
 
-.animate-pulse-glow:hover {
-  will-change: box-shadow;
+.animate-levitate {
+  animation: levitate 5s ease-in-out infinite;
+}
+
+.animate-jello {
+  animation: jello 2s ease-in-out infinite;
 }
