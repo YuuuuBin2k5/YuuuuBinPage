@@ -8,6 +8,7 @@ import {
   Copy,
 } from "lucide-react";
 import LazyImage from "../layout/LazyImage";
+import MultiImageUploader from "../common/MultiImageUploader";
 
 const SimpleProjectForm = ({ isOpen, onClose, onSubmit, project = null }) => {
   const [formData, setFormData] = useState({
@@ -20,6 +21,7 @@ const SimpleProjectForm = ({ isOpen, onClose, onSubmit, project = null }) => {
     demoUrl: "",
     githubUrl: "",
     coverImage: "",
+    images: [],
   });
 
   const handleSubmit = useCallback(
@@ -53,6 +55,11 @@ const SimpleProjectForm = ({ isOpen, onClose, onSubmit, project = null }) => {
         return;
       }
 
+      console.log("=== SUBMITTING PROJECT FORM ===");
+      console.log("Form data:", formData);
+      console.log("Images:", formData.images);
+      console.log("Images count:", formData.images?.length || 0);
+      
       onSubmit(formData);
     },
     [formData, onSubmit]
@@ -86,6 +93,11 @@ const SimpleProjectForm = ({ isOpen, onClose, onSubmit, project = null }) => {
   useEffect(() => {
     if (isOpen) {
       if (project) {
+        console.log("=== LOADING PROJECT FOR EDIT ===");
+        console.log("Project:", project);
+        console.log("Project images:", project.images);
+        console.log("Images count:", project.images?.length || 0);
+        
         setFormData({
           name: project.title || project.name || "",
           description: project.description || "",
@@ -96,6 +108,7 @@ const SimpleProjectForm = ({ isOpen, onClose, onSubmit, project = null }) => {
           demoUrl: project.demoUrl || "",
           githubUrl: project.githubUrl || "",
           coverImage: project.coverImage || "",
+          images: project.images || [],
         });
       } else {
         setFormData({
@@ -108,6 +121,7 @@ const SimpleProjectForm = ({ isOpen, onClose, onSubmit, project = null }) => {
           demoUrl: "",
           githubUrl: "",
           coverImage: "",
+          images: [],
         });
       }
     }
@@ -285,67 +299,15 @@ const SimpleProjectForm = ({ isOpen, onClose, onSubmit, project = null }) => {
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
                 <ImageIcon size={16} />
-                Cover Image URL
+                Ảnh dự án (nhiều ảnh)
               </label>
-              <div className="space-y-3">
-                <input
-                  type="url"
-                  name="coverImage"
-                  value={formData.coverImage}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 bg-slate-800/50 border border-purple-500/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="https://example.com/image.jpg"
-                  maxLength={2000}
-                />
-                {formData.coverImage && (
-                  <div className="text-xs text-gray-400 mt-1">
-                    {formData.coverImage.length}/2000 ký tự
-                    {formData.coverImage.length > 2000 && (
-                      <span className="text-red-400 ml-2">⚠️ Quá dài!</span>
-                    )}
-                  </div>
-                )}
-
-                {/* Sample URLs */}
-                <div className="text-xs text-gray-400">
-                  <p className="mb-2">URL mẫu (click để copy):</p>
-                  <div className="grid grid-cols-1 gap-1 text-xs">
-                    {[
-                      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800",
-                      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800",
-                      "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=800",
-                      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800",
-                    ].map((url, index) => (
-                      <button
-                        key={index}
-                        type="button"
-                        onClick={() =>
-                          setFormData((prev) => ({ ...prev, coverImage: url }))
-                        }
-                        className="text-left p-2 bg-slate-800/30 hover:bg-slate-700/50 rounded text-blue-300 hover:text-blue-200 transition-colors break-all"
-                      >
-                        <Copy size={12} className="inline mr-1" />
-                        {url.substring(0, 60)}...
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Image Preview */}
-                {formData.coverImage && (
-                  <div className="mt-3">
-                    <p className="text-sm text-gray-300 mb-2">Preview:</p>
-                    <div className="w-full max-w-md mx-auto">
-                      <LazyImage
-                        src={formData.coverImage}
-                        alt="Preview"
-                        className="w-full h-32 object-cover rounded-lg"
-                        placeholderClassName="w-full h-32 rounded-lg"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+              <MultiImageUploader
+                images={formData.images}
+                onChange={(images) =>
+                  setFormData((prev) => ({ ...prev, images }))
+                }
+                maxImages={15}
+              />
             </div>
           </div>
 

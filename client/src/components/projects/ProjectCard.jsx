@@ -1,5 +1,6 @@
 import React from "react";
 import LazyImage from "../layout/LazyImage";
+import ImageCarousel from "../common/ImageCarousel";
 import {
   Edit,
   Trash2,
@@ -59,16 +60,25 @@ const ProjectCard = React.memo(
 
         <div className="relative">
           {/* Cover Image */}
-          {project.coverImage && (
-            <div className="relative mb-4 overflow-hidden rounded-xl group/image">
-              <LazyImage
-                src={project.coverImage}
-                alt={project.title || project.name || "Project image"}
-                className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
-                placeholderClassName="w-full h-48 rounded-xl"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-              <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          {(project.images && project.images.length > 0) || project.coverImage ? (
+            <div className="relative mb-4 overflow-hidden rounded-xl group/image h-48">
+              {project.images && project.images.length > 0 ? (
+                <ImageCarousel 
+                  images={project.images} 
+                  alt={project.title || project.name || "Project image"} 
+                />
+              ) : (
+                <>
+                  <LazyImage
+                    src={project.coverImage}
+                    alt={project.title || project.name || "Project image"}
+                    className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+                    placeholderClassName="w-full h-48 rounded-xl"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                </>
+              )}
+              <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -81,7 +91,8 @@ const ProjectCard = React.memo(
                 </button>
               </div>
             </div>
-          )}
+          ) : null}
+          
           {/* Header */}
           <div className="flex items-start justify-between mb-4">
             <div

@@ -48,12 +48,29 @@ public class ExerciseController {
     
     @PostMapping
     public ResponseEntity<ExerciseDTO> createExercise(@RequestBody ExerciseDTO exerciseDTO) {
+        System.out.println("=== CREATE EXERCISE ===");
+        System.out.println("Exercise title: " + exerciseDTO.getTitle());
+        System.out.println("Images count: " + (exerciseDTO.getImages() != null ? exerciseDTO.getImages().size() : 0));
+        if (exerciseDTO.getImages() != null) {
+            exerciseDTO.getImages().forEach(img -> 
+                System.out.println("  - Image URL: " + img.getImageUrl())
+            );
+        }
         ExerciseDTO createdExercise = exerciseService.createExercise(exerciseDTO);
         return ResponseEntity.ok(createdExercise);
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<ExerciseDTO> updateExercise(@PathVariable Long id, @RequestBody ExerciseDTO exerciseDTO) {
+        System.out.println("=== UPDATE EXERCISE ===");
+        System.out.println("Exercise ID: " + id);
+        System.out.println("Exercise title: " + exerciseDTO.getTitle());
+        System.out.println("Images count: " + (exerciseDTO.getImages() != null ? exerciseDTO.getImages().size() : 0));
+        if (exerciseDTO.getImages() != null) {
+            exerciseDTO.getImages().forEach(img -> 
+                System.out.println("  - Image URL: " + img.getImageUrl())
+            );
+        }
         return exerciseService.updateExercise(id, exerciseDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

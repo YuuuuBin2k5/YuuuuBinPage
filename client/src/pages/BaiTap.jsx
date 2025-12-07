@@ -441,6 +441,11 @@ function BaiTap() {
                       setShowDetailModal(true);
                     }}
                     onEdit={(exercise) => {
+                      console.log("=== EDIT EXERCISE CLICKED ===");
+                      console.log("Exercise:", exercise);
+                      console.log("Exercise images:", exercise.images);
+                      console.log("Images count:", exercise.images?.length || 0);
+                      
                       setSelectedExercise(exercise);
                       setCurrentWeekId(exercise.weekId);
                       setShowExerciseForm(true);

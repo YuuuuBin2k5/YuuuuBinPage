@@ -3,7 +3,9 @@ package com.portfolio.api.service;
 import com.portfolio.api.dto.ProjectDTO;
 import com.portfolio.api.dto.TechStackDTO;
 import com.portfolio.api.entity.Project;
+import com.portfolio.api.entity.ProjectImage;
 import com.portfolio.api.repository.ProjectRepository;
+import com.portfolio.api.repository.ProjectImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -11,6 +13,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 public class ProjectService {
     
     private final ProjectRepository projectRepository;
+    private final ProjectImageRepository projectImageRepository;
     
     @Cacheable(value = "projects", key = "'all'")
     public List<ProjectDTO> getAllProjects() {
@@ -51,6 +55,12 @@ public class ProjectService {
     public ProjectDTO createProject(ProjectDTO projectDTO) {
         Project project = convertToEntity(projectDTO);
         Project savedProject = projectRepository.save(project);
+        
+        // Save images if provided
+        if (projectDTO.getImages() != null && !projectDTO.getImages().isEmpty()) {
+            saveProjectImages(savedProject.getId(), projectDTO.getImages());
+        }
+        
         return convertToDTO(savedProject);
     }
     
@@ -76,7 +86,18 @@ public class ProjectService {
                     project.setDemoUrl(projectDTO.getDemoUrl());
                     project.setGithubUrl(projectDTO.getGithubUrl());
                     project.setCoverImage(projectDTO.getCoverImage());
-                    return convertToDTO(projectRepository.save(project));
+                    
+                    Project savedProject = projectRepository.save(project);
+                    
+                    // Update images if provided
+                    if (projectDTO.getImages() != null) {
+                        projectImageRepository.deleteByProjectId(id);
+                        if (!projectDTO.getImages().isEmpty()) {
+                            saveProjectImages(id, projectDTO.getImages());
+                        }
+                    }
+                    
+                    return convertToDTO(savedProject);
                 });
     }
     
@@ -104,6 +125,28 @@ public class ProjectService {
                 ))
                 .collect(java.util.stream.Collectors.toList())
             : new java.util.ArrayList<>();
+        
+        // Load images
+        System.out.println("=== LOADING IMAGES FOR PROJECT ===");
+        System.out.println("Project ID: " + project.getId());
+        List<ProjectDTO.ImageDTO> imageDTOs;
+        try {
+            List<ProjectImage> images = projectImageRepository.findByProjectIdOrderByDisplayOrder(project.getId());
+            System.out.println("Found " + images.size() + " images in database");
+            
+            imageDTOs = images.stream()
+                    .map(img -> {
+                        System.out.println("  - Image: " + img.getImageUrl() + " (order: " + img.getDisplayOrder() + ")");
+                        return new ProjectDTO.ImageDTO(img.getId(), img.getImageUrl(), img.getDisplayOrder(), img.getCaption());
+                    })
+                    .collect(Collectors.toList());
+            
+            System.out.println("Set " + imageDTOs.size() + " images to DTO");
+        } catch (Exception e) {
+            System.err.println("ERROR loading images: " + e.getMessage());
+            e.printStackTrace();
+            imageDTOs = new ArrayList<>();
+        }
             
         return new ProjectDTO(
             project.getId(),
@@ -116,10 +159,32 @@ public class ProjectService {
             project.getDemoUrl(),
             project.getGithubUrl(),
             project.getCoverImage(),
+            imageDTOs,
             techStackDTOs,
             project.getCreatedAt(),
             project.getUpdatedAt()
         );
+    }
+    
+    private void saveProjectImages(Long projectId, List<ProjectDTO.ImageDTO> imageDTOs) {
+        System.out.println("=== SAVING PROJECT IMAGES ===");
+        System.out.println("Project ID: " + projectId);
+        System.out.println("Number of images to save: " + imageDTOs.size());
+        
+        List<ProjectImage> images = new ArrayList<>();
+        for (int i = 0; i < imageDTOs.size(); i++) {
+            ProjectDTO.ImageDTO imgDTO = imageDTOs.get(i);
+            ProjectImage img = new ProjectImage();
+            img.setProjectId(projectId);
+            img.setImageUrl(imgDTO.getImageUrl());
+            img.setDisplayOrder(imgDTO.getDisplayOrder() != null ? imgDTO.getDisplayOrder() : i);
+            img.setCaption(imgDTO.getCaption());
+            images.add(img);
+            System.out.println("  Image " + (i+1) + ": " + imgDTO.getImageUrl() + " (order: " + img.getDisplayOrder() + ")");
+        }
+        
+        List<ProjectImage> savedImages = projectImageRepository.saveAll(images);
+        System.out.println("Successfully saved " + savedImages.size() + " images to database");
     }
     
     private Project convertToEntity(ProjectDTO dto) {

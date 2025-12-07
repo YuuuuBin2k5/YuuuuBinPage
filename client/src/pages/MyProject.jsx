@@ -70,6 +70,11 @@ function MyProject() {
   );
 
   const handleEditProject = useCallback((project) => {
+    console.log("=== EDIT PROJECT CLICKED ===");
+    console.log("Project:", project);
+    console.log("Project images:", project.images);
+    console.log("Images count:", project.images?.length || 0);
+    
     setEditingProject(project);
     setShowForm(true);
   }, []);

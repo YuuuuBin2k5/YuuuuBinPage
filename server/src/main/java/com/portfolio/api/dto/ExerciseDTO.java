@@ -17,11 +17,22 @@ public class ExerciseDTO {
     private String category;
     private String demoUrl;
     private String githubUrl;
-    private String imageUrl;
+    private String imageUrl; // Keep for backward compatibility
+    private List<ImageDTO> images; // New: multiple images
     private Integer estimatedTime;
     private String instructions;
     private List<String> hints;
     private LocalDateTime createdAt;
     private Long weekId;
     private String weekTitle;
+    
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ImageDTO {
+        private Long id;
+        private String imageUrl;
+        private Integer displayOrder;
+        private String caption;
+    }
 }

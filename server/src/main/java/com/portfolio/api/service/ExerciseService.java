@@ -2,8 +2,10 @@ package com.portfolio.api.service;
 
 import com.portfolio.api.dto.ExerciseDTO;
 import com.portfolio.api.entity.Exercise;
+import com.portfolio.api.entity.ExerciseImage;
 import com.portfolio.api.entity.Week;
 import com.portfolio.api.repository.ExerciseRepository;
+import com.portfolio.api.repository.ExerciseImageRepository;
 import com.portfolio.api.repository.WeekRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -11,6 +13,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 public class ExerciseService {
     
     private final ExerciseRepository exerciseRepository;
+    private final ExerciseImageRepository exerciseImageRepository;
     private final WeekRepository weekRepository;
     
     @Cacheable(value = "exercises", key = "'all'")
@@ -68,6 +72,12 @@ public class ExerciseService {
         }
         
         Exercise savedExercise = exerciseRepository.save(exercise);
+        
+        // Save images if provided
+        if (exerciseDTO.getImages() != null && !exerciseDTO.getImages().isEmpty()) {
+            saveExerciseImages(savedExercise.getId(), exerciseDTO.getImages());
+        }
+        
         return convertToDTO(savedExercise);
     }
     
@@ -98,6 +108,15 @@ public class ExerciseService {
                     }
                     
                     Exercise savedExercise = exerciseRepository.save(existingExercise);
+                    
+                    // Update images if provided
+                    if (exerciseDTO.getImages() != null) {
+                        exerciseImageRepository.deleteByExerciseId(id);
+                        if (!exerciseDTO.getImages().isEmpty()) {
+                            saveExerciseImages(id, exerciseDTO.getImages());
+                        }
+                    }
+                    
                     return convertToDTO(savedExercise);
                 });
     }
@@ -135,12 +154,55 @@ public class ExerciseService {
         dto.setHints(exercise.getHints());
         dto.setCreatedAt(exercise.getCreatedAt());
         
+        // Load images
+        System.out.println("=== LOADING IMAGES FOR EXERCISE ===");
+        System.out.println("Exercise ID: " + exercise.getId());
+        try {
+            List<ExerciseImage> images = exerciseImageRepository.findByExerciseIdOrderByDisplayOrder(exercise.getId());
+            System.out.println("Found " + images.size() + " images in database");
+            
+            List<ExerciseDTO.ImageDTO> imageDTOs = images.stream()
+                    .map(img -> {
+                        System.out.println("  - Image: " + img.getImageUrl() + " (order: " + img.getDisplayOrder() + ")");
+                        return new ExerciseDTO.ImageDTO(img.getId(), img.getImageUrl(), img.getDisplayOrder(), img.getCaption());
+                    })
+                    .collect(Collectors.toList());
+            
+            dto.setImages(imageDTOs);
+            System.out.println("Set " + imageDTOs.size() + " images to DTO");
+        } catch (Exception e) {
+            System.err.println("ERROR loading images: " + e.getMessage());
+            e.printStackTrace();
+            dto.setImages(new ArrayList<>());
+        }
+        
         if (exercise.getWeek() != null) {
             dto.setWeekId(exercise.getWeek().getId());
             dto.setWeekTitle(exercise.getWeek().getTitle());
         }
         
         return dto;
+    }
+    
+    private void saveExerciseImages(Long exerciseId, List<ExerciseDTO.ImageDTO> imageDTOs) {
+        System.out.println("=== SAVING EXERCISE IMAGES ===");
+        System.out.println("Exercise ID: " + exerciseId);
+        System.out.println("Number of images to save: " + imageDTOs.size());
+        
+        List<ExerciseImage> images = new ArrayList<>();
+        for (int i = 0; i < imageDTOs.size(); i++) {
+            ExerciseDTO.ImageDTO imgDTO = imageDTOs.get(i);
+            ExerciseImage img = new ExerciseImage();
+            img.setExerciseId(exerciseId);
+            img.setImageUrl(imgDTO.getImageUrl());
+            img.setDisplayOrder(imgDTO.getDisplayOrder() != null ? imgDTO.getDisplayOrder() : i);
+            img.setCaption(imgDTO.getCaption());
+            images.add(img);
+            System.out.println("  Image " + (i+1) + ": " + imgDTO.getImageUrl() + " (order: " + img.getDisplayOrder() + ")");
+        }
+        
+        List<ExerciseImage> savedImages = exerciseImageRepository.saveAll(images);
+        System.out.println("Successfully saved " + savedImages.size() + " images to database");
     }
     
     private Exercise convertToEntity(ExerciseDTO dto) {

@@ -37,14 +37,29 @@ public class ProjectController {
     
     @PostMapping
     public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectDTO projectDTO) {
+        System.out.println("=== CREATE PROJECT ===");
+        System.out.println("Project name: " + projectDTO.getName());
+        System.out.println("Images count: " + (projectDTO.getImages() != null ? projectDTO.getImages().size() : 0));
+        if (projectDTO.getImages() != null) {
+            projectDTO.getImages().forEach(img -> 
+                System.out.println("  - Image URL: " + img.getImageUrl())
+            );
+        }
         ProjectDTO createdProject = projectService.createProject(projectDTO);
         return ResponseEntity.ok(createdProject);
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<ProjectDTO> updateProject(@PathVariable Long id, @RequestBody ProjectDTO projectDTO) {
-        System.out.println("Updating project with ID: " + id);
-        System.out.println("Project data: " + projectDTO.getName());
+        System.out.println("=== UPDATE PROJECT ===");
+        System.out.println("Project ID: " + id);
+        System.out.println("Project name: " + projectDTO.getName());
+        System.out.println("Images count: " + (projectDTO.getImages() != null ? projectDTO.getImages().size() : 0));
+        if (projectDTO.getImages() != null) {
+            projectDTO.getImages().forEach(img -> 
+                System.out.println("  - Image URL: " + img.getImageUrl())
+            );
+        }
         return projectService.updateProject(id, projectDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

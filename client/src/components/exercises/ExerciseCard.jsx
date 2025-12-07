@@ -12,6 +12,7 @@ import {
   Edit,
 } from "lucide-react";
 import { useViewedExercises } from "../../hooks/useViewedExercises";
+import ImageCarousel from "../common/ImageCarousel";
 
 const ExerciseCard = ({ exercise, index, onClick, onEdit, isAdmin }) => {
   const [imageError, setImageError] = useState(false);
@@ -96,7 +97,17 @@ const ExerciseCard = ({ exercise, index, onClick, onEdit, isAdmin }) => {
       <div className="relative flex flex-col gap-4 p-6">
         {/* Exercise Image */}
         <div className="relative w-full h-48 flex-shrink-0 rounded-xl overflow-hidden bg-gradient-to-br from-slate-800 to-slate-700 group-hover:shadow-lg transition-all duration-500">
-          {exercise.imageUrl && !imageError ? (
+          {exercise.images && exercise.images.length > 0 ? (
+            <>
+              <ImageCarousel images={exercise.images} alt={exercise.title} />
+              {/* Checkmark for Viewed */}
+              {exerciseViewed && (
+                <div className="absolute bottom-3 right-3 bg-emerald-500/90 backdrop-blur-sm p-2 rounded-full shadow-lg animate-in fade-in zoom-in duration-300 z-20">
+                  <CheckCircle2 className="w-5 h-5 text-white" />
+                </div>
+              )}
+            </>
+          ) : exercise.imageUrl && !imageError ? (
             <>
               <img
                 src={exercise.imageUrl}

@@ -13,6 +13,7 @@ import {
   PlusCircle,
   Trash2,
 } from "lucide-react";
+import MultiImageUploader from "../common/MultiImageUploader";
 
 const ExerciseForm = ({
   showExerciseForm,
@@ -30,6 +31,7 @@ const ExerciseForm = ({
     demoUrl: "",
     githubUrl: "",
     imageUrl: "",
+    images: [],
     instructions: "",
     hints: [],
     estimatedTime: 60,
@@ -40,6 +42,11 @@ const ExerciseForm = ({
   // Điền dữ liệu vào form khi edit
   React.useEffect(() => {
     if (exercise) {
+      console.log("=== LOADING EXERCISE FOR EDIT ===");
+      console.log("Exercise:", exercise);
+      console.log("Exercise images:", exercise.images);
+      console.log("Images count:", exercise.images?.length || 0);
+      
       setExerciseForm({
         title: exercise.title || "",
         description: exercise.description || "",
@@ -48,6 +55,7 @@ const ExerciseForm = ({
         demoUrl: exercise.demoUrl || "",
         githubUrl: exercise.githubUrl || "",
         imageUrl: exercise.imageUrl || "",
+        images: exercise.images || [],
         instructions: exercise.instructions || "",
         hints: exercise.hints || [],
         estimatedTime: exercise.estimatedTime || 60,
@@ -62,6 +70,7 @@ const ExerciseForm = ({
         demoUrl: "",
         githubUrl: "",
         imageUrl: "",
+        images: [],
         instructions: "",
         hints: [],
         estimatedTime: 60,
@@ -70,6 +79,11 @@ const ExerciseForm = ({
   }, [exercise, showExerciseForm]);
 
   const handleSubmit = (e) => {
+    console.log("=== SUBMITTING EXERCISE FORM ===");
+    console.log("Form data:", exerciseForm);
+    console.log("Images:", exerciseForm.images);
+    console.log("Images count:", exerciseForm.images?.length || 0);
+    
     onSubmit(e, exerciseForm, currentWeekId);
     // Reset form after submission
     setExerciseForm({
@@ -79,6 +93,8 @@ const ExerciseForm = ({
       category: "Frontend",
       demoUrl: "",
       githubUrl: "",
+      imageUrl: "",
+      images: [],
       instructions: "",
       hints: [],
       estimatedTime: 60,
@@ -261,19 +277,14 @@ const ExerciseForm = ({
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 <Globe className="w-4 h-4 inline mr-2" />
-                Image URL (tùy chọn)
+                Ảnh bài tập (nhiều ảnh)
               </label>
-              <input
-                type="url"
-                value={exerciseForm.imageUrl}
-                onChange={(e) =>
-                  setExerciseForm((prev) => ({
-                    ...prev,
-                    imageUrl: e.target.value,
-                  }))
+              <MultiImageUploader
+                images={exerciseForm.images}
+                onChange={(images) =>
+                  setExerciseForm((prev) => ({ ...prev, images }))
                 }
-                placeholder="https://via.placeholder.com/400x300"
-                className="w-full px-4 py-3 bg-slate-800/50 border border-blue-400/30 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                maxImages={10}
               />
             </div>
 

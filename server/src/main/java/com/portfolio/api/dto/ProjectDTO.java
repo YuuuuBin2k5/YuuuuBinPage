@@ -21,8 +21,19 @@ public class ProjectDTO {
     private LocalDate endDate;
     private String demoUrl;
     private String githubUrl;
-    private String coverImage;
+    private String coverImage; // Keep for backward compatibility
+    private List<ImageDTO> images; // New: multiple images
     private List<TechStackDTO> techStacks;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ImageDTO {
+        private Long id;
+        private String imageUrl;
+        private Integer displayOrder;
+        private String caption;
+    }
 }

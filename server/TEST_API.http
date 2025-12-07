@@ -1,0 +1,139 @@
+### Test Multiple Images Feature
+### Use REST Client extension in VS Code or copy to Postman
+
+### 1. Test Create Exercise with Multiple Images
+POST http://localhost:8080/api/exercises
+Content-Type: application/json
+
+{
+  "title": "Test Exercise with Multiple Images",
+  "description": "Testing multiple images feature",
+  "difficulty": "EASY",
+  "category": "Frontend",
+  "estimatedTime": 60,
+  "instructions": "Follow the steps",
+  "hints": ["Hint 1", "Hint 2"],
+  "images": [
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800",
+      "displayOrder": 0,
+      "caption": "Main interface"
+    },
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?w=800",
+      "displayOrder": 1,
+      "caption": "Code example"
+    },
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800",
+      "displayOrder": 2,
+      "caption": "Final result"
+    }
+  ]
+}
+
+### 2. Test Get All Exercises (should include images)
+GET http://localhost:8080/api/exercises
+
+### 3. Test Get Exercise by ID (replace {id} with actual ID)
+GET http://localhost:8080/api/exercises/1
+
+### 4. Test Update Exercise with Images (replace {id} with actual ID)
+PUT http://localhost:8080/api/exercises/1
+Content-Type: application/json
+
+{
+  "title": "Updated Exercise with More Images",
+  "description": "Updated description",
+  "difficulty": "MEDIUM",
+  "category": "Frontend",
+  "estimatedTime": 90,
+  "instructions": "Updated instructions",
+  "hints": ["Updated hint 1"],
+  "images": [
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=800",
+      "displayOrder": 0,
+      "caption": "New image 1"
+    },
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800",
+      "displayOrder": 1,
+      "caption": "New image 2"
+    }
+  ]
+}
+
+### 5. Test Create Project with Multiple Images
+POST http://localhost:8080/api/projects
+Content-Type: application/json
+
+{
+  "name": "Test Project with Multiple Images",
+  "description": "Testing multiple images for projects",
+  "category": "Web App",
+  "status": "In Progress",
+  "startDate": "2024-01-01",
+  "demoUrl": "https://example.com",
+  "githubUrl": "https://github.com/example/repo",
+  "images": [
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800",
+      "displayOrder": 0,
+      "caption": "Dashboard view"
+    },
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800",
+      "displayOrder": 1,
+      "caption": "Analytics page"
+    },
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1551434678-e076c223a692?w=800",
+      "displayOrder": 2,
+      "caption": "Reports section"
+    }
+  ]
+}
+
+### 6. Test Get All Projects (should include images)
+GET http://localhost:8080/api/projects
+
+### 7. Test Get Project by ID (replace {id} with actual ID)
+GET http://localhost:8080/api/projects/1
+
+### 8. Test Update Project with Images (replace {id} with actual ID)
+PUT http://localhost:8080/api/projects/1
+Content-Type: application/json
+
+{
+  "name": "Updated Project with More Images",
+  "description": "Updated project description",
+  "category": "Web App",
+  "status": "Completed",
+  "startDate": "2024-01-01",
+  "endDate": "2024-12-31",
+  "demoUrl": "https://example.com/updated",
+  "githubUrl": "https://github.com/example/updated",
+  "images": [
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=800",
+      "displayOrder": 0,
+      "caption": "Updated dashboard"
+    },
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800",
+      "displayOrder": 1,
+      "caption": "Updated analytics"
+    },
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800",
+      "displayOrder": 2,
+      "caption": "Updated reports"
+    },
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800",
+      "displayOrder": 3,
+      "caption": "Settings page"
+    }
+  ]
+}
