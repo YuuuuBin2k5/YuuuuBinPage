@@ -14,6 +14,7 @@ const AppRoutes = () => {
       {/* Định nghĩa các Route */}
       <Route path="/" element={<Home />} />
       <Route path="/myinfomation" element={<MyInfomation />} />
+      <Route path="/contact" element={<MyInfomation />} />
       <Route path="/myproject" element={<MyProject />} />
       <Route path="/baitap" element={<BaiTap />} />
 
