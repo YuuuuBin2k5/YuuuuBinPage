@@ -88,36 +88,56 @@ public class ExerciseService {
         @CacheEvict(value = "exercisesByCategory", allEntries = true)
     })
     public Optional<ExerciseDTO> updateExercise(Long id, ExerciseDTO exerciseDTO) {
+        System.out.println("=== UPDATE EXERCISE SERVICE ===");
+        System.out.println("Exercise ID: " + id);
+        System.out.println("Images to update: " + (exerciseDTO.getImages() != null ? exerciseDTO.getImages().size() : "null"));
+        
         return exerciseRepository.findById(id)
                 .map(existingExercise -> {
-                    existingExercise.setTitle(exerciseDTO.getTitle());
-                    existingExercise.setDescription(exerciseDTO.getDescription());
-                    existingExercise.setDifficulty(Exercise.Difficulty.valueOf(exerciseDTO.getDifficulty().toUpperCase()));
-                    existingExercise.setCategory(exerciseDTO.getCategory());
-                    existingExercise.setDemoUrl(exerciseDTO.getDemoUrl());
-                    existingExercise.setGithubUrl(exerciseDTO.getGithubUrl());
-                    existingExercise.setImageUrl(exerciseDTO.getImageUrl());
-                    existingExercise.setEstimatedTime(exerciseDTO.getEstimatedTime());
-                    existingExercise.setInstructions(exerciseDTO.getInstructions());
-                    existingExercise.setHints(exerciseDTO.getHints());
-                    
-                    // Update week if weekId is provided
-                    if (exerciseDTO.getWeekId() != null) {
-                        weekRepository.findById(exerciseDTO.getWeekId())
-                                .ifPresent(existingExercise::setWeek);
-                    }
-                    
-                    Exercise savedExercise = exerciseRepository.save(existingExercise);
-                    
-                    // Update images if provided
-                    if (exerciseDTO.getImages() != null) {
-                        exerciseImageRepository.deleteByExerciseId(id);
-                        if (!exerciseDTO.getImages().isEmpty()) {
-                            saveExerciseImages(id, exerciseDTO.getImages());
+                    try {
+                        existingExercise.setTitle(exerciseDTO.getTitle());
+                        existingExercise.setDescription(exerciseDTO.getDescription());
+                        existingExercise.setDifficulty(Exercise.Difficulty.valueOf(exerciseDTO.getDifficulty().toUpperCase()));
+                        existingExercise.setCategory(exerciseDTO.getCategory());
+                        existingExercise.setDemoUrl(exerciseDTO.getDemoUrl());
+                        existingExercise.setGithubUrl(exerciseDTO.getGithubUrl());
+                        existingExercise.setImageUrl(exerciseDTO.getImageUrl());
+                        existingExercise.setEstimatedTime(exerciseDTO.getEstimatedTime());
+                        existingExercise.setInstructions(exerciseDTO.getInstructions());
+                        existingExercise.setHints(exerciseDTO.getHints());
+                        
+                        // Update week if weekId is provided
+                        if (exerciseDTO.getWeekId() != null) {
+                            weekRepository.findById(exerciseDTO.getWeekId())
+                                    .ifPresent(existingExercise::setWeek);
                         }
+                        
+                        System.out.println("Saving exercise...");
+                        Exercise savedExercise = exerciseRepository.save(existingExercise);
+                        System.out.println("Exercise saved successfully");
+                        
+                        // Update images if provided
+                        if (exerciseDTO.getImages() != null) {
+                            System.out.println("Deleting old images...");
+                            exerciseImageRepository.deleteByExerciseId(id);
+                            System.out.println("Old images deleted");
+                            
+                            if (!exerciseDTO.getImages().isEmpty()) {
+                                System.out.println("Saving new images...");
+                                saveExerciseImages(id, exerciseDTO.getImages());
+                                System.out.println("New images saved");
+                            }
+                        }
+                        
+                        System.out.println("Converting to DTO...");
+                        ExerciseDTO result = convertToDTO(savedExercise);
+                        System.out.println("Update completed successfully");
+                        return result;
+                    } catch (Exception e) {
+                        System.err.println("ERROR in updateExercise: " + e.getMessage());
+                        e.printStackTrace();
+                        throw new RuntimeException("Failed to update exercise: " + e.getMessage(), e);
                     }
-                    
-                    return convertToDTO(savedExercise);
                 });
     }
     
