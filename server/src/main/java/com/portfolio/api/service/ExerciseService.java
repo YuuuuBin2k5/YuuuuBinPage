@@ -72,10 +72,12 @@ public class ExerciseService {
         }
         
         Exercise savedExercise = exerciseRepository.save(exercise);
+        exerciseRepository.flush(); // Force flush to database
         
         // Save images if provided
         if (exerciseDTO.getImages() != null && !exerciseDTO.getImages().isEmpty()) {
             saveExerciseImages(savedExercise.getId(), exerciseDTO.getImages());
+            exerciseImageRepository.flush(); // Force flush save
         }
         
         return convertToDTO(savedExercise);
@@ -114,17 +116,20 @@ public class ExerciseService {
                         
                         System.out.println("Saving exercise...");
                         Exercise savedExercise = exerciseRepository.save(existingExercise);
+                        exerciseRepository.flush(); // Force flush to database
                         System.out.println("Exercise saved successfully");
                         
                         // Update images if provided
                         if (exerciseDTO.getImages() != null) {
                             System.out.println("Deleting old images...");
                             exerciseImageRepository.deleteByExerciseId(id);
+                            exerciseImageRepository.flush(); // Force flush delete
                             System.out.println("Old images deleted");
                             
                             if (!exerciseDTO.getImages().isEmpty()) {
                                 System.out.println("Saving new images...");
                                 saveExerciseImages(id, exerciseDTO.getImages());
+                                exerciseImageRepository.flush(); // Force flush save
                                 System.out.println("New images saved");
                             }
                         }

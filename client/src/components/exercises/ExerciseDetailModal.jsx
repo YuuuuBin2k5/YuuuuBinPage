@@ -10,8 +10,15 @@ import {
   ExternalLink,
   Sparkles,
   BookOpen,
+  Terminal,
+  Lightbulb,
+  Calendar,
+  Eye,
+  Image as ImageIcon,
+  Layers,
 } from "lucide-react";
 import { useViewedExercises } from "../../hooks/useViewedExercises";
+import ImageCarousel from "../common/ImageCarousel";
 
 const ExerciseDetailModal = ({ exercise, isOpen, onClose }) => {
   const { markAsViewed } = useViewedExercises();
@@ -30,6 +37,23 @@ const ExerciseDetailModal = ({ exercise, isOpen, onClose }) => {
     }
   };
 
+  // Memoize colors - MUST be before early return
+  const categoryClass = React.useMemo(() => {
+    if (!exercise) return "bg-slate-500/20 text-slate-400 border-slate-500/30";
+    const colors = {
+      HTML: "bg-orange-500/20 text-orange-400 border-orange-500/30",
+      CSS: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+      JAVASCRIPT: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+      REACT: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
+      BACKEND: "bg-green-500/20 text-green-400 border-green-500/30",
+      FULLSTACK: "bg-purple-500/20 text-purple-400 border-purple-500/30",
+    };
+    return (
+      colors[exercise.category?.toUpperCase()] ||
+      "bg-slate-500/20 text-slate-400 border-slate-500/30"
+    );
+  }, [exercise]);
+
   // Close on ESC key
   useEffect(() => {
     const handleEsc = (e) => {
@@ -47,47 +71,18 @@ const ExerciseDetailModal = ({ exercise, isOpen, onClose }) => {
 
   if (!isOpen || !exercise) return null;
 
-  // Get difficulty color
-  const getDifficultyColor = (difficulty) => {
-    const colors = {
-      EASY: "from-emerald-500 to-green-500",
-      MEDIUM: "from-amber-500 to-orange-500",
-      HARD: "from-red-500 to-rose-500",
-    };
-    return colors[difficulty?.toUpperCase()] || colors.MEDIUM;
-  };
-
-  // Get category color
-  const getCategoryColor = (category) => {
-    const colors = {
-      HTML: "bg-orange-500/20 text-orange-400 border-orange-500/30",
-      CSS: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-      JAVASCRIPT: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-      REACT: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
-      BACKEND: "bg-green-500/20 text-green-400 border-green-500/30",
-      FULLSTACK: "bg-purple-500/20 text-purple-400 border-purple-500/30",
-    };
-    return (
-      colors[category?.toUpperCase()] ||
-      "bg-slate-500/20 text-slate-400 border-slate-500/30"
-    );
-  };
-
-  const difficultyGradient = getDifficultyColor(exercise.difficulty);
-  const categoryClass = getCategoryColor(exercise.category);
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
-      {/* Backdrop */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-fade-in">
+      {/* Backdrop - Reduced blur for performance */}
       <div
-        className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl"
+        className="absolute inset-0 bg-slate-950/95"
         onClick={onClose}
       ></div>
 
-      {/* Modal */}
-      <div className="relative w-full max-w-4xl max-h-[92vh] overflow-hidden bg-slate-900/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-slate-800/50 animate-slideUp">
-        {/* Scrollable Content */}
-        <div className="overflow-y-auto max-h-[92vh] custom-scrollbar">
+      {/* Modal - Reduced blur for performance */}
+      <div className="relative w-full max-w-4xl max-h-[92vh] overflow-hidden bg-slate-900/98 rounded-2xl shadow-2xl border border-slate-800/50 modal-slide-up will-change-transform">
+        {/* Scrollable Content - Hardware accelerated */}
+        <div className="overflow-y-auto max-h-[92vh] custom-scrollbar transform-gpu">
           {/* Close Button - Minimal */}
           <button
             onClick={onClose}
@@ -98,57 +93,130 @@ const ExerciseDetailModal = ({ exercise, isOpen, onClose }) => {
 
           {/* Content Container */}
           <div className="px-8 pb-8 -mt-6">
-            {/* Header Section */}
-            <div className="mb-8">
-              {/* Title */}
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
-                {exercise.title}
-              </h1>
+            {/* Header Section - Terminal Style */}
+            <div className="mb-6">
+              {/* Terminal Header */}
+              <div className="bg-gradient-to-r from-slate-950 to-slate-900 rounded-t-lg border border-slate-700/50 border-b-0 px-4 py-2 flex items-center gap-2">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+                </div>
+                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider ml-2">
+                  exercise.details
+                </span>
+              </div>
 
-              {/* Meta Pills - Horizontal */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span
-                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${categoryClass}`}
-                >
-                  <Code2 className="w-3.5 h-3.5" />
-                  {exercise.category}
-                </span>
-                <span
-                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r ${difficultyGradient} text-white text-xs font-semibold`}
-                >
-                  <Star className="w-3.5 h-3.5" />
-                  {exercise.difficulty}
-                </span>
-                {exercise.estimatedTime && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-medium">
-                    <Clock className="w-3.5 h-3.5" />
-                    {exercise.estimatedTime} phút
-                  </span>
-                )}
+              {/* Terminal Content */}
+              <div className="bg-black/40 rounded-b-lg border border-slate-700/50 border-t-0 p-6">
+                {/* Title with prompt */}
+                <div className="flex items-start gap-3 mb-4">
+                  <span className="text-emerald-400 font-mono text-sm mt-1">$</span>
+                  <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight flex-1">
+                    {exercise.title}
+                  </h1>
+                </div>
+
+                {/* Meta Info Grid - Developer Style */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
+                  <div className="bg-slate-900/60 rounded-lg p-3 border border-slate-700/30">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Code2 className="w-3.5 h-3.5 text-cyan-400" />
+                      <span className="text-[10px] font-mono text-slate-500 uppercase">Category</span>
+                    </div>
+                    <span className={`text-xs font-semibold ${categoryClass.split(' ')[1]}`}>
+                      {exercise.category}
+                    </span>
+                  </div>
+
+                  <div className="bg-slate-900/60 rounded-lg p-3 border border-slate-700/30">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Star className="w-3.5 h-3.5 text-amber-400" />
+                      <span className="text-[10px] font-mono text-slate-500 uppercase">Level</span>
+                    </div>
+                    <span className="text-xs font-semibold text-white">
+                      {exercise.difficulty}
+                    </span>
+                  </div>
+
+                  {exercise.estimatedTime && (
+                    <div className="bg-slate-900/60 rounded-lg p-3 border border-slate-700/30">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Clock className="w-3.5 h-3.5 text-blue-400" />
+                        <span className="text-[10px] font-mono text-slate-500 uppercase">Duration</span>
+                      </div>
+                      <span className="text-xs font-semibold text-white">
+                        {exercise.estimatedTime} min
+                      </span>
+                    </div>
+                  )}
+
+                  {exercise.weekTitle && (
+                    <div className="bg-slate-900/60 rounded-lg p-3 border border-slate-700/30">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Calendar className="w-3.5 h-3.5 text-purple-400" />
+                        <span className="text-[10px] font-mono text-slate-500 uppercase">Week</span>
+                      </div>
+                      <span className="text-xs font-semibold text-white truncate block">
+                        {exercise.weekTitle}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
+            {/* Images Section */}
+            {exercise.images && exercise.images.length > 0 && (
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1 h-5 bg-gradient-to-b from-cyan-500 to-blue-500 rounded-full"></div>
+                  <h3 className="text-sm font-mono font-semibold text-white uppercase tracking-wider">
+                    <ImageIcon className="w-4 h-4 inline mr-2 text-cyan-400" />
+                    Screenshots
+                  </h3>
+                  <span className="text-xs font-mono text-slate-500">
+                    ({exercise.images.length})
+                  </span>
+                </div>
+                <div className="bg-slate-900/40 rounded-xl p-4 border border-slate-700/40">
+                  <div className="h-64 rounded-lg overflow-hidden">
+                    <ImageCarousel images={exercise.images} alt={exercise.title} />
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Description */}
             <div className="mb-6">
-              <h3 className="flex items-center gap-2 text-base font-semibold text-white mb-3">
-                <BookOpen className="w-4 h-4 text-blue-400" />
-                Mô Tả
-              </h3>
-              <div className="bg-slate-800/40 rounded-xl p-5 border border-slate-700/40">
-                <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line">
-                  {exercise.description}
-                </p>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1 h-5 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full"></div>
+                <h3 className="text-sm font-mono font-semibold text-white uppercase tracking-wider">
+                  <BookOpen className="w-4 h-4 inline mr-2 text-blue-400" />
+                  Description
+                </h3>
+              </div>
+              <div className="bg-slate-900/40 rounded-xl p-5 border border-slate-700/40">
+                <div className="flex items-start gap-3">
+                  <Terminal className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line font-mono">
+                    {exercise.description}
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* Instructions */}
             {exercise.instructions && (
               <div className="mb-6">
-                <h3 className="flex items-center gap-2 text-base font-semibold text-white mb-3">
-                  <Sparkles className="w-4 h-4 text-amber-400" />
-                  Hướng Dẫn Thực Hiện
-                </h3>
-                <div className="bg-slate-800/40 rounded-xl p-5 border border-slate-700/40">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1 h-5 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full"></div>
+                  <h3 className="text-sm font-mono font-semibold text-white uppercase tracking-wider">
+                    <Layers className="w-4 h-4 inline mr-2 text-amber-400" />
+                    Implementation Steps
+                  </h3>
+                </div>
+                <div className="bg-slate-900/40 rounded-xl p-5 border border-slate-700/40">
                   <div className="space-y-3">
                     {exercise.instructions
                       .split("\n")
@@ -158,17 +226,17 @@ const ExerciseDetailModal = ({ exercise, isOpen, onClose }) => {
                         const cleanLine = line.trim().replace(/^\d+\.\s*/, "");
 
                         return (
-                          <div key={index} className="flex gap-3 items-start">
-                            {isNumbered && (
-                              <div className="flex-shrink-0 w-6 h-6 bg-amber-500/20 rounded-lg flex items-center justify-center text-amber-400 text-xs font-semibold border border-amber-500/30">
+                          <div key={index} className="flex gap-3 items-start group hover:bg-slate-800/30 p-2 rounded-lg transition-colors">
+                            {isNumbered ? (
+                              <div className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-lg flex items-center justify-center text-amber-400 text-xs font-mono font-bold border border-amber-500/30 group-hover:border-amber-500/50 transition-colors">
                                 {line.match(/^\d+/)[0]}
                               </div>
+                            ) : (
+                              <div className="flex-shrink-0 w-7 h-7 flex items-center justify-center">
+                                <div className="w-1.5 h-1.5 rounded-full bg-amber-400/50"></div>
+                              </div>
                             )}
-                            <p
-                              className={`text-slate-300 text-sm leading-relaxed ${
-                                isNumbered ? "flex-1" : "ml-9"
-                              }`}
-                            >
+                            <p className="flex-1 text-slate-300 text-sm leading-relaxed font-mono">
                               {cleanLine}
                             </p>
                           </div>
@@ -182,20 +250,31 @@ const ExerciseDetailModal = ({ exercise, isOpen, onClose }) => {
             {/* Hints */}
             {exercise.hints && exercise.hints.length > 0 && (
               <div className="mb-6">
-                <h3 className="flex items-center gap-2 text-base font-semibold text-white mb-3">
-                  <Sparkles className="w-4 h-4 text-emerald-400" />
-                  Gợi Ý
-                </h3>
-                <div className="bg-slate-800/40 rounded-xl p-5 border border-slate-700/40">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1 h-5 bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full"></div>
+                  <h3 className="text-sm font-mono font-semibold text-white uppercase tracking-wider">
+                    <Lightbulb className="w-4 h-4 inline mr-2 text-emerald-400" />
+                    Hints & Tips
+                  </h3>
+                  <span className="text-xs font-mono text-slate-500">
+                    ({exercise.hints.length})
+                  </span>
+                </div>
+                <div className="bg-slate-900/40 rounded-xl p-5 border border-slate-700/40">
                   <div className="space-y-3">
                     {exercise.hints.map((hint, index) => (
-                      <div key={index} className="flex gap-3 items-start">
-                        <div className="flex-shrink-0 w-6 h-6 bg-emerald-500/20 rounded-lg flex items-center justify-center border border-emerald-500/30">
-                          <Sparkles className="w-3 h-3 text-emerald-400" />
+                      <div key={index} className="flex gap-3 items-start group hover:bg-slate-800/30 p-3 rounded-lg transition-colors border border-transparent hover:border-emerald-500/20">
+                        <div className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-lg flex items-center justify-center border border-emerald-500/30 group-hover:border-emerald-500/50 transition-colors">
+                          <Lightbulb className="w-3.5 h-3.5 text-emerald-400" />
                         </div>
-                        <p className="flex-1 text-slate-300 text-sm leading-relaxed">
-                          {hint}
-                        </p>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[10px] font-mono text-emerald-400 uppercase">Hint #{index + 1}</span>
+                          </div>
+                          <p className="text-slate-300 text-sm leading-relaxed font-mono">
+                            {hint}
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -203,87 +282,70 @@ const ExerciseDetailModal = ({ exercise, isOpen, onClose }) => {
               </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-slate-700/30">
-              {exercise.demoUrl && (
-                <a
-                  href={exercise.demoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={handleLinkClick}
-                  className="group flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
-                >
-                  <Globe className="w-4 h-4" />
-                  <span>Xem Demo Live</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                </a>
-              )}
+            {/* Action Buttons - Terminal Style */}
+            <div className="pt-6 border-t border-slate-700/30">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-1 h-5 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
+                <h3 className="text-sm font-mono font-semibold text-white uppercase tracking-wider">
+                  <Terminal className="w-4 h-4 inline mr-2 text-purple-400" />
+                  Quick Actions
+                </h3>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {exercise.demoUrl && (
+                  <a
+                    href={exercise.demoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={handleLinkClick}
+                    className="group relative overflow-hidden px-6 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-mono font-semibold text-sm rounded-lg transition-all duration-300 flex items-center justify-center gap-2 border border-blue-400/30 hover:border-blue-400/50 hover:shadow-lg hover:shadow-blue-500/20"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                    <Globe className="w-4 h-4 relative z-10" />
+                    <span className="relative z-10">LIVE DEMO</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform relative z-10" />
+                  </a>
+                )}
 
-              {exercise.githubUrl && (
-                <a
-                  href={exercise.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={handleLinkClick}
-                  className="group flex-1 px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold text-sm rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
-                >
-                  <Github className="w-4 h-4" />
-                  <span>Xem Source Code</span>
-                  <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </a>
+                {exercise.githubUrl && (
+                  <a
+                    href={exercise.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={handleLinkClick}
+                    className="group relative overflow-hidden px-6 py-4 bg-gradient-to-r from-slate-700 to-slate-600 hover:from-slate-600 hover:to-slate-500 text-white font-mono font-semibold text-sm rounded-lg transition-all duration-300 flex items-center justify-center gap-2 border border-slate-500/30 hover:border-slate-400/50 hover:shadow-lg hover:shadow-slate-500/20"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                    <Github className="w-4 h-4 relative z-10" />
+                    <span className="relative z-10">SOURCE CODE</span>
+                    <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform relative z-10" />
+                  </a>
+                )}
+              </div>
+
+              {/* Additional Info Footer */}
+              {exercise.createdAt && (
+                <div className="mt-4 pt-4 border-t border-slate-700/30">
+                  <div className="flex items-center justify-between text-xs font-mono text-slate-500">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>Created: {new Date(exercise.createdAt).toLocaleDateString('vi-VN')}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>ID: #{exercise.id}</span>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Animations */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(50px) scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.2s ease-out;
-        }
-        .animate-slideUp {
-          animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(15, 23, 42, 0.5);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: linear-gradient(180deg, #a855f7 0%, #ec4899 100%);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(180deg, #9333ea 0%, #db2777 100%);
-        }
-      `,
-        }}
-      />
     </div>
   );
 };
 
-export default ExerciseDetailModal;
+export default React.memo(ExerciseDetailModal);

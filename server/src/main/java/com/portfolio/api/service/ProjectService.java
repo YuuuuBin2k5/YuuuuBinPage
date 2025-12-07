@@ -55,10 +55,12 @@ public class ProjectService {
     public ProjectDTO createProject(ProjectDTO projectDTO) {
         Project project = convertToEntity(projectDTO);
         Project savedProject = projectRepository.save(project);
+        projectRepository.flush(); // Force flush to database
         
         // Save images if provided
         if (projectDTO.getImages() != null && !projectDTO.getImages().isEmpty()) {
             saveProjectImages(savedProject.getId(), projectDTO.getImages());
+            projectImageRepository.flush(); // Force flush save
         }
         
         return convertToDTO(savedProject);
@@ -88,12 +90,15 @@ public class ProjectService {
                     project.setCoverImage(projectDTO.getCoverImage());
                     
                     Project savedProject = projectRepository.save(project);
+                    projectRepository.flush(); // Force flush to database
                     
                     // Update images if provided
                     if (projectDTO.getImages() != null) {
                         projectImageRepository.deleteByProjectId(id);
+                        projectImageRepository.flush(); // Force flush delete
                         if (!projectDTO.getImages().isEmpty()) {
                             saveProjectImages(id, projectDTO.getImages());
+                            projectImageRepository.flush(); // Force flush save
                         }
                     }
                     

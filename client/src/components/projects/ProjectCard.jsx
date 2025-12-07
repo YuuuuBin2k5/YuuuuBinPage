@@ -54,14 +54,22 @@ const ProjectCard = React.memo(
     };
 
     return (
-      <div className="group relative bg-gradient-to-br from-slate-900/90 to-slate-800/90 border border-purple-500/20 rounded-2xl p-6 hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20 backdrop-blur-sm">
-        {/* Glow effect */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm"></div>
+      <div 
+        className="group relative rounded overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-cyan-500/30 transform-gpu border-2 border-cyan-800/25 hover:border-cyan-600/60"
+        style={{
+          background: 'radial-gradient(ellipse 80% 60% at 50% 50%, rgba(6, 182, 212, 0.15), rgba(8, 145, 178, 0.08) 40%, rgba(15, 23, 42, 1) 70%)'
+        }}
+      >
+        {/* Diagonal gradient overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/40 via-transparent to-cyan-950/60"></div>
+        
+        {/* Animated shimmer effect on hover */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
 
-        <div className="relative">
+        <div className="relative p-6">
           {/* Cover Image */}
           {(project.images && project.images.length > 0) || project.coverImage ? (
-            <div className="relative mb-4 overflow-hidden rounded-xl group/image h-48">
+            <div className="relative mb-4 overflow-hidden rounded-sm group/image h-48">
               {project.images && project.images.length > 0 ? (
                 <ImageCarousel 
                   images={project.images} 
@@ -78,16 +86,16 @@ const ProjectCard = React.memo(
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                 </>
               )}
-              <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+              <div className="absolute bottom-3 right-3 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 z-20">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     onView?.(project);
                   }}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-purple-600/80 hover:bg-purple-600 text-white text-sm rounded-lg backdrop-blur-sm transition-all duration-300"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-cyan-600/90 hover:bg-cyan-600 text-white text-[10px] font-mono font-semibold rounded backdrop-blur-sm transition-all duration-300"
                 >
-                  <Eye className="w-4 h-4" />
-                  Xem chi tiết
+                  <Eye className="w-3 h-3" />
+                  XEM CHI TIẾT
                 </button>
               </div>
             </div>
@@ -99,19 +107,19 @@ const ProjectCard = React.memo(
               className="flex items-center gap-3 flex-1 cursor-pointer"
               onClick={() => onView?.(project)}
             >
-              <div className="p-2 bg-purple-500/20 rounded-lg">
+              <div className="p-2 bg-teal-600/30 border border-teal-500/50 rounded">
                 {getCategoryIcon(project.category)}
               </div>
               <div className="flex-1">
-                <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition-colors line-clamp-1">
+                <h3 className="text-xl font-bold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-cyan-400 transition-all duration-300 line-clamp-1">
                   {project.title || project.name || "Unnamed Project"}
                 </h3>
                 <span
-                  className={`inline-block px-3 py-1 rounded-full text-xs font-medium border mt-1 ${getStatusColor(
+                  className={`inline-block px-3 py-1 rounded-sm text-[10px] font-mono font-bold border mt-1 ${getStatusColor(
                     project.status
                   )}`}
                 >
-                  {getStatusText(project.status)}
+                  {getStatusText(project.status).toUpperCase()}
                 </span>
               </div>
             </div>
@@ -121,14 +129,14 @@ const ProjectCard = React.memo(
               <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <button
                   onClick={() => onEdit(project)}
-                  className="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-500/20 rounded-lg transition-all duration-300"
+                  className="p-2 text-blue-300 hover:text-blue-200 bg-slate-700/60 hover:bg-slate-600/70 border-2 border-slate-600/70 hover:border-slate-500/80 rounded transition-all duration-300"
                   title="Edit Project"
                 >
                   <Edit className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => onDelete(project.id)}
-                  className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/20 rounded-lg transition-all duration-300"
+                  className="p-2 text-red-300 hover:text-red-200 bg-slate-700/60 hover:bg-slate-600/70 border-2 border-slate-600/70 hover:border-slate-500/80 rounded transition-all duration-300"
                   title="Delete Project"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -161,27 +169,27 @@ const ProjectCard = React.memo(
           )}
 
           {/* Links */}
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onView?.(project);
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600/20 text-purple-400 border border-purple-500/30 rounded-lg hover:bg-purple-600/30 transition-all duration-300 text-sm"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-700/60 hover:bg-slate-600/70 text-slate-200 hover:text-slate-100 border-2 border-slate-700/30 hover:border-blue-500/60 rounded transition-all duration-300 text-sm font-mono font-semibold"
             >
               <Eye className="w-4 h-4" />
-              Chi tiết
+              Chi Tiết
             </button>
             {project.demoUrl && (
               <a
                 href={project.demoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-lg hover:bg-emerald-600/30 transition-all duration-300 text-sm"
+                className="p-2.5 bg-slate-700/60 hover:bg-slate-600/70 text-slate-200 hover:text-slate-100 border-2 border-slate-700/30 hover:border-blue-500/60 rounded transition-all duration-300 hover:scale-110"
                 onClick={(e) => e.stopPropagation()}
+                title="Demo"
               >
                 <ExternalLink className="w-4 h-4" />
-                Demo
               </a>
             )}
             {project.githubUrl && (
@@ -189,11 +197,11 @@ const ProjectCard = React.memo(
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-gray-600/20 text-gray-400 border border-gray-500/30 rounded-lg hover:bg-gray-600/30 transition-all duration-300 text-sm"
+                className="p-2.5 bg-slate-700/60 hover:bg-slate-600/70 text-slate-200 hover:text-slate-100 border-2 border-slate-700/30 hover:border-blue-500/60 rounded transition-all duration-300 hover:scale-110"
                 onClick={(e) => e.stopPropagation()}
+                title="GitHub"
               >
                 <Github className="w-4 h-4" />
-                Code
               </a>
             )}
           </div>

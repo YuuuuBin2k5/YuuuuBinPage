@@ -185,17 +185,17 @@ function BaiTap() {
   }, [weeks, expandedWeek]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/10 to-slate-900 -mt-24 pt-24">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/10 to-slate-900 -mt-24 pt-24 page-transition">
       {/* Header */}
-      <div className="px-6 py-8">
-        <BaiTapHeader />
+      <div className="px-6 py-8 text-reveal">
+        <BaiTapHeader totalWeeks={weeks.length} totalExercises={exercises.length} />
       </div>
 
       {/* Main Layout: Sidebar + Content */}
-      <div className="relative lg:flex gap-6 px-6 pb-8">
+      <div className="relative lg:flex gap-6 px-6 pb-8 card-slide-up">
         {/* Left Sidebar - Weeks Timeline (Desktop) */}
         <aside className="hidden lg:block w-80 shrink-0 sticky top-4 self-start h-fit max-h-[calc(100vh-2rem)] transition-all duration-300">
-          <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 border border-slate-700/50 rounded-2xl p-6 backdrop-blur-xl shadow-2xl shadow-blue-500/10">
+          <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-2 border-blue-600/25 hover:border-blue-500/50 transition-all duration-300 rounded p-6 backdrop-blur-xl shadow-2xl shadow-blue-500/10">
             {/* Sidebar Header */}
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 mb-2">
@@ -228,10 +228,10 @@ function BaiTap() {
                 {/* All Exercises Option */}
                 <button
                   onClick={() => setExpandedWeek(null)}
-                  className={`w-full text-left p-4 rounded-xl transition-all duration-300 border ${
+                  className={`w-full text-left p-4 rounded transition-all duration-300 border-2 ${
                     !expandedWeek
-                      ? "bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-blue-500/40 shadow-lg"
-                      : "bg-slate-800/30 border-slate-700/30 hover:border-blue-500/30"
+                      ? "bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-blue-500/60 shadow-lg"
+                      : "bg-slate-800/30 border-slate-700/30 hover:border-blue-500/60"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -270,15 +270,15 @@ function BaiTap() {
                     <button
                       key={week.id}
                       onClick={() => setExpandedWeek(isActive ? null : week.id)}
-                      className={`w-full text-left p-4 rounded-xl transition-all duration-300 border ${
+                      className={`w-full text-left p-4 rounded transition-all duration-300 border-2 ${
                         isActive
-                          ? "bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-blue-500/40 shadow-lg"
-                          : "bg-slate-800/30 border-slate-700/30 hover:border-blue-500/30 hover:bg-slate-800/50"
+                          ? "bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-blue-500/60 shadow-lg"
+                          : "bg-slate-800/30 border-slate-700/30 hover:border-blue-500/60 hover:bg-slate-800/50"
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          className={`w-10 h-10 rounded flex items-center justify-center ${
                             isActive
                               ? "bg-gradient-to-br from-blue-500 to-cyan-500"
                               : "bg-slate-700/50"
@@ -339,7 +339,7 @@ function BaiTap() {
 
           {/* Content Header */}
           <div className="mb-6">
-            <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 border border-slate-700/50 rounded-2xl p-6 backdrop-blur-xl">
+            <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-2 border-blue-600/25 hover:border-blue-500/50 transition-all duration-300 rounded p-6 backdrop-blur-xl">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   {currentWeek ? (
@@ -401,7 +401,7 @@ function BaiTap() {
 
           {/* Exercises Grid */}
           {currentWeekExercises.length === 0 ? (
-            <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 border border-slate-700/50 rounded-2xl p-12 text-center backdrop-blur-xl">
+            <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-2 border-blue-600/25 rounded p-12 text-center backdrop-blur-xl">
               <div className="mb-6">
                 <div className="w-24 h-24 mx-auto bg-gradient-to-br from-slate-800 to-slate-700 rounded-full flex items-center justify-center">
                   <Flame className="w-12 h-12 text-slate-400" />
@@ -455,95 +455,37 @@ function BaiTap() {
                 ))}
               </div>
 
-              {/* Pagination */}
+              {/* Pagination - Simplified */}
               {totalPages > 1 && (
-                <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-br from-slate-900/95 to-slate-800/95 border border-slate-700/50 rounded-2xl p-6 backdrop-blur-xl">
-                  {/* Pagination Info */}
-                  <div className="text-slate-400 text-sm">
-                    Hiển thị{" "}
-                    <span className="text-blue-400 font-semibold">
-                      {indexOfFirstExercise + 1}
-                    </span>{" "}
-                    -{" "}
-                    <span className="text-blue-400 font-semibold">
-                      {Math.min(
-                        indexOfLastExercise,
-                        currentWeekExercises.length
-                      )}
-                    </span>{" "}
-                    trong tổng số{" "}
-                    <span className="text-blue-400 font-semibold">
-                      {currentWeekExercises.length}
-                    </span>{" "}
-                    bài tập
+                <div className="mt-8 flex items-center justify-center gap-4 bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-2 border-blue-600/25 rounded p-4 backdrop-blur-xl">
+                  {/* Page Info */}
+                  <div className="text-slate-400 text-sm font-medium">
+                    Trang{" "}
+                    <span className="text-blue-400 font-bold">{currentPage}</span>
+                    {" / "}
+                    <span className="text-slate-300">{totalPages}</span>
                   </div>
 
-                  {/* Pagination Controls */}
+                  {/* Page Numbers */}
                   <div className="flex items-center gap-2">
-                    {/* Previous Button */}
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="p-2 rounded-lg border transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-700/50 border-slate-700/50 hover:border-blue-500/50 hover:bg-blue-500/10 text-slate-400 hover:text-blue-400"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
+                    {[...Array(totalPages)].map((_, index) => {
+                      const pageNumber = index + 1;
+                      const isCurrentPage = currentPage === pageNumber;
 
-                    {/* Page Numbers */}
-                    <div className="flex items-center gap-1">
-                      {[...Array(totalPages)].map((_, index) => {
-                        const pageNumber = index + 1;
-                        const isCurrentPage = currentPage === pageNumber;
-
-                        // Show first page, last page, current page, and pages around current
-                        const showPage =
-                          pageNumber === 1 ||
-                          pageNumber === totalPages ||
-                          (pageNumber >= currentPage - 1 &&
-                            pageNumber <= currentPage + 1);
-
-                        if (!showPage) {
-                          // Show ellipsis
-                          if (
-                            pageNumber === currentPage - 2 ||
-                            pageNumber === currentPage + 2
-                          ) {
-                            return (
-                              <span
-                                key={pageNumber}
-                                className="px-2 text-slate-500"
-                              >
-                                ...
-                              </span>
-                            );
-                          }
-                          return null;
-                        }
-
-                        return (
-                          <button
-                            key={pageNumber}
-                            onClick={() => handlePageChange(pageNumber)}
-                            className={`min-w-[40px] h-10 px-3 rounded-lg font-medium transition-all duration-300 ${
-                              isCurrentPage
-                                ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/20"
-                                : "border border-slate-700/50 text-slate-400 hover:border-blue-500/50 hover:bg-blue-500/10 hover:text-blue-400"
-                            }`}
-                          >
-                            {pageNumber}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    {/* Next Button */}
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="p-2 rounded-lg border transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-slate-700/50 border-slate-700/50 hover:border-blue-500/50 hover:bg-blue-500/10 text-slate-400 hover:text-blue-400"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
+                      return (
+                        <button
+                          key={pageNumber}
+                          onClick={() => handlePageChange(pageNumber)}
+                          className={`w-10 h-10 rounded font-semibold transition-all duration-300 ${
+                            isCurrentPage
+                              ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/20 scale-110 border-2 border-blue-400/60"
+                              : "border-2 border-slate-700/30 text-slate-400 hover:border-blue-500/60 hover:bg-blue-500/10 hover:text-blue-400"
+                          }`}
+                        >
+                          {pageNumber}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}

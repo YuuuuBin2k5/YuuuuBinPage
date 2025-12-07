@@ -213,33 +213,118 @@ function MyProject() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/10 to-slate-900 -mt-24 pt-24 px-6 py-8">
-      {/* Header với hiệu ứng mystical */}
-      <div className="max-w-7xl mx-auto">
-        <div className="relative text-center mb-12">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-96 h-96 bg-gradient-to-r from-purple-600/10 via-cyan-600/10 to-purple-600/10 rounded-full blur-3xl animate-pulse"></div>
-          </div>
-          <div className="relative">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-purple-500/20 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-purple-400" />
-              <span className="text-purple-400 text-sm font-bold uppercase tracking-wider">
-                Featured Projects
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/10 to-slate-900 -mt-24 pt-24">
+      {/* Header */}
+      <div className="px-6 py-8">
+        <div className="relative text-center mb-6">
+          {/* Compact Terminal-Style Header */}
+          <div className="relative max-w-4xl mx-auto">
+            {/* Terminal Top Bar */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-950/80 to-slate-950/80 border border-blue-500/40 rounded-t mb-0">
+              <div className="flex gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-blue-500/80"></div>
+              </div>
+              <span className="text-[9px] font-mono text-blue-400/60 uppercase tracking-wider ml-2">
+                projects.sh
               </span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-black mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-pink-200">
-              My Creative Journey
-            </h1>
+            {/* Terminal Content */}
+            <div className="bg-gradient-to-br from-slate-950/90 to-blue-950/50 border-x border-b border-blue-500/40 rounded-b p-4">
+              {/* Top Row: Command Line + Stats */}
+              <div className="flex items-center justify-between gap-4 mb-3">
+                {/* Command Line */}
+                <div className="flex items-center gap-2 flex-1">
+                  <span className="text-blue-400 font-mono text-sm">$</span>
+                  <div className="w-1 h-4 bg-blue-400 animate-pulse"></div>
+                  <span className="text-blue-300 font-mono text-sm">
+                    <span className="text-cyan-400">cd</span> my-portfolio-projects
+                  </span>
+                </div>
+                
+                {/* Stats - Right Side */}
+                <div className="hidden md:flex items-center gap-3">
+                  <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded-sm">
+                    <span className="text-[10px] font-mono text-blue-400 uppercase tracking-wide">
+                      {filteredProjects.length} Dự Án
+                    </span>
+                  </div>
+                  <div className="px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-sm">
+                    <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-wide">
+                      {projects.filter(p => p.status === 'Completed').length} Hoàn Thành
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-            <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
-              Products crafted with passion and boundless creativity
-            </p>
+              {/* Title */}
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 font-mono text-left">
+                <span className="text-white">Dự Án</span>
+                <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent"> Của Tôi</span>
+              </h1>
+
+              {/* Description */}
+              <p className="text-sm text-slate-400 font-mono mb-3 leading-relaxed text-left">
+                <span className="text-slate-600"># </span>
+                <span className="text-slate-300">Web Development</span>
+                <span className="text-blue-400 mx-1">→</span>
+                <span className="text-slate-300">Full Stack</span>
+                <span className="text-cyan-400 mx-1">→</span>
+                <span className="text-slate-300">Creative Solutions</span>
+              </p>
+
+              {/* Tech Categories */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <Code className="w-3 h-3 text-blue-400" />
+                {["Web App", "Mobile", "API", "Landing", "Game"].map((cat) => (
+                  <span
+                    key={cat}
+                    className="px-2 py-0.5 bg-teal-600/20 border border-teal-500/50 rounded-sm text-[10px] font-mono font-bold text-teal-300 uppercase tracking-wide hover:scale-105 transition-transform"
+                  >
+                    {cat}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            {/* Decorative Divider */}
+            <div className="relative mt-6 h-px overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent animate-shimmer"></div>
+              
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></div>
+                <div className="w-1 h-1 rounded-full bg-blue-400/60 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-0.5 h-0.5 rounded-full bg-blue-300/40 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+              </div>
+              
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                <div className="w-0.5 h-0.5 rounded-full bg-cyan-300/40 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                <div className="w-1 h-1 rounded-full bg-cyan-400/60 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse"></div>
+              </div>
+            </div>
+            
+            {/* Terminal-style separator text */}
+            <div className="flex items-center justify-center gap-3 mt-4 mb-6">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent to-slate-700/50"></div>
+              <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest px-3 py-1 bg-slate-900/50 border border-slate-700/30 rounded-sm">
+                ─── My Portfolio ───
+              </span>
+              <div className="flex-1 h-px bg-gradient-to-l from-transparent to-slate-700/50"></div>
+            </div>
           </div>
         </div>
 
-        {/* Controls */}
-        <div className="mb-8 backdrop-blur-sm bg-slate-800/30 rounded-2xl p-6 border border-purple-500/20">
+      </div>
+
+      {/* Main Content */}
+      <div className="px-6 pb-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Controls */}
+          <div className="mb-8 backdrop-blur-sm bg-slate-800/30 rounded p-6 border-2 border-blue-600/25 hover:border-blue-500/50 transition-all duration-300">
           <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
             {/* Search */}
             <div className="relative flex-1 max-w-md">
@@ -258,10 +343,10 @@ function MyProject() {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                  className={`px-4 py-2 rounded font-mono font-semibold transition-all duration-300 border-2 ${
                     selectedCategory === category
-                      ? "bg-gradient-to-r from-purple-600 to-cyan-600 text-white shadow-lg shadow-purple-500/25"
-                      : "bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 border border-slate-600/50"
+                      ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/25 border-blue-400/60"
+                      : "bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 border-slate-700/30 hover:border-blue-500/60"
                   }`}
                 >
                   {category}
@@ -276,20 +361,17 @@ function MyProject() {
                   setEditingProject(null);
                   setShowForm(true);
                 }}
-                className="group relative px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-emerald-500/25"
+                className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono font-semibold rounded transition-all duration-300 shadow-lg shadow-emerald-500/25 flex items-center gap-2"
               >
-                <div className="absolute -inset-1 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm"></div>
-                <div className="relative flex items-center gap-2">
-                  <Plus className="w-5 h-5" />
-                  Tạo Dự Án Mới
-                </div>
+                <Plus className="w-5 h-5" />
+                Tạo Dự Án Mới
               </button>
             )}
           </div>
         </div>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Projects Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProjects.map((project) => (
             <ProjectCard
               key={project.id}
@@ -303,8 +385,8 @@ function MyProject() {
           ))}
         </div>
 
-        {/* Empty State */}
-        {filteredProjects.length === 0 && (
+          {/* Empty State */}
+          {filteredProjects.length === 0 && (
           <div className="text-center py-16">
             <div className="relative inline-block">
               <Sparkles className="w-16 h-16 text-purple-400 mx-auto mb-4 animate-pulse" />
@@ -319,8 +401,8 @@ function MyProject() {
           </div>
         )}
 
-        {/* Project Form Modal */}
-        <ProjectForm
+          {/* Project Form Modal */}
+          <ProjectForm
           isOpen={showForm}
           project={editingProject}
           onSubmit={editingProject ? handleUpdateProject : handleCreateProject}
@@ -330,8 +412,8 @@ function MyProject() {
           }}
         />
 
-        {/* Project Detail Modal */}
-        <ProjectDetailModal
+          {/* Project Detail Modal */}
+          <ProjectDetailModal
           isOpen={showDetailModal}
           project={selectedProject}
           onClose={() => {
@@ -339,6 +421,7 @@ function MyProject() {
             setSelectedProject(null);
           }}
         />
+        </div>
       </div>
 
       {/* Background Effects */}
