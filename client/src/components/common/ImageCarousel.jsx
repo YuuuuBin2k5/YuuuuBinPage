@@ -46,9 +46,9 @@ const ImageCarousel = ({ images = [], alt = "Image" }) => {
             <img
               src={currentImage.imageUrl}
               alt={currentImage.caption || alt}
+              loading="lazy"
               className="w-full h-full object-contain transition-transform duration-700 group-hover/image:scale-105"
               onError={() => setImageError(true)}
-              loading="lazy"
             />
             {/* Overlay gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-60 group-hover/image:opacity-40 transition-opacity"></div>

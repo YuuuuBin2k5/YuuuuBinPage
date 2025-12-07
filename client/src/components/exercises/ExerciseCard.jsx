@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Clock,
   Globe,
   Github,
   Code2,
-  Star,
   Image as ImageIcon,
   ArrowRight,
-  Eye,
   CheckCircle2,
   Edit,
 } from "lucide-react";
 import { useViewedExercises } from "../../hooks/useViewedExercises";
 import ImageCarousel from "../common/ImageCarousel";
 
-const ExerciseCard = ({ exercise, index, onClick, onEdit, isAdmin }) => {
+const ExerciseCard = ({ exercise, onClick, onEdit, isAdmin }) => {
   const [imageError, setImageError] = useState(false);
   const { isViewed, getViewCount, markAsViewed } = useViewedExercises();
 
@@ -54,6 +52,18 @@ const ExerciseCard = ({ exercise, index, onClick, onEdit, isAdmin }) => {
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
 
       <div className="relative flex flex-col gap-4 p-6">
+        {/* Viewed Badge - Top right corner inside card */}
+        {exerciseViewed && (
+          <div className="absolute top-2 right-2 z-30">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-lg shadow-xl border-2 border-emerald-400/60 animate-in slide-in-from-top duration-300">
+              <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+              <span className="text-[11px] font-mono font-bold text-white tracking-wide">
+                {viewCount > 1 ? `VIEWED ×${viewCount}` : "COMPLETED"}
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Exercise Image */}
         <div className="relative w-full h-48 flex-shrink-0 rounded-sm overflow-hidden bg-gradient-to-br from-slate-800 to-slate-700 group-hover:shadow-lg transition-all duration-500 group/imagearea">
           {exercise.images && exercise.images.length > 0 ? (
@@ -77,18 +87,6 @@ const ExerciseCard = ({ exercise, index, onClick, onEdit, isAdmin }) => {
               <div className="text-center">
                 <ImageIcon className="w-16 h-16 text-slate-600 mx-auto mb-2" />
                 <p className="text-slate-500 text-sm">No preview</p>
-              </div>
-            </div>
-          )}
-
-          {/* Viewed Badge - Developer Style: Bottom right corner - Fades ONLY on image hover */}
-          {exerciseViewed && (
-            <div className="absolute bottom-2 right-2 z-20 group-hover/imagearea:opacity-0 group-hover/imagearea:translate-y-2 transition-all duration-300">
-              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-600/90 rounded shadow-lg border border-emerald-500/70 animate-in slide-in-from-bottom duration-300">
-                <div className="w-1.5 h-1.5 bg-emerald-200 rounded-full animate-pulse"></div>
-                <span className="text-[10px] font-mono font-bold text-white tracking-wide">
-                  {viewCount > 1 ? `VIEWED×${viewCount}` : "COMPLETED"}
-                </span>
               </div>
             </div>
           )}
@@ -188,4 +186,12 @@ const ExerciseCard = ({ exercise, index, onClick, onEdit, isAdmin }) => {
   );
 };
 
-export default React.memo(ExerciseCard);
+// Memoize with custom comparison to prevent unnecessary re-renders
+export default React.memo(ExerciseCard, (prevProps, nextProps) => {
+  // Only re-render if these props change
+  return (
+    prevProps.exercise.id === nextProps.exercise.id &&
+    prevProps.index === nextProps.index &&
+    prevProps.isAdmin === nextProps.isAdmin
+  );
+});

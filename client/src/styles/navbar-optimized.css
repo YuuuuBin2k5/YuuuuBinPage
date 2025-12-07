@@ -1,0 +1,198 @@
+/**
+ * NAVBAR PERFORMANCE OPTIMIZATION
+ * Ultra-optimized styles for smooth scrolling
+ */
+
+/* ============================================
+   CRITICAL NAVBAR OPTIMIZATIONS
+   ============================================ */
+
+/* Force GPU acceleration on navbar */
+nav {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  contain: layout style;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimize navbar transitions - inline styles take precedence */
+nav {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Only use will-change during scroll */
+nav.scrolling {
+  will-change: transform, background-color;
+}
+
+nav:not(.scrolling) {
+  will-change: auto;
+}
+
+/* Optimize navbar links */
+nav a,
+nav button {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Only add will-change on hover */
+nav a:hover,
+nav a:focus,
+nav button:hover,
+nav button:focus {
+  will-change: transform;
+}
+
+nav a:not(:hover):not(:focus),
+nav button:not(:hover):not(:focus) {
+  will-change: auto;
+}
+
+/* Optimize backdrop blur - expensive operation */
+nav[class*="backdrop-blur"] {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* Reduce blur on low-end devices */
+@media (max-width: 768px) {
+  nav[class*="backdrop-blur"] {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+}
+
+/* Disable blur on very low-end devices */
+@media (max-width: 480px) {
+  nav[class*="backdrop-blur"] {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-color: rgba(15, 23, 42, 0.95) !important;
+  }
+}
+
+/* ============================================
+   SCROLL PERFORMANCE
+   ============================================ */
+
+/* Optimize scroll container */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Prevent layout shift during scroll */
+body {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+/* ============================================
+   ANIMATION OPTIMIZATIONS
+   ============================================ */
+
+/* Inline styles handle transitions for better performance */
+
+/* Disable animations on reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  nav,
+  nav * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   HOVER OPTIMIZATIONS
+   ============================================ */
+
+/* Optimize hover effects */
+nav a::before,
+nav a::after,
+nav button::before,
+nav button::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+/* Remove will-change when not hovering */
+nav a:not(:hover)::before,
+nav a:not(:hover)::after,
+nav button:not(:hover)::before,
+nav button:not(:hover)::after {
+  will-change: auto;
+}
+
+/* ============================================
+   MOBILE OPTIMIZATIONS
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Simplify navbar on mobile */
+  nav {
+    contain: strict;
+  }
+  
+  /* Reduce shadow complexity */
+  nav[class*="shadow"] {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  }
+  
+  /* Disable expensive effects */
+  nav [class*="blur"],
+  nav [class*="gradient"] {
+    filter: none !important;
+  }
+}
+
+/* ============================================
+   TAB SWITCHING OPTIMIZATION
+   ============================================ */
+
+/* Pause animations when tab is hidden */
+body:not(.tab-visible) nav * {
+  animation-play-state: paused !important;
+  will-change: auto !important;
+}
+
+/* Resume animations when tab is visible */
+body.tab-visible nav * {
+  animation-play-state: running;
+}
+
+/* ============================================
+   NAVIGATION TRANSITION OPTIMIZATION
+   ============================================ */
+
+/* Optimize Link transitions during route change */
+nav a {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Prevent layout shift during active state change */
+nav a[class*="shadow"] {
+  contain: layout style;
+}
+
+/* Optimize active state transitions */
+nav a.active,
+nav a[aria-current="page"] {
+  contain: layout style paint;
+}
+
+/* Fast transitions for navigation */
+nav a * {
+  transition-duration: 0.2s !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}

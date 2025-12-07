@@ -11,9 +11,25 @@ import {
 } from "./utils/background";
 import { TEXT_DARK_MODE, TEXT_LIGHT_MODE } from "./utils/text-font";
 import Footer from "./components/layout/Footer";
+import { initPerformanceOptimizations } from "./utils/performance";
+import { initTabVisibility } from "./utils/tabVisibility";
+import "./styles/performance.css";
+import "./styles/navbar-optimized.css";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
+
+  // Initialize performance optimizations on mount
+  useEffect(() => {
+    initPerformanceOptimizations();
+    
+    // Initialize tab visibility optimization
+    const cleanupTabVisibility = initTabVisibility();
+    
+    return () => {
+      cleanupTabVisibility();
+    };
+  }, []);
 
   // Hàm chuyển đổi sẽ được truyền xuống SideBar
   const toggleDarkMode = () => {

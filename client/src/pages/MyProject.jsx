@@ -1,28 +1,13 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { FONT_COINY } from "../utils/fonts";
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
 import { projectAPI } from "../services/api";
 import { useDebounce } from "../hooks/usePerformance";
+import { useTypewriter } from "../hooks/useTypewriter";
 import {
   Plus,
-  Edit,
-  Trash2,
-  ExternalLink,
-  Github,
-  Calendar,
-  User,
   Code,
   Sparkles,
-  Eye,
-  Clock,
-  Star,
-  Zap,
-  Layers,
-  Award,
-  Target,
-  BookOpen,
-  Briefcase,
 } from "lucide-react";
 import ProjectForm from "../components/admin/SimpleProjectForm";
 import ProjectCard from "../components/projects/ProjectCard";
@@ -47,6 +32,24 @@ function MyProject() {
   // Debounce search term for better performance
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
+  // Typewriter effect for dynamic text - Real project technologies from course
+  const typewriterTexts = [
+    "Full-Stack Web Apps với Java & React",
+    "Servlet/JSP - JavaServer Pages Development",
+    "JSTL & Expression Language (EL) Integration",
+    "JPA/Hibernate - O/R Mapping & EntityManager",
+    "JDBC - PreparedStatement & Connection Pooling",
+    "Session Management - Cookies & URL Rewriting",
+    "JavaMail API - Email với SMTP Protocol",
+    "HTML5 Semantic Elements & CSS3 Styling",
+    "MySQL Database Design & SQL Queries",
+    "RESTful API với Spring Boot Framework",
+    "Responsive UI - Mobile-First Design",
+    "Security - SQL Injection Prevention"
+  ];
+  
+  const typedText = useTypewriter(typewriterTexts, 70, 30, 2000);
+
   // Use cached projects from context
   useEffect(() => {
     setProjects(cachedProjects);
@@ -56,7 +59,7 @@ function MyProject() {
   const handleCreateProject = useCallback(
     async (projectData) => {
       try {
-        const newProject = await projectAPI.create(projectData);
+        await projectAPI.create(projectData);
         setShowForm(false);
         setEditingProject(null);
         // Refresh cache after creating
@@ -120,42 +123,6 @@ function MyProject() {
     setShowDetailModal(true);
   }, []);
 
-  const getStatusColor = (status) => {
-    const colors = {
-      PLANNING:
-        "bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-300 border-yellow-400/40",
-      IN_PROGRESS:
-        "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-cyan-300 border-cyan-400/40",
-      COMPLETED:
-        "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-emerald-300 border-emerald-400/40",
-      ON_HOLD:
-        "bg-gradient-to-r from-gray-500/20 to-slate-500/20 text-slate-300 border-slate-400/40",
-    };
-    return colors[status] || colors["IN_PROGRESS"];
-  };
-
-  const getStatusIcon = (status) => {
-    const icons = {
-      PLANNING: <Target className="w-4 h-4" />,
-      IN_PROGRESS: <Zap className="w-4 h-4" />,
-      COMPLETED: <Award className="w-4 h-4" />,
-      ON_HOLD: <Clock className="w-4 h-4" />,
-    };
-    return icons[status] || icons["IN_PROGRESS"];
-  };
-
-  const getCategoryIcon = (category) => {
-    const icons = {
-      WEB: <Code className="w-5 h-5" />,
-      FRONTEND: <Layers className="w-5 h-5" />,
-      BACKEND: <Briefcase className="w-5 h-5" />,
-      ALGORITHM: <BookOpen className="w-5 h-5" />,
-      AI: <Sparkles className="w-5 h-5" />,
-      RESEARCH: <Star className="w-5 h-5" />,
-    };
-    return icons[category] || <Code className="w-5 h-5" />;
-  };
-
   const formatDate = (dateString) => {
     if (!dateString) return "TBD";
     return new Date(dateString).toLocaleDateString("vi-VN", {
@@ -217,24 +184,52 @@ function MyProject() {
       {/* Header */}
       <div className="px-6 py-8">
         <div className="relative text-center mb-6">
+          {/* Animated Background Effects */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Animated Gradient Orbs */}
+            <div className="absolute top-0 left-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute top-0 right-1/4 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+            
+            {/* Floating Particles */}
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-1 h-1 bg-purple-400/30 rounded-full animate-float"
+                style={{
+                  left: `${10 + i * 12}%`,
+                  top: `${20 + (i % 3) * 20}%`,
+                  animationDelay: `${i * 0.5}s`,
+                  animationDuration: `${3 + i * 0.5}s`
+                }}
+              />
+            ))}
+          </div>
+
           {/* Compact Terminal-Style Header */}
           <div className="relative max-w-4xl mx-auto">
-            {/* Terminal Top Bar */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-950/80 to-slate-950/80 border border-blue-500/40 rounded-t mb-0">
+            {/* Terminal Top Bar with Glow */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-950/80 to-slate-950/80 border border-blue-500/40 rounded-t mb-0 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300">
               <div className="flex gap-1.5">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-500/80"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80"></div>
-                <div className="w-2.5 h-2.5 rounded-full bg-blue-500/80"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500/80 animate-pulse" style={{ animationDuration: '2s' }}></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80 animate-pulse" style={{ animationDuration: '2s', animationDelay: '0.3s' }}></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-blue-500/80 animate-pulse" style={{ animationDuration: '2s', animationDelay: '0.6s' }}></div>
               </div>
-              <span className="text-[9px] font-mono text-blue-400/60 uppercase tracking-wider ml-2">
+              <span className="text-[9px] font-mono text-blue-400/60 uppercase tracking-wider ml-2 animate-pulse">
                 projects.sh
               </span>
             </div>
 
-            {/* Terminal Content */}
-            <div className="bg-gradient-to-br from-slate-950/90 to-blue-950/50 border-x border-b border-blue-500/40 rounded-b p-4">
+            {/* Terminal Content with Scan Line */}
+            <div className="relative bg-gradient-to-br from-slate-950/90 to-blue-950/50 border-x border-b border-blue-500/40 rounded-b p-4 overflow-hidden shadow-2xl shadow-blue-500/10">
+              {/* Scan Line Effect */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-400/5 to-transparent h-full animate-scan-slow"></div>
+              </div>
+              
+              {/* Content Wrapper */}
+              <div className="relative z-10">
               {/* Top Row: Command Line + Stats */}
-              <div className="flex items-center justify-between gap-4 mb-3">
+              <div className="flex items-center justify-between gap-4 mb-3 animate-in fade-in slide-in-from-top-4 duration-500">
                 {/* Command Line */}
                 <div className="flex items-center gap-2 flex-1">
                   <span className="text-blue-400 font-mono text-sm">$</span>
@@ -259,33 +254,40 @@ function MyProject() {
                 </div>
               </div>
 
-              {/* Title */}
-              <h1 className="text-3xl md:text-4xl font-bold mb-2 font-mono text-left">
-                <span className="text-white">Dự Án</span>
-                <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent"> Của Tôi</span>
+              {/* Title with Glitch Effect on Hover */}
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 font-mono text-left group cursor-default animate-in fade-in slide-in-from-left-4 duration-700" style={{ animationDelay: '0.2s' }}>
+                <span className="text-white group-hover:animate-pulse">Dự Án</span>
+                <span className="relative inline-block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                  <span className="relative z-10"> Của Tôi</span>
+                  {/* Glow effect */}
+                  <span className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-400 blur-lg opacity-0 group-hover:opacity-50 transition-opacity duration-300"></span>
+                </span>
               </h1>
 
-              {/* Description */}
-              <p className="text-sm text-slate-400 font-mono mb-3 leading-relaxed text-left">
+              {/* Description - Typewriter Effect with Glow */}
+              <div className="text-sm text-slate-400 font-mono mb-3 leading-relaxed text-left h-6 animate-in fade-in duration-700" style={{ animationDelay: '0.4s' }}>
                 <span className="text-slate-600"># </span>
-                <span className="text-slate-300">Web Development</span>
-                <span className="text-blue-400 mx-1">→</span>
-                <span className="text-slate-300">Full Stack</span>
-                <span className="text-cyan-400 mx-1">→</span>
-                <span className="text-slate-300">Creative Solutions</span>
-              </p>
+                <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+                  {typedText}
+                  {/* Text glow */}
+                  <span className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 blur-sm"></span>
+                </span>
+                <span className="inline-block w-2 h-4 bg-cyan-400 ml-1 animate-pulse shadow-lg shadow-cyan-400/50"></span>
+              </div>
 
-              {/* Tech Categories */}
-              <div className="flex items-center gap-2 flex-wrap">
+              {/* Tech Categories with Stagger Animation */}
+              <div className="flex items-center gap-2 flex-wrap animate-in fade-in slide-in-from-bottom-4 duration-700" style={{ animationDelay: '0.6s' }}>
                 <Code className="w-3 h-3 text-blue-400" />
-                {["Web App", "Mobile", "API", "Landing", "Game"].map((cat) => (
+                {["Web App", "Mobile", "API", "Landing", "Game"].map((cat, index) => (
                   <span
                     key={cat}
-                    className="px-2 py-0.5 bg-teal-600/20 border border-teal-500/50 rounded-sm text-[10px] font-mono font-bold text-teal-300 uppercase tracking-wide hover:scale-105 transition-transform"
+                    className="px-2 py-0.5 bg-teal-600/20 border border-teal-500/50 rounded-sm text-[10px] font-mono font-bold text-teal-300 uppercase tracking-wide hover:scale-110 hover:shadow-lg transition-all duration-300 cursor-default animate-in fade-in zoom-in-50"
+                    style={{ animationDelay: `${0.7 + index * 0.05}s`, animationDuration: '300ms' }}
                   >
                     {cat}
                   </span>
                 ))}
+              </div>
               </div>
             </div>
             
@@ -370,24 +372,32 @@ function MyProject() {
           </div>
         </div>
 
-          {/* Projects Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project) => (
-            <ProjectCard
+          {/* Projects Grid - With Animation */}
+          <div 
+            key={`${selectedCategory}-${debouncedSearchTerm}`}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500"
+          >
+          {filteredProjects.map((project, index) => (
+            <div
               key={project.id}
-              project={project}
-              isAdmin={isAdmin}
-              onEdit={handleEditProject}
-              onDelete={handleDeleteProject}
-              onView={handleViewProject}
-              formatDate={formatDate}
-            />
+              style={{ animationDelay: `${index * 50}ms` }}
+              className="animate-in fade-in slide-in-from-bottom-2 duration-300"
+            >
+              <ProjectCard
+                project={project}
+                isAdmin={isAdmin}
+                onEdit={handleEditProject}
+                onDelete={handleDeleteProject}
+                onView={handleViewProject}
+                formatDate={formatDate}
+              />
+            </div>
           ))}
         </div>
 
-          {/* Empty State */}
+          {/* Empty State - With Animation */}
           {filteredProjects.length === 0 && (
-          <div className="text-center py-16">
+          <div className="text-center py-16 animate-in fade-in zoom-in-50 duration-500">
             <div className="relative inline-block">
               <Sparkles className="w-16 h-16 text-purple-400 mx-auto mb-4 animate-pulse" />
               <div className="absolute -inset-2 bg-purple-500/20 rounded-full blur-lg"></div>

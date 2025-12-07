@@ -1,4 +1,27 @@
 /* ============================================
+   GLOBAL PERFORMANCE SETTINGS - PRO OPTIMIZATION
+   ============================================ */
+
+/* Force GPU acceleration on all animated elements */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimize rendering for animated elements */
+[class*="animate-"],
+[class*="transition-"] {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Prevent layout shifts */
+img,
+video {
+  content-visibility: auto;
+}
+
+/* ============================================
    GLOBAL ANIMATIONS - Reusable across app
    ============================================ */
 
@@ -129,6 +152,120 @@
 }
 
 /* ============================================
+   MODERN ANIMATION UTILITIES (Tailwind-style)
+   ============================================ */
+
+/* Fade In */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide In From Top */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide In From Bottom */
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Zoom In */
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Float Animation for Particles */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) translateX(10px);
+    opacity: 0.6;
+  }
+}
+
+/* Slow Scan Line */
+@keyframes scanSlow {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.animate-float {
+  animation: float ease-in-out infinite;
+}
+
+.animate-scan-slow {
+  animation: scanSlow 8s linear infinite;
+}
+
+/* Animate In Classes */
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
+.slide-in-from-top-4 {
+  animation-name: slideInFromTop;
+}
+
+.slide-in-from-bottom-4 {
+  animation-name: slideInFromBottom;
+}
+
+.slide-in-from-bottom-2 {
+  animation-name: slideInFromBottom;
+  --tw-translate-y: 0.5rem;
+}
+
+.zoom-in-50 {
+  animation-name: zoomIn;
+}
+
+.duration-300 {
+  animation-duration: 300ms;
+}
+
+.duration-500 {
+  animation-duration: 500ms;
+}
+
+/* ============================================
    UTILITY CLASSES
    ============================================ */
 
@@ -186,14 +323,104 @@
 }
 
 /* ============================================
-   PERFORMANCE OPTIMIZATIONS
+   PERFORMANCE OPTIMIZATIONS - PRO LEVEL
    ============================================ */
 
-/* GPU Acceleration */
+/* GPU Acceleration - Force hardware acceleration */
 .transform-gpu {
-  transform: translateZ(0);
+  transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   perspective: 1000px;
+}
+
+/* CSS Containment - Prevent layout thrashing */
+.contain-layout {
+  contain: layout;
+}
+
+.contain-paint {
+  contain: paint;
+}
+
+.contain-strict {
+  contain: strict;
+}
+
+/* Navbar Optimization - Only use will-change on interaction */
+nav {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  contain: layout style;
+}
+
+nav a,
+nav button {
+  backface-visibility: hidden;
+}
+
+/* Only add will-change during interaction */
+nav a:hover,
+nav a:focus,
+nav button:hover,
+nav button:focus {
+  will-change: transform;
+}
+
+nav a:not(:hover):not(:focus),
+nav button:not(:hover):not(:focus) {
+  will-change: auto;
+}
+
+/* Reduce ALL animations on scroll and low-end devices */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Disable heavy animations on low-end devices */
+@media (max-width: 768px) {
+  .animate-float-icon,
+  .animate-rotate-icon,
+  .animate-breathe,
+  .animate-tilt-card,
+  .animate-orbit,
+  .animate-wave-motion,
+  .animate-pulse-glow,
+  .animate-swing,
+  .animate-bounce-subtle,
+  .animate-wiggle,
+  .animate-morph,
+  .animate-spiral-rotate,
+  .animate-magnetic-pulse,
+  .animate-rainbow-glow,
+  .animate-levitate,
+  .animate-jello {
+    animation: none !important;
+  }
+}
+
+/* Reduce animations class - Applied by JS */
+.reduce-animations *,
+.reduce-animations *::before,
+.reduce-animations *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Performance mode - Disable all non-essential animations */
+.performance-mode [class*="animate-float"],
+.performance-mode [class*="animate-rotate"],
+.performance-mode [class*="animate-breathe"],
+.performance-mode [class*="animate-pulse"],
+.performance-mode [class*="animate-wave"],
+.performance-mode [class*="animate-bounce"] {
+  animation: none !important;
 }
 
 .will-change-transform {
@@ -204,10 +431,42 @@
   will-change: opacity;
 }
 
+/* Remove will-change after animation completes */
+.animation-complete {
+  will-change: auto;
+}
+
 /* Smooth Scrolling */
 .smooth-scroll {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================
+   TAB SWITCHING OPTIMIZATION
+   ============================================ */
+
+/* Optimize page visibility changes */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Pause animations when tab is hidden */
+@media (prefers-reduced-motion: no-preference) {
+  body:not(.tab-visible) [class*="animate-"] {
+    animation-play-state: paused !important;
+  }
+}
+
+/* Reduce GPU usage when tab is not visible */
+body:not(.tab-visible) {
+  will-change: auto !important;
+}
+
+body:not(.tab-visible) * {
+  will-change: auto !important;
 }
 
 /* ============================================
@@ -278,4 +537,543 @@
 }
 .stagger-item:nth-child(n + 10) {
   animation-delay: 0.45s;
+}
+
+/* ============================================
+   SKILLS SHOWCASE ANIMATIONS
+   ============================================ */
+
+/* Floating particles animation */
+@keyframes floatParticle {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translate(20px, -30px) scale(1.2);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-15px, -60px) scale(0.8);
+    opacity: 0.4;
+  }
+  75% {
+    transform: translate(30px, -40px) scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+/* Grid movement animation */
+@keyframes gridMove {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+/* Shimmer effect for cards */
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* Shine effect for button */
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-15deg);
+  }
+}
+
+/* Particle burst animation */
+@keyframes particleBurst {
+  0% {
+    transform: rotate(var(--rotation, 0deg)) translateX(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--rotation, 0deg)) translateX(40px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Gradient animation */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
+
+/* Fly in animations for icons */
+@keyframes flyInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-100px) translateY(20px) rotate(-45deg) scale(0);
+  }
+  60% {
+    transform: translateX(10px) translateY(-5px) rotate(5deg) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes flyInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(100px) translateY(20px) rotate(45deg) scale(0);
+  }
+  60% {
+    transform: translateX(-10px) translateY(-5px) rotate(-5deg) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes flyInFromTop {
+  0% {
+    opacity: 0;
+    transform: translateY(-100px) translateX(20px) rotate(-45deg) scale(0);
+  }
+  60% {
+    transform: translateY(10px) translateX(-5px) rotate(5deg) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes flyInFromBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(100px) translateX(-20px) rotate(45deg) scale(0);
+  }
+  60% {
+    transform: translateY(-10px) translateX(5px) rotate(-5deg) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+  }
+}
+
+/* Spiral entrance animation */
+@keyframes spiralIn {
+  0% {
+    opacity: 0;
+    transform: rotate(720deg) scale(0) translateZ(-200px);
+  }
+  60% {
+    transform: rotate(-20deg) scale(1.1) translateZ(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(0deg) scale(1) translateZ(0);
+  }
+}
+
+/* Magnetic hover effect */
+@keyframes magneticPull {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(var(--mouse-x, 0), var(--mouse-y, 0));
+  }
+}
+
+/* Glow pulse animation */
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3),
+                0 0 40px rgba(139, 92, 246, 0.2),
+                0 0 60px rgba(139, 92, 246, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.5),
+                0 0 60px rgba(139, 92, 246, 0.3),
+                0 0 90px rgba(139, 92, 246, 0.2);
+  }
+}
+
+/* Rotate and scale on hover */
+@keyframes rotateScale {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+/* Wave effect */
+@keyframes wave {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+  }
+  50% {
+    transform: translateY(0) translateX(10px);
+  }
+  75% {
+    transform: translateY(10px) translateX(5px);
+  }
+}
+
+/* 3D flip animation */
+@keyframes flip3D {
+  0% {
+    transform: perspective(1000px) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(1000px) rotateY(360deg);
+  }
+}
+
+/* Bounce in animation */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(-50px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05) translateY(0);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Elastic scale */
+@keyframes elasticScale {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.25);
+  }
+  40% {
+    transform: scale(0.75);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  65% {
+    transform: scale(0.95);
+  }
+  75% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ============================================
+   CONTINUOUS MOTION ANIMATIONS - ĐỈNH!
+   ============================================ */
+
+/* Float animation - Icons bay lên xuống */
+@keyframes floatIcon {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-15px) translateX(8px);
+  }
+  50% {
+    transform: translateY(-8px) translateX(-5px);
+  }
+  75% {
+    transform: translateY(-20px) translateX(10px);
+  }
+}
+
+/* Rotate animation - Xoay liên tục */
+@keyframes rotateIcon {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Breathe animation - Hiệu ứng thở */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.08);
+    filter: brightness(1.2);
+  }
+}
+
+/* Tilt card animation - Card nghiêng nhẹ */
+@keyframes tiltCard {
+  0%, 100% {
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+  }
+  25% {
+    transform: perspective(1000px) rotateX(5deg) rotateY(-5deg);
+  }
+  50% {
+    transform: perspective(1000px) rotateX(-3deg) rotateY(3deg);
+  }
+  75% {
+    transform: perspective(1000px) rotateX(3deg) rotateY(5deg);
+  }
+}
+
+/* Orbit animation - Quay quanh tâm */
+@keyframes orbitIcon {
+  0% {
+    transform: rotate(0deg) translateX(20px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(20px) rotate(-360deg);
+  }
+}
+
+/* Wave motion - Chuyển động sóng */
+@keyframes waveMotion {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-12px) translateX(8px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(-5px) translateX(15px) rotate(-3deg);
+  }
+  75% {
+    transform: translateY(-15px) translateX(8px) rotate(7deg);
+  }
+}
+
+/* Pulse glow - Ánh sáng nhấp nháy */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 
+      0 0 10px rgba(139, 92, 246, 0.3),
+      0 0 20px rgba(139, 92, 246, 0.2),
+      0 0 30px rgba(139, 92, 246, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 20px rgba(139, 92, 246, 0.6),
+      0 0 40px rgba(139, 92, 246, 0.4),
+      0 0 60px rgba(139, 92, 246, 0.3);
+  }
+}
+
+/* Swing animation - Đung đưa */
+@keyframes swing {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(15deg);
+  }
+  40% {
+    transform: rotate(-10deg);
+  }
+  60% {
+    transform: rotate(5deg);
+  }
+  80% {
+    transform: rotate(-5deg);
+  }
+}
+
+/* Bounce subtle - Nảy nhẹ */
+@keyframes bounceSubtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Wiggle - Lắc lư */
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg) translateX(0);
+  }
+  25% {
+    transform: rotate(5deg) translateX(5px);
+  }
+  50% {
+    transform: rotate(-5deg) translateX(-5px);
+  }
+  75% {
+    transform: rotate(3deg) translateX(3px);
+  }
+}
+
+/* Morph - Biến hình */
+@keyframes morph {
+  0%, 100% {
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  }
+  25% {
+    border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%;
+  }
+  50% {
+    border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
+  }
+  75% {
+    border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
+  }
+}
+
+/* Spiral rotate - Xoay xoắn ốc */
+@keyframes spiralRotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+/* Magnetic pull - Hút từ tính */
+@keyframes magneticPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.15) saturate(1.2);
+  }
+}
+
+/* Rainbow glow - Ánh sáng cầu vồng */
+@keyframes rainbowGlow {
+  0% {
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  50% {
+    filter: hue-rotate(180deg) brightness(1.2);
+  }
+  100% {
+    filter: hue-rotate(360deg) brightness(1);
+  }
+}
+
+/* Levitate - Bay lơ lửng */
+@keyframes levitate {
+  0%, 100% {
+    transform: translateY(0) translateZ(0);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    transform: translateY(-20px) translateZ(20px);
+    box-shadow: 0 25px 35px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Jello - Rung lắc như thạch */
+@keyframes jello {
+  0%, 100% {
+    transform: skewX(0deg) skewY(0deg);
+  }
+  30% {
+    transform: skewX(12.5deg) skewY(12.5deg);
+  }
+  40% {
+    transform: skewX(-6.25deg) skewY(-6.25deg);
+  }
+  50% {
+    transform: skewX(3.125deg) skewY(3.125deg);
+  }
+  65% {
+    transform: skewX(-1.5625deg) skewY(-1.5625deg);
+  }
+  75% {
+    transform: skewX(0.78125deg) skewY(0.78125deg);
+  }
+}
+
+/* Utility classes for continuous animations - OPTIMIZED */
+/* Only use these on hover or when visible */
+.animate-float-icon {
+  animation: floatIcon 10s ease-in-out infinite;
+}
+
+.animate-rotate-icon {
+  animation: rotateIcon 20s linear infinite;
+}
+
+.animate-breathe {
+  animation: breathe 5s ease-in-out infinite;
+}
+
+.animate-wave-motion {
+  animation: waveMotion 8s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounceSubtle 4s ease-in-out infinite;
+}
+
+.animate-magnetic-pulse {
+  animation: magneticPulse 5s ease-in-out infinite;
+}
+
+/* Only add will-change on hover to prevent constant GPU usage */
+.animate-float-icon:hover,
+.animate-rotate-icon:hover,
+.animate-breathe:hover,
+.animate-wave-motion:hover,
+.animate-bounce-subtle:hover,
+.animate-magnetic-pulse:hover {
+  will-change: transform;
+}
+
+.animate-pulse-glow:hover {
+  will-change: box-shadow;
 }

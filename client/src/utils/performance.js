@@ -1,104 +1,262 @@
-// Performance monitoring utilities
+/**
+ * PRO PERFORMANCE UTILITIES
+ * Advanced optimization techniques for smooth 60fps
+ */
 
-export class PerformanceMonitor {
-  constructor() {
-    this.metrics = new Map();
-    this.observers = new Map();
-    this.isProduction = process.env.NODE_ENV === "production";
-    this.isEnabled = false; // Disable all monitoring for now
-  }
+// Debounce function - Prevents excessive function calls
+export const debounce = (func, wait) => {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
 
-  // Start timing a operation
-  startTiming(label) {
-    if (this.isProduction || !this.isEnabled) return;
-    this.metrics.set(label, performance.now());
-  }
-
-  // End timing and log result
-  endTiming(label) {
-    if (this.isProduction || !this.isEnabled) return;
-    const startTime = this.metrics.get(label);
-    if (startTime) {
-      const duration = performance.now() - startTime;
-      console.log(`⏱️ ${label}: ${duration.toFixed(2)}ms`);
-      this.metrics.delete(label);
-      return duration;
+// Throttle function - Limits function execution rate
+export const throttle = (func, limit) => {
+  let inThrottle;
+  return function executedFunction(...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
     }
+  };
+};
+
+// RAF-based throttle - More accurate for animations
+export const rafThrottle = (func) => {
+  let rafId = null;
+  return function executedFunction(...args) {
+    if (rafId) return;
+    rafId = requestAnimationFrame(() => {
+      func.apply(this, args);
+      rafId = null;
+    });
+  };
+};
+
+// Intersection Observer for lazy loading
+export const createLazyObserver = (callback, options = {}) => {
+  const defaultOptions = {
+    root: null,
+    rootMargin: '50px',
+    threshold: 0.1,
+  };
+
+  return new IntersectionObserver(callback, { ...defaultOptions, ...options });
+};
+
+// Detect if device is low-end
+export const isLowEndDevice = () => {
+  // Check for mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+
+  // Check for low memory (if available)
+  const hasLowMemory = navigator.deviceMemory ? navigator.deviceMemory < 4 : false;
+
+  // Check for slow connection
+  const hasSlowConnection = navigator.connection
+    ? navigator.connection.effectiveType === 'slow-2g' ||
+      navigator.connection.effectiveType === '2g' ||
+      navigator.connection.effectiveType === '3g'
+    : false;
+
+  return isMobile || hasLowMemory || hasSlowConnection;
+};
+
+// Optimize images
+export const optimizeImage = (src, width = 800, quality = 80) => {
+  // If using a CDN, add optimization parameters
+  if (src.includes('cloudinary') || src.includes('imgix')) {
+    return `${src}?w=${width}&q=${quality}&auto=format`;
   }
+  return src;
+};
 
-  // Monitor component render times
-  measureComponent(componentName, renderFn) {
-    if (this.isProduction) return renderFn();
+// Preload critical resources
+export const preloadResource = (href, as = 'image') => {
+  const link = document.createElement('link');
+  link.rel = 'preload';
+  link.as = as;
+  link.href = href;
+  document.head.appendChild(link);
+};
 
-    this.startTiming(`${componentName} render`);
-    const result = renderFn();
-    this.endTiming(`${componentName} render`);
-    return result;
-  }
-
-  // Monitor API call performance
-  async measureAPI(apiName, apiCall) {
-    this.startTiming(`API: ${apiName}`);
-    try {
-      const result = await apiCall();
-      this.endTiming(`API: ${apiName}`);
-      return result;
-    } catch (error) {
-      this.endTiming(`API: ${apiName}`);
-      throw error;
+// Remove will-change after animation
+export const removeWillChange = (element, delay = 1000) => {
+  setTimeout(() => {
+    if (element) {
+      element.style.willChange = 'auto';
     }
+  }, delay);
+};
+
+// Batch DOM updates
+export const batchDOMUpdates = (updates) => {
+  requestAnimationFrame(() => {
+    updates.forEach((update) => update());
+  });
+};
+
+// Check if user prefers reduced motion
+export const prefersReducedMotion = () => {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+// Optimize scroll performance
+export const optimizeScroll = () => {
+  let ticking = false;
+  
+  return (callback) => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        callback();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  };
+};
+
+// Memory cleanup
+export const cleanupMemory = () => {
+  // Remove unused event listeners
+  // Clear caches
+  // Force garbage collection (if available)
+  if (window.gc) {
+    window.gc();
   }
+};
 
-  // Setup performance observer for Core Web Vitals
-  setupWebVitals() {
-    if (this.isProduction || !this.isEnabled || !window.PerformanceObserver)
-      return;
+// Performance monitoring
+export const measurePerformance = (name, fn) => {
+  const start = performance.now();
+  const result = fn();
+  const end = performance.now();
+  console.log(`⚡ ${name}: ${(end - start).toFixed(2)}ms`);
+  return result;
+};
 
-    try {
-      // Largest Contentful Paint
-      const lcpObserver = new PerformanceObserver((list) => {
-        for (const entry of list.getEntries()) {
-          console.log(`🎯 LCP: ${entry.startTime.toFixed(2)}ms`);
-        }
-      });
-      lcpObserver.observe({ type: "largest-contentful-paint", buffered: true });
+// Async component loader with timeout
+export const loadComponentWithTimeout = (loader, timeout = 5000) => {
+  return Promise.race([
+    loader(),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Component load timeout')), timeout)
+    ),
+  ]);
+};
 
-      // First Input Delay
-      const fidObserver = new PerformanceObserver((list) => {
-        for (const entry of list.getEntries()) {
-          console.log(`⚡ FID: ${entry.processingStart - entry.startTime}ms`);
-        }
-      });
-      fidObserver.observe({ type: "first-input", buffered: true });
+// Optimize CSS animations
+export const optimizeAnimations = () => {
+  const isLowEnd = isLowEndDevice();
+  const reducedMotion = prefersReducedMotion();
 
-      // Cumulative Layout Shift
-      const clsObserver = new PerformanceObserver((list) => {
-        let clsValue = 0;
-        for (const entry of list.getEntries()) {
-          if (!entry.hadRecentInput) {
-            clsValue += entry.value;
+  if (isLowEnd || reducedMotion) {
+    // Disable heavy animations
+    document.documentElement.classList.add('reduce-animations');
+  }
+};
+
+// Optimize navbar scroll performance
+export const optimizeNavbarScroll = () => {
+  let scrollTicking = false;
+  let lastScrollY = 0;
+  
+  const handleScroll = () => {
+    if (!scrollTicking) {
+      requestAnimationFrame(() => {
+        const nav = document.querySelector('nav');
+        const currentScrollY = window.scrollY;
+        
+        if (nav) {
+          // Add scrolling class during scroll
+          if (currentScrollY !== lastScrollY) {
+            nav.classList.add('scrolling');
+            
+            // Remove after scroll ends
+            setTimeout(() => {
+              nav.classList.remove('scrolling');
+            }, 150);
           }
         }
-        if (clsValue > 0) {
-          console.log(`📐 CLS: ${clsValue.toFixed(4)}`);
-        }
+        
+        lastScrollY = currentScrollY;
+        scrollTicking = false;
       });
-      clsObserver.observe({ type: "layout-shift", buffered: true });
-    } catch (e) {
-      console.warn("Performance Observer not supported");
+      scrollTicking = true;
     }
+  };
+  
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  
+  return () => {
+    window.removeEventListener('scroll', handleScroll);
+  };
+};
+
+// Initialize performance optimizations
+export const initPerformanceOptimizations = () => {
+  // Optimize animations based on device
+  optimizeAnimations();
+
+  // Optimize navbar scroll
+  optimizeNavbarScroll();
+
+  // Add passive event listeners hint
+  if ('passive' in document.createElement('div')) {
+    document.addEventListener('touchstart', () => {}, { passive: true });
+    document.addEventListener('touchmove', () => {}, { passive: true });
   }
 
-  // Memory usage monitoring
-  logMemoryUsage() {
-    if (this.isProduction || !this.isEnabled || !performance.memory) return;
+  // Preconnect to external domains
+  const preconnectDomains = [
+    'https://fonts.googleapis.com',
+    'https://fonts.gstatic.com',
+  ];
 
-    const { usedJSHeapSize, totalJSHeapSize } = performance.memory;
-    const usedMB = (usedJSHeapSize / 1024 / 1024).toFixed(2);
-    const totalMB = (totalJSHeapSize / 1024 / 1024).toFixed(2);
-    console.log(`🧠 Memory: ${usedMB}MB / ${totalMB}MB`);
+  preconnectDomains.forEach((domain) => {
+    const link = document.createElement('link');
+    link.rel = 'preconnect';
+    link.href = domain;
+    link.crossOrigin = 'anonymous';
+    document.head.appendChild(link);
+  });
+
+  // Log performance metrics
+  if (window.performance && window.performance.timing) {
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const perfData = window.performance.timing;
+        const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+        console.log(`📊 Page Load Time: ${pageLoadTime}ms`);
+      }, 0);
+    });
   }
-}
+};
 
-// Export singleton instance
-export const performanceMonitor = new PerformanceMonitor();
+export default {
+  debounce,
+  throttle,
+  rafThrottle,
+  createLazyObserver,
+  isLowEndDevice,
+  optimizeImage,
+  preloadResource,
+  removeWillChange,
+  batchDOMUpdates,
+  prefersReducedMotion,
+  optimizeScroll,
+  cleanupMemory,
+  measurePerformance,
+  loadComponentWithTimeout,
+  optimizeAnimations,
+  initPerformanceOptimizations,
+};

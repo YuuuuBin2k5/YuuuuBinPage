@@ -182,8 +182,8 @@ const FeaturedExercises = () => {
           <Code2 className="w-4 h-4 text-blue-400" />
           <span className="text-sm font-semibold text-blue-300">
             {(localStorage.getItem("language") || "en") === "vi"
-              ? "LẬP TRÌNH WEB - THỰC HÀNH"
-              : "WEB PROGRAMMING - PRACTICE"}
+              ? "SERVLET/JSP • JSTL • JPA • JDBC"
+              : "SERVLET/JSP • JSTL • JPA • JDBC"}
           </span>
           <Brain className="w-4 h-4 text-cyan-400" />
         </div>
@@ -191,15 +191,15 @@ const FeaturedExercises = () => {
         {/* Title */}
         <h3 className="text-5xl md:text-7xl font-black mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-200 to-cyan-200">
           {(localStorage.getItem("language") || "en") === "vi"
-            ? "Bài Tập Môn Học"
-            : "Course Exercises"}
+            ? "Lập Trình Web với Java"
+            : "Web Programming with Java"}
         </h3>
 
         {/* Description */}
         <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed mb-4">
           {(localStorage.getItem("language") || "en") === "vi"
-            ? "Tổng hợp các bài tập thực hành môn Lập Trình Web, từ HTML/CSS cơ bản đến JavaScript nâng cao và React Framework."
-            : "Collection of Web Programming course exercises, from basic HTML/CSS to advanced JavaScript and React Framework."}
+            ? "Khóa học toàn diện về Servlet/JSP, JavaServer Pages, JSTL, Expression Language, JDBC, JPA và JavaMail API. Từ cơ bản đến nâng cao với các bài tập thực hành chuyên sâu."
+            : "Comprehensive course on Servlet/JSP, JavaServer Pages, JSTL, Expression Language, JDBC, JPA and JavaMail API. From basics to advanced with in-depth practical exercises."}
         </p>
 
         {/* Course Info Badge */}
@@ -386,28 +386,32 @@ const FeaturedExercises = () => {
                       {(exercise.demoUrl || exercise.githubUrl) && (
                         <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           {exercise.demoUrl && (
-                            <a
-                              href={exercise.demoUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => handleLinkClick(e, exercise.id)}
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleLinkClick(e, exercise.id);
+                                window.open(exercise.demoUrl, '_blank', 'noopener,noreferrer');
+                              }}
                               className="p-2 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 hover:border-blue-500/50 rounded-lg text-blue-400 hover:text-blue-300 transition-all duration-300 hover:scale-110"
                               title="Demo"
                             >
                               <Globe className="w-4 h-4" />
-                            </a>
+                            </button>
                           )}
                           {exercise.githubUrl && (
-                            <a
-                              href={exercise.githubUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => handleLinkClick(e, exercise.id)}
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleLinkClick(e, exercise.id);
+                                window.open(exercise.githubUrl, '_blank', 'noopener,noreferrer');
+                              }}
                               className="p-2 bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600/50 hover:border-slate-500/50 rounded-lg text-slate-400 hover:text-white transition-all duration-300 hover:scale-110"
                               title="GitHub"
                             >
                               <Github className="w-4 h-4" />
-                            </a>
+                            </button>
                           )}
                         </div>
                       )}

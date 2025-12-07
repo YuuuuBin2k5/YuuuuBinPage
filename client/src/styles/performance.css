@@ -1,0 +1,278 @@
+/**
+ * PERFORMANCE MODE CSS
+ * Ultra-optimized styles for maximum performance
+ */
+
+/* ============================================
+   CRITICAL PERFORMANCE HINTS
+   ============================================ */
+
+/* Force GPU acceleration on all elements */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+}
+
+body {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+/* Optimize all images */
+img {
+  content-visibility: auto;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Optimize videos */
+video {
+  content-visibility: auto;
+}
+
+/* ============================================
+   LAYOUT CONTAINMENT - Prevent reflows
+   ============================================ */
+
+/* Contain layout for major sections */
+main,
+section,
+article,
+aside {
+  contain: layout style;
+}
+
+/* Contain paint for cards */
+.card,
+[class*="card-"],
+[class*="Card"] {
+  contain: paint;
+}
+
+/* Strict containment for modals */
+.modal,
+[class*="modal-"],
+[class*="Modal"] {
+  contain: strict;
+}
+
+/* ============================================
+   SCROLL PERFORMANCE
+   ============================================ */
+
+/* Optimize scroll containers */
+.scroll-container,
+[class*="overflow-"] {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Prevent scroll jank */
+* {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================
+   ANIMATION PERFORMANCE
+   ============================================ */
+
+/* Only animate transform and opacity */
+[class*="transition-"],
+[class*="animate-"] {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Remove will-change after animation */
+[class*="transition-"]:not(:hover):not(:focus),
+[class*="animate-"]:not(:hover):not(:focus) {
+  will-change: auto;
+}
+
+/* ============================================
+   FONT PERFORMANCE
+   ============================================ */
+
+/* Optimize font rendering */
+body,
+button,
+input,
+textarea,
+select {
+  font-display: swap;
+  text-rendering: optimizeSpeed;
+}
+
+/* Prevent font flash */
+@font-face {
+  font-display: swap;
+}
+
+/* ============================================
+   INTERACTION PERFORMANCE
+   ============================================ */
+
+/* Optimize hover states */
+a:hover,
+button:hover,
+[role="button"]:hover {
+  will-change: transform;
+}
+
+/* Optimize focus states */
+a:focus,
+button:focus,
+input:focus,
+textarea:focus {
+  will-change: auto;
+}
+
+/* ============================================
+   REDUCE PAINT COMPLEXITY
+   ============================================ */
+
+/* Simplify shadows on low-end devices */
+@media (max-width: 768px) {
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  /* Keep only essential shadows */
+  .modal,
+  .dropdown,
+  .tooltip {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+/* ============================================
+   MEMORY OPTIMIZATION
+   ============================================ */
+
+/* Limit backdrop filters (expensive) */
+[class*="backdrop-blur"] {
+  backdrop-filter: blur(8px);
+}
+
+@media (max-width: 768px) {
+  [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+    background-color: rgba(0, 0, 0, 0.8) !important;
+  }
+}
+
+/* ============================================
+   LOW-END DEVICE OPTIMIZATIONS
+   ============================================ */
+
+/* Disable expensive effects on mobile */
+@media (max-width: 768px) {
+  /* No gradients */
+  [class*="gradient"] {
+    background: solid !important;
+  }
+  
+  /* No filters */
+  [class*="filter-"],
+  [class*="blur-"] {
+    filter: none !important;
+  }
+  
+  /* No transforms on scroll */
+  [class*="parallax"] {
+    transform: none !important;
+  }
+  
+  /* Simplify borders */
+  * {
+    border-radius: 8px !important;
+  }
+}
+
+/* ============================================
+   CRITICAL CSS - Above the fold
+   ============================================ */
+
+/* Inline critical styles */
+.above-fold {
+  contain: layout style paint;
+  content-visibility: auto;
+}
+
+/* Lazy load below fold */
+.below-fold {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* ============================================
+   PERFORMANCE MONITORING
+   ============================================ */
+
+/* Visual indicator for performance issues */
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    content: "⚡ Performance Mode";
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    background: rgba(0, 255, 0, 0.2);
+    color: #0f0;
+    font-size: 10px;
+    z-index: 99999;
+    pointer-events: none;
+    border-radius: 4px;
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Force GPU layer */
+.gpu-accelerate {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Optimize for speed */
+.optimize-speed {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  text-rendering: optimizeSpeed;
+}
+
+/* Contain layout */
+.contain-layout {
+  contain: layout;
+}
+
+.contain-paint {
+  contain: paint;
+}
+
+.contain-strict {
+  contain: strict;
+}
+
+/* Content visibility */
+.lazy-load {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Prevent layout shift */
+.prevent-shift {
+  contain: layout style;
+}
