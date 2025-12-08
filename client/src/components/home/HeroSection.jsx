@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Github, Linkedin, Mail, MapPin, Code, Sparkles } from "lucide-react";
 import { useTranslation } from "../../hooks/useTranslation";
 import { useParallax } from "../../hooks/useParallax";
@@ -6,6 +7,7 @@ import avatarImg from "../../images/avatar.jpg";
 
 const HeroSection = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
 
   // Parallax effects with different speeds
@@ -126,14 +128,20 @@ const HeroSection = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-              <button className="group relative px-8 py-4 bg-indigo-600 text-white font-semibold rounded-full overflow-hidden shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:bg-indigo-500 transition-all duration-300">
+              <button 
+                onClick={() => navigate('/contact')}
+                className="group relative px-8 py-4 bg-indigo-600 text-white font-semibold rounded-full overflow-hidden shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:bg-indigo-500 transition-all duration-300"
+              >
                 <span className="relative z-10 flex items-center gap-2">
                   <Code size={20} />
                   {t("hero.ctaConsulting")}
                 </span>
               </button>
 
-              <button className="px-8 py-4 bg-white/5 backdrop-blur-sm text-white font-semibold rounded-full border border-white/10 hover:bg-white/10 hover:border-indigo-500/50 transition-all duration-300">
+              <button 
+                onClick={() => navigate('/myproject')}
+                className="px-8 py-4 bg-white/5 backdrop-blur-sm text-white font-semibold rounded-full border border-white/10 hover:bg-white/10 hover:border-indigo-500/50 transition-all duration-300"
+              >
                 {t("hero.ctaPortfolio")}
               </button>
             </div>
