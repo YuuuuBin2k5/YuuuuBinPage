@@ -2,8 +2,9 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 
 import MyInfomation from "../pages/MyInfomation";
+import Contact from "../pages/Contact";
 import BaiTap from "../pages/BaiTap";
-import NotFound from "../pages/NotFound"; // Thêm trang 404 cho đầy đủ
+import NotFound from "../pages/NotFound";
 import Home from "../pages/Home";
 import MyProject from "../pages/MyProject";
 
@@ -14,7 +15,7 @@ const AppRoutes = () => {
       {/* Định nghĩa các Route */}
       <Route path="/" element={<Home />} />
       <Route path="/myinfomation" element={<MyInfomation />} />
-      <Route path="/contact" element={<MyInfomation />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/myproject" element={<MyProject />} />
       <Route path="/baitap" element={<BaiTap />} />
 
