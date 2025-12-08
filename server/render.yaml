@@ -8,7 +8,7 @@ services:
     region: oregon
     plan: free
     branch: main
-    healthCheckPath: /actuator/health
+    healthCheckPath: /health
     autoDeploy: true
     envVars:
       - key: SPRING_PROFILES_ACTIVE
