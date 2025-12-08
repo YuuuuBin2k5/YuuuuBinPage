@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import emailjs from '@emailjs/browser';
+import { useTranslation } from "../hooks/useTranslation";
 import {
   Mail,
   Phone,
@@ -21,6 +22,7 @@ import {
 } from "lucide-react";
 
 function Contact() {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -56,7 +58,7 @@ function Contact() {
       );
       
       if (result.text === 'OK') {
-        alert(">>> MESSAGE_SENT_SUCCESSFULLY\n>>> EMAIL_DELIVERED_TO: daonguyennhatanh0910@gmail.com\n>>> RESPONSE_TIME: <24h\n>>> STATUS: 200_OK");
+        alert(t("contact.successMessage"));
         setFormData({ name: "", email: "", subject: "", message: "" });
       } else {
         throw new Error('Failed to send email');
@@ -72,7 +74,7 @@ function Contact() {
         `Từ: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`
       )}`;
       
-      alert(">>> EMAILJS_ERROR\n>>> OPENING_EMAIL_CLIENT_AS_FALLBACK\n>>> STATUS: FALLBACK_MODE");
+      alert(t("contact.errorMessage"));
       window.location.href = mailtoLink;
       
       setTimeout(() => {
@@ -94,7 +96,7 @@ function Contact() {
   const contactInfo = [
     {
       icon: Mail,
-      label: "EMAIL_ADDRESS",
+      label: t("contact.emailLabel"),
       value: "daonguyennhatanh0910@gmail.com",
       link: "mailto:daonguyennhatanh0910@gmail.com",
       color: "from-cyan-500 to-blue-500",
@@ -102,7 +104,7 @@ function Contact() {
     },
     {
       icon: Phone,
-      label: "PHONE_NUMBER",
+      label: t("contact.phoneLabel"),
       value: "0786 759 178",
       link: "tel:0786759178",
       color: "from-green-500 to-emerald-500",
@@ -110,8 +112,8 @@ function Contact() {
     },
     {
       icon: MapPin,
-      label: "LOCATION_GPS",
-      value: "KTX D2, ĐHSPKT TP.HCM",
+      label: t("contact.locationLabel"),
+      value: t("contact.locationValue"),
       link: "https://maps.google.com/?q=KTX+D2+Truong+Dai+Hoc+Su+Pham+Ky+Thuat",
       color: "from-red-500 to-orange-500",
       code: "const location = {lat: 10.850, lng: 106.772};",
@@ -122,7 +124,7 @@ function Contact() {
   const socialLinks = [
     {
       icon: Github,
-      label: "GITHUB",
+      label: t("contact.github"),
       link: "https://github.com/YuuuuBin2k5",
       color: "hover:text-purple-400",
       bg: "hover:bg-purple-500/30",
@@ -130,7 +132,7 @@ function Contact() {
     },
     {
       icon: Linkedin,
-      label: "LINKEDIN",
+      label: t("contact.linkedin"),
       link: "https://www.linkedin.com/in/anh-nh%E1%BA%ADt-0b3ba0353/",
       color: "hover:text-blue-400",
       bg: "hover:bg-blue-500/30",
@@ -138,7 +140,7 @@ function Contact() {
     },
     {
       icon: Facebook,
-      label: "FACEBOOK",
+      label: t("contact.facebook"),
       link: "https://www.facebook.com/YuuuBinn/",
       color: "hover:text-cyan-400",
       bg: "hover:bg-cyan-500/30",
@@ -166,7 +168,7 @@ function Contact() {
           {/* Simple Title */}
           <div className="inline-block mb-4 px-4 py-1 bg-black border-2 border-cyan-500">
             <span className="text-cyan-400 font-mono font-black text-xs tracking-widest">
-              CONTACT_PROTOCOL
+              {t("contact.title")}
             </span>
           </div>
           
@@ -180,7 +182,7 @@ function Contact() {
           
           <p className="text-green-400 font-mono text-sm max-w-2xl mx-auto">
             <span className="text-gray-500">// </span>
-            Ready to collaborate on innovative projects
+            {t("contact.subtitle")}
           </p>
         </div>
       </div>
@@ -280,7 +282,7 @@ function Contact() {
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-green-500/30">
                   <Server className="w-6 h-6 text-green-400 animate-pulse" />
                   <h3 className="text-xl font-black text-green-400 font-mono tracking-wider">
-                    SOCIAL_NETWORKS
+                    {t("contact.socialNetworks")}
                   </h3>
                   <div className="flex-1 h-0.5 bg-gradient-to-r from-green-500/50 to-transparent"></div>
                 </div>
@@ -320,7 +322,7 @@ function Contact() {
               <div className="bg-cyan-500 text-black px-6 py-3 font-mono font-black text-sm flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Terminal className="w-5 h-5" />
-                  <span>MESSAGE_PROTOCOL</span>
+                  <span>{t("contact.formTitle")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Lock className="w-4 h-4 animate-pulse" />
@@ -357,7 +359,7 @@ function Contact() {
                   <div>
                     <label className="block text-xs font-mono font-black text-cyan-400 mb-2 tracking-widest flex items-center gap-2">
                       <User className="w-4 h-4" />
-                      <span>USERNAME</span>
+                      <span>{t("contact.nameLabel")}</span>
                       <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -367,7 +369,7 @@ function Contact() {
                       onChange={handleChange}
                       required
                       className="w-full px-4 py-3 bg-black border-4 border-slate-700 focus:border-cyan-400 text-green-400 placeholder-slate-600 focus:outline-none transition-all font-mono font-bold"
-                      placeholder="root@user"
+                      placeholder={t("contact.namePlaceholder")}
                     />
                   </div>
 
@@ -375,7 +377,7 @@ function Contact() {
                   <div>
                     <label className="block text-xs font-mono font-black text-cyan-400 mb-2 tracking-widest flex items-center gap-2">
                       <Mail className="w-4 h-4" />
-                      <span>EMAIL_ADDRESS</span>
+                      <span>{t("contact.emailLabel")}</span>
                       <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -385,7 +387,7 @@ function Contact() {
                       onChange={handleChange}
                       required
                       className="w-full px-4 py-3 bg-black border-4 border-slate-700 focus:border-cyan-400 text-green-400 placeholder-slate-600 focus:outline-none transition-all font-mono font-bold"
-                      placeholder="user@domain.com"
+                      placeholder={t("contact.emailPlaceholder")}
                     />
                   </div>
 
@@ -393,7 +395,7 @@ function Contact() {
                   <div>
                     <label className="block text-xs font-mono font-black text-cyan-400 mb-2 tracking-widest flex items-center gap-2">
                       <Code className="w-4 h-4" />
-                      <span>SUBJECT_LINE</span>
+                      <span>{t("contact.subjectLabel")}</span>
                       <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -403,7 +405,7 @@ function Contact() {
                       onChange={handleChange}
                       required
                       className="w-full px-4 py-3 bg-black border-4 border-slate-700 focus:border-cyan-400 text-green-400 placeholder-slate-600 focus:outline-none transition-all font-mono font-bold"
-                      placeholder="PROJECT_COLLABORATION | INQUIRY | OTHER"
+                      placeholder={t("contact.subjectPlaceholder")}
                     />
                   </div>
 
@@ -411,7 +413,7 @@ function Contact() {
                   <div>
                     <label className="block text-xs font-mono font-black text-cyan-400 mb-2 tracking-widest flex items-center gap-2">
                       <MessageSquare className="w-4 h-4" />
-                      <span>MESSAGE_BODY</span>
+                      <span>{t("contact.messageLabel")}</span>
                       <span className="text-red-500">*</span>
                     </label>
                     <textarea
@@ -421,7 +423,7 @@ function Contact() {
                       required
                       rows="6"
                       className="w-full px-4 py-3 bg-black border-4 border-slate-700 focus:border-cyan-400 text-green-400 placeholder-slate-600 focus:outline-none transition-all resize-none font-mono"
-                      placeholder="// Enter your message here..."
+                      placeholder={t("contact.messagePlaceholder")}
                     ></textarea>
                   </div>
 
@@ -436,12 +438,12 @@ function Contact() {
                       {isSubmitting ? (
                         <>
                           <div className="w-6 h-6 border-4 border-black/30 border-t-black animate-spin"></div>
-                          TRANSMITTING...
+                          {t("contact.sending")}
                         </>
                       ) : (
                         <>
                           <Send className="w-6 h-6" />
-                          SEND_MESSAGE
+                          {t("contact.sendButton")}
                           <Zap className="w-6 h-6 animate-pulse" />
                         </>
                       )}
@@ -455,15 +457,15 @@ function Contact() {
                     <div className="flex items-center gap-2 text-green-400">
                       <Clock className="w-4 h-4 animate-pulse" />
                       <div>
-                        <div className="text-gray-500">RESPONSE_TIME:</div>
-                        <div className="font-bold">&lt; 24 HOURS</div>
+                        <div className="text-gray-500">{t("contact.responseTime")}</div>
+                        <div className="font-bold">{t("contact.responseValue")}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-cyan-400">
                       <Activity className="w-4 h-4 animate-pulse" />
                       <div>
-                        <div className="text-gray-500">AVAILABILITY:</div>
-                        <div className="font-bold">24/7 ONLINE</div>
+                        <div className="text-gray-500">{t("contact.availability")}</div>
+                        <div className="font-bold">{t("contact.availabilityValue")}</div>
                       </div>
                     </div>
                   </div>

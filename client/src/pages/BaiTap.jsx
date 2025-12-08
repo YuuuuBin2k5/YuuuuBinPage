@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, memo } from "react";
+import { useTranslation } from "../hooks/useTranslation";
 import { useAuth } from "../contexts/AuthContext";
 import { weeksAPI, exercisesAPI, baiTapAPI } from "../services";
 import { useViewedExercises } from "../hooks/useViewedExercises";
@@ -16,7 +17,7 @@ import {
 } from "lucide-react";
 
 // Memoized WeekButton component to prevent unnecessary re-renders
-const WeekButton = memo(({ week, isActive, exerciseCount, onClick }) => (
+const WeekButton = memo(({ week, isActive, exerciseCount, onClick, exercisesLabel }) => (
   <button
     onClick={onClick}
     className={`w-full text-left p-4 rounded transition-all duration-300 border-2 ${
@@ -44,7 +45,7 @@ const WeekButton = memo(({ week, isActive, exerciseCount, onClick }) => (
           {week.title}
         </h3>
         <p className="text-xs text-slate-400">
-          {exerciseCount} bài tập
+          {exerciseCount} {exercisesLabel}
         </p>
       </div>
       {isActive && (
@@ -57,6 +58,7 @@ const WeekButton = memo(({ week, isActive, exerciseCount, onClick }) => (
 WeekButton.displayName = 'WeekButton';
 
 function BaiTap() {
+  const { t } = useTranslation();
   const { isAdmin } = useAuth();
   const { markAsViewed } = useViewedExercises();
   const [weeks, setWeeks] = useState([]);
@@ -143,10 +145,10 @@ function BaiTap() {
         await weeksAPI.create(weekData);
         setShowCreateForm(false);
         loadWeeks();
-        alert("Tuần học đã được tạo thành công!");
+        alert(t("exercises.createWeekSuccess"));
       } catch (error) {
         console.error("Error creating week:", error);
-        alert("Có lỗi xảy ra khi tạo tuần học!");
+        alert(t("exercises.createWeekError"));
       } finally {
         setLoading(false);
       }
@@ -168,10 +170,10 @@ function BaiTap() {
         // Nếu có selectedExercise thì update, không thì create
         if (selectedExercise) {
           await exercisesAPI.update(selectedExercise.id, exerciseData);
-          alert("Bài tập đã được cập nhật thành công!");
+          alert(t("exercises.updateExerciseSuccess"));
         } else {
           await exercisesAPI.create(exerciseData);
-          alert("Bài tập đã được thêm thành công!");
+          alert(t("exercises.createExerciseSuccess"));
         }
 
         setShowExerciseForm(false);
@@ -180,7 +182,7 @@ function BaiTap() {
         loadExercises();
       } catch (error) {
         console.error("Error saving exercise:", error);
-        alert("Có lỗi xảy ra khi lưu bài tập!");
+        alert(t("exercises.saveExerciseError"));
       } finally {
         setLoading(false);
       }
@@ -290,10 +292,10 @@ function BaiTap() {
             {/* Sidebar Header */}
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 mb-2">
-                Lộ Trình Học
+                {t("exercises.roadmap")}
               </h2>
               <p className="text-slate-400 text-sm">
-                {weeks.length} tuần • {exercises.length} bài tập
+                {weeks.length} {t("exercises.weeksCount")} • {exercises.length} {t("exercises.exercisesCount")}
               </p>
             </div>
 
@@ -304,7 +306,7 @@ function BaiTap() {
                 className="w-full mb-4 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-emerald-500/20"
               >
                 <Plus className="w-4 h-4" />
-                Thêm Tuần Mới
+                {t("exercises.addNewWeek")}
               </button>
             )}
 
@@ -312,7 +314,7 @@ function BaiTap() {
             {weeks.length === 0 ? (
               <div className="text-center py-12">
                 <Brain className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-500 text-sm">Chưa có tuần học nào</p>
+                <p className="text-slate-500 text-sm">{t("exercises.noWeeks")}</p>
               </div>
             ) : (
               <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar pr-2">
@@ -341,10 +343,10 @@ function BaiTap() {
                           !expandedWeek ? "text-white" : "text-slate-300"
                         }`}
                       >
-                        Tất Cả Bài Tập
+                        {t("exercises.allExercises")}
                       </h3>
                       <p className="text-xs text-slate-400">
-                        {exercises.length} bài tập
+                        {exercises.length} {t("exercises.exercisesCount")}
                       </p>
                     </div>
                   </div>
@@ -361,6 +363,7 @@ function BaiTap() {
                       isActive={isActive}
                       exerciseCount={exerciseCountsByWeek[week.id] || 0}
                       onClick={() => handleWeekSelect(week.id)}
+                      exercisesLabel={t("exercises.exercisesCount")}
                     />
                   );
                 })}
@@ -382,10 +385,10 @@ function BaiTap() {
               }
               className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none cursor-pointer"
             >
-              <option value="">Tất Cả Bài Tập ({exercises.length})</option>
+              <option value="">{t("exercises.allExercises")} ({exercises.length})</option>
               {weeks.map((week) => (
                 <option key={week.id} value={week.id}>
-                  {week.title} ({exerciseCountsByWeek[week.id] || 0} bài tập)
+                  {week.title} ({exerciseCountsByWeek[week.id] || 0} {t("exercises.exercisesCount")})
                 </option>
               ))}
             </select>
@@ -422,18 +425,18 @@ function BaiTap() {
                           )}
                         </span>
                         <span className="px-3 py-1.5 bg-emerald-500/20 text-emerald-400 rounded-lg text-sm font-medium">
-                          {currentWeekExercises.length} bài tập
+                          {currentWeekExercises.length} {t("exercises.exercisesCount")}
                         </span>
                       </div>
                     </>
                   ) : (
                     <>
                       <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-300 mb-2">
-                        Tất Cả Bài Tập
+                        {t("exercises.allExercises")}
                       </h1>
                       <p className="text-slate-300">
-                        Khám phá và thử thách bản thân với {exercises.length}{" "}
-                        bài tập từ {weeks.length} tuần học
+                        {t("exercises.exploreAll")} {exercises.length}{" "}
+                        {t("exercises.exercisesCount")} {t("exercises.from")} {weeks.length} {t("exercises.weekStudy")}
                       </p>
                     </>
                   )}
@@ -449,7 +452,7 @@ function BaiTap() {
                     className="ml-4 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-medium rounded-xl transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-blue-500/20"
                   >
                     <Plus className="w-4 h-4" />
-                    Thêm Bài Tập
+                    {t("exercises.addExercise")}
                   </button>
                 )}
               </div>
@@ -465,12 +468,12 @@ function BaiTap() {
                 </div>
               </div>
               <h3 className="text-2xl font-bold text-slate-300 mb-2">
-                Chưa có bài tập nào
+                {t("exercises.noExercises")}
               </h3>
               <p className="text-slate-400 mb-6">
                 {currentWeek
-                  ? "Tuần học này chưa có bài tập nào. Thêm bài tập đầu tiên để bắt đầu!"
-                  : "Chọn một tuần học bên trái để xem bài tập hoặc thêm bài tập mới."}
+                  ? t("exercises.noExercisesDesc")
+                  : t("exercises.selectWeek")}
               </p>
               {isAdmin && currentWeek && (
                 <button
@@ -481,7 +484,7 @@ function BaiTap() {
                   className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-blue-500/20"
                 >
                   <Plus className="w-4 h-4" />
-                  Thêm Bài Tập Đầu Tiên
+                  {t("exercises.addFirstExercise")}
                 </button>
               )}
             </div>
@@ -507,7 +510,7 @@ function BaiTap() {
                 <div className="mt-8 flex items-center justify-center gap-4 bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-2 border-blue-600/25 rounded p-4 backdrop-blur-xl">
                   {/* Page Info */}
                   <div className="text-slate-400 text-sm font-medium">
-                    Trang{" "}
+                    {t("exercises.page")}{" "}
                     <span className="text-blue-400 font-bold">{currentPage}</span>
                     {" / "}
                     <span className="text-slate-300">{totalPages}</span>

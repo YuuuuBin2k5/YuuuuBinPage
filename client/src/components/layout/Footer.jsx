@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useTranslation } from "../../hooks/useTranslation";
 import logo from "../../assets/logo.svg";
 import {
@@ -42,10 +43,10 @@ function Footer() {
 
   const quickLinks = [
     { name: t("nav.about"), href: "/" },
-    { name: t("nav.resume"), href: "./myinfomation" },
-    { name: t("nav.projects"), href: "./myproject" },
-    { name: t("nav.exercises"), href: "./baitap" },
-    { name: t("nav.contact"), href: "./contact" },
+    { name: t("nav.resume"), href: "/myinfomation" },
+    { name: t("nav.projects"), href: "/myproject" },
+    { name: t("nav.exercises"), href: "/baitap" },
+    { name: t("nav.contact"), href: "/contact" },
   ];
 
   return (
@@ -125,13 +126,13 @@ function Footer() {
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.name}>
-                  <a
-                    href={link.href}
+                  <Link
+                    to={link.href}
                     className="text-slate-400 hover:text-purple-400 text-sm transition-colors duration-200 flex items-center gap-2 group"
                   >
                     <span className="w-0 group-hover:w-4 h-px bg-gradient-to-r from-purple-400 to-transparent transition-all duration-300" />
                     {link.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

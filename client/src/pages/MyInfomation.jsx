@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "../hooks/useTranslation";
 import {
   Code,
   Database,
@@ -25,6 +26,7 @@ import {
 } from "lucide-react";
 
 function MyInfomation() {
+  const { t } = useTranslation();
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeSection, setActiveSection] = useState("skills");
 
@@ -131,30 +133,25 @@ function MyInfomation() {
   // Education
   const education = [
     {
-      degree: "Cử Nhân Công Nghệ Thông Tin",
-      school: "Đại Học Sư Phạm Kỹ Thuật TP.HCM",
-      period: "2023 - 2027",
-      currentYear: "Năm 3",
-      status: "Đang theo học",
+      degree: t("resume.degree"),
+      school: t("resume.university"),
+      period: t("resume.period"),
+      currentYear: t("resume.currentYear"),
+      status: t("resume.status"),
     },
   ];
 
   // Career Objective
-  const objective = "Sinh viên năm 3 ngành Công Nghệ Thông Tin với đam mê phát triển phần mềm. Tìm kiếm cơ hội thực tập Full Stack Developer để áp dụng kiến thức về React, Spring Boot, và các công nghệ web hiện đại vào dự án thực tế. Mong muốn học hỏi và phát triển kỹ năng lập trình trong môi trường chuyên nghiệp.";
+  const objective = t("resume.careerObjectiveText");
 
   // Languages
   const languages = [
-    { name: "Tiếng Việt", level: "Native" },
-    { name: "Tiếng Anh", level: "Đọc hiểu tài liệu kỹ thuật" },
+    { name: t("resume.vietnamese"), level: t("resume.nativeLevel") },
+    { name: t("resume.english"), level: t("resume.technicalReading") },
   ];
 
   // Soft Skills
-  const softSkills = [
-    "Tự học và nghiên cứu công nghệ mới",
-    "Làm việc nhóm hiệu quả",
-    "Giải quyết vấn đề logic",
-    "Quản lý thời gian tốt",
-  ];
+  const softSkills = t("resume.softSkillsList");
 
   const getColorClass = (color) => {
     const colors = {
@@ -185,7 +182,7 @@ function MyInfomation() {
           <div className="text-center mb-8">
             <div className="inline-block mb-4 px-4 py-1 bg-black border-2 border-green-500">
               <span className="text-green-400 font-mono font-black text-xs tracking-widest">
-                RESUME_PROTOCOL
+                {t("resume.title")}
               </span>
             </div>
             
@@ -195,7 +192,7 @@ function MyInfomation() {
             
             <p className="text-cyan-400 font-mono text-xl font-bold mb-6">
               <span className="text-gray-500">// </span>
-              {personalInfo.title}
+              {t("resume.fullStackDev")}
             </p>
 
             {/* Contact Info - Compact */}
@@ -261,7 +258,7 @@ function MyInfomation() {
           <div className="text-center mb-8">
             <button className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-green-600 to-cyan-600 hover:from-green-500 hover:to-cyan-500 text-black font-mono font-black border-4 border-green-400 transition-all duration-300 hover:scale-105">
               <Download className="w-5 h-5" />
-              DOWNLOAD_CV.pdf
+              {t("resume.downloadCV")}
               <Zap className="w-5 h-5 animate-pulse" />
             </button>
           </div>
@@ -283,7 +280,7 @@ function MyInfomation() {
                     : "bg-black text-slate-400 border-slate-700 hover:border-cyan-500 hover:text-cyan-400"
                 }`}
               >
-                {section.toUpperCase()}
+                {t(`resume.${section}`)}
               </button>
             ))}
           </div>
@@ -299,7 +296,7 @@ function MyInfomation() {
                     {category === "database" && <Database className="w-6 h-6 text-blue-400" />}
                     {category === "tools" && <Terminal className="w-6 h-6 text-purple-400" />}
                     <h3 className="text-xl font-black text-white font-mono tracking-wider uppercase">
-                      {category}
+                      {t(`resume.${category}`)}
                     </h3>
                   </div>
 
@@ -335,7 +332,7 @@ function MyInfomation() {
               <div className="bg-black border-4 border-cyan-500/50 p-8">
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-cyan-500/30">
                   <Target className="w-6 h-6 text-cyan-400" />
-                  <h3 className="text-2xl font-black text-white font-mono">MỤC TIÊU NGHỀ NGHIỆP</h3>
+                  <h3 className="text-2xl font-black text-white font-mono">{t("resume.careerObjective")}</h3>
                 </div>
                 <p className="text-slate-300 leading-relaxed text-lg">{objective}</p>
               </div>
@@ -344,7 +341,7 @@ function MyInfomation() {
               <div className="bg-black border-4 border-green-500/50 p-8">
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-green-500/30">
                   <Star className="w-6 h-6 text-green-400" />
-                  <h3 className="text-2xl font-black text-white font-mono">KỸ NĂNG MỀM</h3>
+                  <h3 className="text-2xl font-black text-white font-mono">{t("resume.softSkills")}</h3>
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   {softSkills.map((skill, i) => (
@@ -360,7 +357,7 @@ function MyInfomation() {
               <div className="bg-black border-4 border-purple-500/50 p-8">
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b-2 border-purple-500/30">
                   <Globe className="w-6 h-6 text-purple-400" />
-                  <h3 className="text-2xl font-black text-white font-mono">NGÔN NGỮ</h3>
+                  <h3 className="text-2xl font-black text-white font-mono">{t("resume.languages")}</h3>
                 </div>
                 <div className="space-y-4">
                   {languages.map((lang, i) => (
@@ -442,13 +439,13 @@ function MyInfomation() {
                       <div className="flex items-center gap-3">
                         <TrendingUp className="w-6 h-6 text-green-400" />
                         <span className="text-slate-300 font-mono">
-                          Chuyên ngành: <span className="text-green-400 font-bold">Full Stack Development</span>
+                          {t("resume.major")} <span className="text-green-400 font-bold">{t("resume.majorValue")}</span>
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
                         <Award className="w-6 h-6 text-yellow-400" />
                         <span className="text-slate-300 font-mono">
-                          Tốt nghiệp dự kiến: <span className="text-yellow-400 font-bold">2027</span>
+                          {t("resume.expectedGraduation")} <span className="text-yellow-400 font-bold">{t("resume.expectedGraduationValue")}</span>
                         </span>
                       </div>
                     </div>

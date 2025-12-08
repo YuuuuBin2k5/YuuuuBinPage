@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useTranslation } from "../hooks/useTranslation";
 import { FONT_COINY } from "../utils/fonts";
 import { useAuth } from "../contexts/AuthContext";
 import { useData } from "../contexts/DataContext";
@@ -30,6 +31,7 @@ import ProjectCard from "../components/projects/ProjectCard";
 import ProjectDetailModal from "../components/projects/ProjectDetailModal";
 
 function MyProject() {
+  const { t } = useTranslation();
   const { isAdmin } = useAuth();
   const {
     projects: cachedProjects,
@@ -116,7 +118,7 @@ function MyProject() {
 
   const handleDeleteProject = useCallback(
     async (id) => {
-      if (!confirm("⚠️ Bạn có chắc chắn muốn xóa dự án này không?")) return;
+      if (!confirm(t("projects.confirmDelete"))) return;
 
       try {
         await projectAPI.delete(id);
@@ -293,12 +295,12 @@ function MyProject() {
                 <div className="hidden md:flex items-center gap-3">
                   <div className="px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded-sm">
                     <span className="text-[10px] font-mono text-blue-400 uppercase tracking-wide">
-                      {filteredProjects.length} Dự Án
+                      {filteredProjects.length} {t("projects.projectsCount")}
                     </span>
                   </div>
                   <div className="px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 rounded-sm">
                     <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-wide">
-                      {projects.filter(p => p.status === 'Completed').length} Hoàn Thành
+                      {projects.filter(p => p.status === 'Completed').length} {t("projects.completed")}
                     </span>
                   </div>
                 </div>
@@ -306,9 +308,10 @@ function MyProject() {
 
               {/* Title with Glitch Effect on Hover */}
               <h1 className="text-3xl md:text-4xl font-bold mb-2 font-mono text-left group cursor-default animate-in fade-in slide-in-from-left-4 duration-700" style={{ animationDelay: '0.2s' }}>
-                <span className="text-white group-hover:animate-pulse">Dự Án</span>
+                <span className="text-white group-hover:animate-pulse">{t("projects.titlePart1")}</span>
+                {" "}
                 <span className="relative inline-block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                  <span className="relative z-10"> Của Tôi</span>
+                  <span className="relative z-10">{t("projects.titlePart2")}</span>
                   {/* Glow effect */}
                   <span className="absolute inset-0 bg-gradient-to-r from-blue-400 to-cyan-400 blur-lg opacity-0 group-hover:opacity-50 transition-opacity duration-300"></span>
                 </span>
@@ -382,7 +385,7 @@ function MyProject() {
             <div className="relative flex-1 max-w-md">
               <input
                 type="text"
-                placeholder="🔍 Tìm kiếm dự án..."
+                placeholder={t("projects.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full px-4 py-3 bg-slate-900/50 border border-purple-400/30 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
@@ -416,7 +419,7 @@ function MyProject() {
                 className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-mono font-semibold rounded transition-all duration-300 shadow-lg shadow-emerald-500/25 flex items-center gap-2"
               >
                 <Plus className="w-5 h-5" />
-                Tạo Dự Án Mới
+                {t("projects.createNew")}
               </button>
             )}
           </div>
@@ -453,10 +456,10 @@ function MyProject() {
               <div className="absolute -inset-2 bg-purple-500/20 rounded-full blur-lg"></div>
             </div>
             <h3 className="text-2xl font-bold text-slate-300 mb-2">
-              Không tìm thấy dự án
+              {t("projects.noProjects")}
             </h3>
             <p className="text-slate-400">
-              Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm
+              {t("projects.noProjectsDesc")}
             </p>
           </div>
         )}
