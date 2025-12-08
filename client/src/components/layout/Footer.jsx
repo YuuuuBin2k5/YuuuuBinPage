@@ -42,10 +42,10 @@ function Footer() {
 
   const quickLinks = [
     { name: t("nav.about"), href: "/" },
-    { name: t("nav.resume"), href: "/myinfomation" },
-    { name: t("nav.projects"), href: "/myproject" },
-    { name: t("nav.exercises"), href: "/baitap" },
-    { name: t("nav.contact"), href: "/contact" },
+    { name: t("nav.resume"), href: "./myinfomation" },
+    { name: t("nav.projects"), href: "./myproject" },
+    { name: t("nav.exercises"), href: "./baitap" },
+    { name: t("nav.contact"), href: "./contact" },
   ];
 
   return (
