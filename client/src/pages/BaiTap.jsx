@@ -14,46 +14,89 @@ import {
   Flame,
   Plus,
   Calendar,
+  BookOpen,
+  Code2,
+  Database,
+  Globe,
+  Layers,
+  Zap,
+  Target,
+  Trophy,
+  Sparkles,
+  GraduationCap,
+  Lightbulb,
+  Cpu,
+  Server,
+  Shield,
+  Star,
+  Library,
 } from "lucide-react";
 
+// Function to get icon based on week number or title
+const getWeekIcon = (weekTitle, weekId) => {
+  const title = weekTitle.toLowerCase();
+  
+  // Match by keywords in title
+  if (title.includes('html') || title.includes('css')) return BookOpen;
+  if (title.includes('javascript') || title.includes('js')) return Code2;
+  if (title.includes('database') || title.includes('sql') || title.includes('jdbc')) return Database;
+  if (title.includes('api') || title.includes('rest')) return Globe;
+  if (title.includes('jpa') || title.includes('hibernate')) return Layers;
+  if (title.includes('servlet') || title.includes('jsp')) return Zap;
+  if (title.includes('session') || title.includes('cookie')) return Shield;
+  if (title.includes('jstl') || title.includes('el')) return Target;
+  if (title.includes('email') || title.includes('mail')) return Sparkles;
+  if (title.includes('deploy') || title.includes('hosting')) return Server;
+  if (title.includes('advanced') || title.includes('nâng cao')) return Trophy;
+  if (title.includes('final') || title.includes('cuối')) return Star;
+  
+  // Fallback: cycle through icons based on ID
+  const icons = [GraduationCap, Lightbulb, Cpu, Brain, Rocket, Flame];
+  return icons[weekId % icons.length];
+};
+
 // Memoized WeekButton component to prevent unnecessary re-renders
-const WeekButton = memo(({ week, isActive, exerciseCount, onClick, exercisesLabel }) => (
-  <button
-    onClick={onClick}
-    className={`w-full text-left p-4 rounded transition-all duration-300 border-2 ${
-      isActive
-        ? "bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-blue-500/60 shadow-lg"
-        : "bg-slate-800/30 border-slate-700/30 hover:border-blue-500/60 hover:bg-slate-800/50"
-    }`}
-  >
-    <div className="flex items-center gap-3">
-      <div
-        className={`w-10 h-10 rounded flex items-center justify-center ${
-          isActive
-            ? "bg-gradient-to-br from-blue-500 to-cyan-500"
-            : "bg-slate-700/50"
-        }`}
-      >
-        <Brain className="w-5 h-5 text-white" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <h3
-          className={`font-bold truncate ${
-            isActive ? "text-white" : "text-slate-300"
+const WeekButton = memo(({ week, isActive, exerciseCount, onClick, exercisesLabel }) => {
+  const IconComponent = getWeekIcon(week.title, week.id);
+  
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full text-left p-4 rounded transition-all duration-300 border-2 ${
+        isActive
+          ? "bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-blue-500/60 shadow-lg"
+          : "bg-slate-800/30 border-slate-700/30 hover:border-blue-500/60 hover:bg-slate-800/50"
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          className={`w-10 h-10 rounded flex items-center justify-center ${
+            isActive
+              ? "bg-gradient-to-br from-blue-500 to-cyan-500"
+              : "bg-slate-700/50"
           }`}
         >
-          {week.title}
-        </h3>
-        <p className="text-xs text-slate-400">
-          {exerciseCount} {exercisesLabel}
-        </p>
+          <IconComponent className="w-5 h-5 text-white" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3
+            className={`font-bold truncate ${
+              isActive ? "text-white" : "text-slate-300"
+            }`}
+          >
+            {week.title}
+          </h3>
+          <p className="text-xs text-slate-400">
+            {exerciseCount} {exercisesLabel}
+          </p>
+        </div>
+        {isActive && (
+          <div className="w-2 h-2 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full animate-pulse"></div>
+        )}
       </div>
-      {isActive && (
-        <div className="w-2 h-2 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full animate-pulse"></div>
-      )}
-    </div>
-  </button>
-));
+    </button>
+  );
+});
 
 WeekButton.displayName = 'WeekButton';
 
@@ -335,7 +378,7 @@ function BaiTap() {
                           : "bg-slate-700/50"
                       }`}
                     >
-                      <Rocket className="w-5 h-5 text-white" />
+                      <Library className="w-5 h-5 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3
