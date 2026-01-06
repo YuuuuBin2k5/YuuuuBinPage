@@ -1,143 +1,50 @@
-import { getCachedData, setCachedData, clearCache } from "./cacheUtils";
+// Service cho Projects - Sử dụng dữ liệu cứng (không cần backend)
+import { projectsData } from "../data/projectsData";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com";
-
-// Project API Functions
+// Project API Functions - Dữ liệu cứng
 export const projectAPI = {
-  // Get all projects with caching
+  // Get all projects
   getAll: async () => {
-    const cacheKey = "projects_all";
-    const cachedData = getCachedData(cacheKey);
-
-    if (cachedData) {
-      return cachedData;
-    }
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/projects`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to fetch projects");
-
-      const data = await response.json();
-      setCachedData(cacheKey, data);
-      return data;
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-      throw error;
-    }
+    return Promise.resolve([...projectsData]);
   },
 
   // Get project by ID
   getById: async (id) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/projects/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to fetch project");
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching project:", error);
-      throw error;
-    }
+    const project = projectsData.find((p) => p.id === id);
+    if (!project) throw new Error("Project not found");
+    return Promise.resolve({ ...project });
   },
 
   // Get projects by category
   getByCategory: async (category) => {
-    const cacheKey = `projects_category_${category}`;
-    const cachedData = getCachedData(cacheKey);
-
-    if (cachedData) {
-      return cachedData;
-    }
-
-    try {
-      const response = await fetch(
-        `${API_BASE_URL}/projects/category/${category}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (!response.ok) throw new Error("Failed to fetch projects by category");
-
-      const data = await response.json();
-      setCachedData(cacheKey, data);
-      return data;
-    } catch (error) {
-      console.error("Error fetching projects by category:", error);
-      throw error;
-    }
+    const filtered = projectsData.filter((p) => p.category === category);
+    return Promise.resolve([...filtered]);
   },
 
-  // Create new project
+  // Get featured projects
+  getFeatured: async () => {
+    const featured = projectsData.filter((p) => p.featured);
+    return Promise.resolve([...featured]);
+  },
+
+  // Create (disabled in hardcoded mode)
   create: async (projectData) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/projects`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(projectData),
-      });
-      if (!response.ok) throw new Error("Failed to create project");
-
-      // Clear cache after successful create
-      clearCache("projects_all");
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error creating project:", error);
-      throw error;
-    }
+    console.log("Create project (hardcoded mode):", projectData);
+    alert("Chế độ dữ liệu cứng - Không thể thêm project. Vui lòng bật backend.");
+    throw new Error("Hardcoded mode - Cannot create project");
   },
 
-  // Update project
+  // Update (disabled)
   update: async (id, projectData) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/projects/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(projectData),
-      });
-      if (!response.ok) throw new Error("Failed to update project");
-
-      // Clear cache after successful update
-      clearCache("projects_all");
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error updating project:", error);
-      throw error;
-    }
+    console.log("Update project (hardcoded mode):", id, projectData);
+    alert("Chế độ dữ liệu cứng - Không thể cập nhật project. Vui lòng bật backend.");
+    throw new Error("Hardcoded mode - Cannot update project");
   },
 
-  // Delete project
+  // Delete (disabled)
   delete: async (id) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to delete project");
-
-      // Clear cache after successful delete
-      clearCache("projects_all");
-
-      return true;
-    } catch (error) {
-      console.error("Error deleting project:", error);
-      throw error;
-    }
+    console.log("Delete project (hardcoded mode):", id);
+    alert("Chế độ dữ liệu cứng - Không thể xóa project. Vui lòng bật backend.");
+    throw new Error("Hardcoded mode - Cannot delete project");
   },
 };

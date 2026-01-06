@@ -1,149 +1,59 @@
-import { getCachedData, setCachedData, clearCache } from "./cacheUtils";
+// Service cho Weeks - Sử dụng dữ liệu cứng (không cần backend)
+import { weeksData } from "../data/baitapData";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com";
-
-// Weeks API Functions
+// Weeks API Functions - Dữ liệu cứng
 export const weeksAPI = {
   // Get all weeks
   getAll: async () => {
-    const cacheKey = "weeks_all";
-    const cachedData = getCachedData(cacheKey);
-
-    if (cachedData) {
-      return cachedData;
-    }
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/weeks`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to fetch weeks");
-
-      const data = await response.json();
-      setCachedData(cacheKey, data);
-      return data;
-    } catch (error) {
-      console.error("Error fetching weeks:", error);
-      throw error;
-    }
+    return Promise.resolve([...weeksData]);
   },
 
   // Get week by ID
   getById: async (id) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/weeks/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to fetch week");
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching week:", error);
-      throw error;
-    }
+    const week = weeksData.find((w) => w.id === id);
+    if (!week) throw new Error("Week not found");
+    return Promise.resolve({ ...week });
   },
 
-  // Get current weeks
+  // Get current weeks (weeks that are currently active based on date)
   getCurrent: async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/weeks/current`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to fetch current weeks");
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching current weeks:", error);
-      throw error;
-    }
+    const now = new Date();
+    const current = weeksData.filter((w) => {
+      const start = new Date(w.startDate);
+      const end = new Date(w.endDate);
+      return now >= start && now <= end;
+    });
+    return Promise.resolve([...current]);
   },
 
   // Get upcoming weeks
   getUpcoming: async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/weeks/upcoming`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to fetch upcoming weeks");
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching upcoming weeks:", error);
-      throw error;
-    }
+    const now = new Date();
+    const upcoming = weeksData.filter((w) => {
+      const start = new Date(w.startDate);
+      return start > now;
+    });
+    return Promise.resolve([...upcoming]);
   },
 
-  // Create new week
+  // Create new week (chỉ log, không thực sự thêm)
   create: async (weekData) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/weeks`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(weekData),
-      });
-      if (!response.ok) throw new Error("Failed to create week");
-
-      // Clear cache after successful create
-      clearCache("weeks_all");
-      clearCache("baitap_all_data");
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error creating week:", error);
-      throw error;
-    }
+    console.log("Create week (hardcoded mode):", weekData);
+    alert("Chế độ dữ liệu cứng - Không thể thêm tuần mới. Vui lòng bật backend để sử dụng tính năng này.");
+    throw new Error("Hardcoded mode - Cannot create week");
   },
 
-  // Update week
+  // Update week (chỉ log)
   update: async (id, weekData) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/weeks/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(weekData),
-      });
-      if (!response.ok) throw new Error("Failed to update week");
-
-      // Clear cache after successful update
-      clearCache("weeks_all");
-      clearCache("baitap_all_data");
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error updating week:", error);
-      throw error;
-    }
+    console.log("Update week (hardcoded mode):", id, weekData);
+    alert("Chế độ dữ liệu cứng - Không thể cập nhật tuần. Vui lòng bật backend để sử dụng tính năng này.");
+    throw new Error("Hardcoded mode - Cannot update week");
   },
 
-  // Delete week
+  // Delete week (chỉ log)
   delete: async (id) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/weeks/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to delete week");
-
-      // Clear cache after successful delete
-      clearCache("weeks_all");
-      clearCache("baitap_all_data");
-
-      return true;
-    } catch (error) {
-      console.error("Error deleting week:", error);
-      throw error;
-    }
+    console.log("Delete week (hardcoded mode):", id);
+    alert("Chế độ dữ liệu cứng - Không thể xóa tuần. Vui lòng bật backend để sử dụng tính năng này.");
+    throw new Error("Hardcoded mode - Cannot delete week");
   },
 };

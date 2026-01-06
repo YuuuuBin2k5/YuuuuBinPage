@@ -1,114 +1,44 @@
-import { getCachedData, setCachedData, clearCache } from "./cacheUtils";
+// Service cho Tech Stack - Sử dụng dữ liệu cứng (không cần backend)
+import { techStacksData } from "../data/projectsData";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "https://server-portfolio-dymu.onrender.com";
-
-// Tech Stack API Functions
+// Tech Stack API Functions - Dữ liệu cứng
 export const techStackAPI = {
   // Get all tech stacks
   getAll: async () => {
-    const cacheKey = "tech_stacks_all";
-    const cachedData = getCachedData(cacheKey);
-
-    if (cachedData) {
-      return cachedData;
-    }
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/tech-stacks`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to fetch tech stacks");
-
-      const data = await response.json();
-      setCachedData(cacheKey, data);
-      return data;
-    } catch (error) {
-      console.error("Error fetching tech stacks:", error);
-      throw error;
-    }
+    return Promise.resolve([...techStacksData]);
   },
 
   // Get tech stack by ID
   getById: async (id) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/tech-stacks/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to fetch tech stack");
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching tech stack:", error);
-      throw error;
-    }
+    const tech = techStacksData.find((t) => t.id === id);
+    if (!tech) throw new Error("Tech stack not found");
+    return Promise.resolve({ ...tech });
   },
 
-  // Create new tech stack
+  // Get by category
+  getByCategory: async (category) => {
+    const filtered = techStacksData.filter((t) => t.category === category);
+    return Promise.resolve([...filtered]);
+  },
+
+  // Create (disabled)
   create: async (techStackData) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/tech-stacks`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(techStackData),
-      });
-      if (!response.ok) throw new Error("Failed to create tech stack");
-
-      // Clear cache after successful create
-      clearCache("tech_stacks_all");
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error creating tech stack:", error);
-      throw error;
-    }
+    console.log("Create tech stack (hardcoded mode):", techStackData);
+    alert("Chế độ dữ liệu cứng - Không thể thêm tech stack. Vui lòng bật backend.");
+    throw new Error("Hardcoded mode - Cannot create tech stack");
   },
 
-  // Update tech stack
+  // Update (disabled)
   update: async (id, techStackData) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/tech-stacks/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(techStackData),
-      });
-      if (!response.ok) throw new Error("Failed to update tech stack");
-
-      // Clear cache after successful update
-      clearCache("tech_stacks_all");
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error updating tech stack:", error);
-      throw error;
-    }
+    console.log("Update tech stack (hardcoded mode):", id, techStackData);
+    alert("Chế độ dữ liệu cứng - Không thể cập nhật tech stack. Vui lòng bật backend.");
+    throw new Error("Hardcoded mode - Cannot update tech stack");
   },
 
-  // Delete tech stack
+  // Delete (disabled)
   delete: async (id) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/tech-stacks/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) throw new Error("Failed to delete tech stack");
-
-      // Clear cache after successful delete
-      clearCache("tech_stacks_all");
-
-      return true;
-    } catch (error) {
-      console.error("Error deleting tech stack:", error);
-      throw error;
-    }
+    console.log("Delete tech stack (hardcoded mode):", id);
+    alert("Chế độ dữ liệu cứng - Không thể xóa tech stack. Vui lòng bật backend.");
+    throw new Error("Hardcoded mode - Cannot delete tech stack");
   },
 };

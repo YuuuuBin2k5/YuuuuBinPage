@@ -1,5 +1,4 @@
-// Legacy API file - now re-exports from organized service files
-// This file is kept for backward compatibility
+// API file - Chế độ dữ liệu cứng (không cần backend)
 
 // Re-export all services
 export { projectAPI } from "./projectService";
@@ -7,7 +6,7 @@ export { weeksAPI } from "./weekService";
 export { exercisesAPI } from "./exerciseService";
 export { techStackAPI } from "./techStackService";
 
-// Export cache utilities for advanced usage
+// Export cache utilities (giữ lại để tương thích)
 export {
   getCachedData,
   setCachedData,
@@ -15,10 +14,9 @@ export {
   clearCacheByPattern,
 } from "./cacheUtils";
 
-// API Configuration
+// API Configuration (không sử dụng trong chế độ hardcoded)
 export const API_CONFIG = {
-  BASE_URL:
-    import.meta.env.VITE_API_URL ||
-    "https://server-portfolio-dymu.onrender.com",
-  CACHE_DURATION: 5 * 60 * 1000, // 5 minutes
+  BASE_URL: "", // Không cần backend
+  CACHE_DURATION: 5 * 60 * 1000,
+  MODE: "HARDCODED", // Đánh dấu đang dùng dữ liệu cứng
 };
