@@ -46,8 +46,8 @@ const StatsGrid = () => {
       number: "HCMUTE",
       label: isEn ? "Software Engineering" : "Kỹ Thuật Phần Mềm",
       description: isEn
-        ? `3rd Year Student • GPA ${profileData.gpa}/4.0`
-        : `Sinh viên năm 3 • GPA ${profileData.gpa}/4.0`,
+        ? `4th Year Student • GPA ${profileData.gpa}`
+        : `Sinh viên năm 4 • GPA ${profileData.gpa}`,
       icon: GraduationCap,
       iconBg: "bg-purple-500/10 border-purple-500/30 text-purple-400",
       glowColor: "group-hover:border-purple-500/40",
@@ -101,3 +101,4 @@ const StatsGrid = () => {
 };
 
 export default StatsGrid;
+
