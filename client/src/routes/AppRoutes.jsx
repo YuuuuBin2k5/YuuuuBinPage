@@ -5,6 +5,10 @@ import { useLanguage } from "../contexts/LanguageContext";
 
 // Lazy-loaded page components for route-level code splitting
 const Home = React.lazy(() => import("../pages/Home"));
+// Homepage statically loaded for instantaneous first paint & immediate animation readiness
+import Home from "../pages/Home";
+
+// Lazy-loaded secondary page components for route-level code splitting
 const MyProject = React.lazy(() => import("../pages/MyProject"));
 const ProjectDetailPage = React.lazy(() => import("../pages/ProjectDetailPage"));
 const BaiTap = React.lazy(() => import("../pages/BaiTap"));
