@@ -1,5 +1,4 @@
-// Service cho Bài Tập - Sử dụng dữ liệu cứng (không cần backend)
-import { weeksData, exercisesData, getAllBaiTapData } from "../data/baitapData";
+import { exercisesData, getAllBaiTapData } from "../data/baitapData";
 
 // Combined Bai Tap API - Dữ liệu cứng
 export const baiTapAPI = {

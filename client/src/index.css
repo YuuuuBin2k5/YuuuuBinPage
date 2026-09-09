@@ -235,32 +235,6 @@
   animation: float 2s ease-in-out infinite;
 }
 
-/* hiệu ứng chuyển ảnh avatar */
-.animation-avatar {
-  background-position: center;
-  border: 1px solid black; /* Để dễ nhìn */
-  background-size: 100% 100%;
-  box-shadow: 20px 20px 10px gray;
-  animation: slider 13s linear infinite;
-}
-@keyframes slider {
-  0% {
-    background-image: url("images/avatar.jpg");
-  }
-
-  30% {
-    background-image: url("images/avatar2.png");
-  }
-
-  60% {
-    background-image: url("images/avatar3.jpg");
-  }
-
-  100% {
-    background-image: url("images/avatar4.jpg");
-  }
-}
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -651,4 +625,16 @@
 
 .animate-shimmer {
   animation: shimmer 2.5s ease-in-out infinite;
+}
+
+/* Accessibility: Respect user reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

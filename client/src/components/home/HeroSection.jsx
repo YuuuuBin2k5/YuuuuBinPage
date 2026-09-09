@@ -2,7 +2,7 @@ import React from "react";
 import { Github, Linkedin, Mail, Download, ArrowRight } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { profileData } from "../../data/profileData";
-import avatarImg from "../../images/avatar.jpg";
+import avatarImg from "../../images/avatar.webp";
 
 const HeroSection = () => {
   const { language } = useLanguage();
@@ -171,6 +171,8 @@ const HeroSection = () => {
                 <div className="flex items-center gap-3.5 pb-4 border-b border-slate-800/60">
                   <img
                     src={avatarImg}
+                    width="72"
+                    height="72"
                     alt={isEn ? "Dao Nguyen Nhat Anh - Avatar" : "Đào Nguyễn Nhật Anh - Ảnh đại diện"}
                     className="w-16 h-16 sm:w-18 sm:h-18 rounded-xl object-cover border border-indigo-500/30 shadow-md"
                   />

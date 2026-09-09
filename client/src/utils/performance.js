@@ -4,7 +4,7 @@ export class PerformanceMonitor {
   constructor() {
     this.metrics = new Map();
     this.observers = new Map();
-    this.isProduction = process.env.NODE_ENV === "production";
+    this.isProduction = Boolean(import.meta.env?.PROD);
     this.isEnabled = false; // Disable all monitoring for now
   }
 
@@ -84,7 +84,7 @@ export class PerformanceMonitor {
         }
       });
       clsObserver.observe({ type: "layout-shift", buffered: true });
-    } catch (e) {
+    } catch {
       console.warn("Performance Observer not supported");
     }
   }

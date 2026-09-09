@@ -9,7 +9,7 @@ export const useRenderTracker = (componentName) => {
     renderCount.current++;
     const renderTime = Date.now() - renderStartTime.current;
 
-    if (process.env.NODE_ENV === "development") {
+    if (import.meta.env?.DEV) {
       console.log(
         `🔍 [${componentName}] Render #${renderCount.current} - ${renderTime}ms`
       );
@@ -45,7 +45,7 @@ export const useRenderOptimization = (componentName, dependencies = []) => {
       renderTimes.current.reduce((a, b) => a + b, 0) /
       renderTimes.current.length;
 
-    if (process.env.NODE_ENV === "development") {
+    if (import.meta.env?.DEV) {
       console.log(
         `📊 [${componentName}] Avg render interval: ${avgRenderTime.toFixed(
           2
@@ -54,6 +54,7 @@ export const useRenderOptimization = (componentName, dependencies = []) => {
     }
 
     lastRender.current = now;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 };
 

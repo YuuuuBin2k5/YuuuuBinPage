@@ -1,656 +1,649 @@
-import React, { useState, useEffect, useMemo, useCallback, memo } from "react";
-import { useTranslation } from "../hooks/useTranslation";
-import { useAuth } from "../contexts/AuthContext";
-import { weeksAPI, exercisesAPI, baiTapAPI } from "../services";
-import { useViewedExercises } from "../hooks/useViewedExercises";
-import BaiTapHeader from "../components/exercises/BaiTapHeader";
-import ExerciseCard from "../components/exercises/ExerciseCard";
-import ExerciseDetailModal from "../components/exercises/ExerciseDetailModal";
-import WeekForm from "../components/exercises/WeekForm";
-import ExerciseForm from "../components/exercises/ExerciseForm";
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
+import { Link } from "react-router-dom";
 import {
-  Brain,
-  Rocket,
-  Flame,
-  Plus,
-  Calendar,
   BookOpen,
+  Layers,
+  ExternalLink,
+  Github,
+  Calendar,
+  ChevronRight,
   Code2,
   Database,
-  Globe,
-  Layers,
-  Zap,
-  Target,
-  Trophy,
-  Sparkles,
-  GraduationCap,
-  Lightbulb,
-  Cpu,
   Server,
-  Shield,
-  Star,
-  Library,
+  Mail,
+  ShieldCheck,
+  CheckCircle2,
+  Terminal,
+  Cpu,
+  ArrowLeft,
+  X,
+  Maximize2,
+  Globe,
+  Tag
 } from "lucide-react";
+import { useLanguage } from "../contexts/LanguageContext";
+import { labSummaryData } from "../data/labSummaryData";
+import { weeksData, exercisesData } from "../data/baitapData";
 
-// Function to get icon based on week number or title
-const getWeekIcon = (weekTitle, weekId) => {
-  const title = weekTitle.toLowerCase();
-  
-  // Match by keywords in title
-  if (title.includes('html') || title.includes('css')) return BookOpen;
-  if (title.includes('javascript') || title.includes('js')) return Code2;
-  if (title.includes('database') || title.includes('sql') || title.includes('jdbc')) return Database;
-  if (title.includes('api') || title.includes('rest')) return Globe;
-  if (title.includes('jpa') || title.includes('hibernate')) return Layers;
-  if (title.includes('servlet') || title.includes('jsp')) return Zap;
-  if (title.includes('session') || title.includes('cookie')) return Shield;
-  if (title.includes('jstl') || title.includes('el')) return Target;
-  if (title.includes('email') || title.includes('mail')) return Sparkles;
-  if (title.includes('deploy') || title.includes('hosting')) return Server;
-  if (title.includes('advanced') || title.includes('nâng cao')) return Trophy;
-  if (title.includes('final') || title.includes('cuối')) return Star;
-  
-  // Fallback: cycle through icons based on ID
-  const icons = [GraduationCap, Lightbulb, Cpu, Brain, Rocket, Flame];
-  return icons[weekId % icons.length];
+// Icon mapping per module chapter
+const getModuleIcon = (moduleId) => {
+  switch (moduleId) {
+    case 1:
+      return Server;
+    case 2:
+      return Code2;
+    case 3:
+      return Terminal;
+    case 4:
+      return Layers;
+    case 5:
+      return ShieldCheck;
+    case 6:
+      return Code2;
+    case 7:
+      return BookOpen;
+    case 8:
+    case 9:
+      return Database;
+    case 10:
+      return Layers;
+    case 11:
+      return Mail;
+    default:
+      return Terminal;
+  }
 };
 
-// Memoized WeekButton component to prevent unnecessary re-renders
-const WeekButton = memo(({ week, isActive, exerciseCount, onClick, exercisesLabel }) => {
-  const IconComponent = getWeekIcon(week.title, week.id);
-  
-  return (
-    <button
-      onClick={onClick}
-      className={`w-full text-left p-4 rounded transition-all duration-300 border-2 ${
-        isActive
-          ? "bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-blue-500/60 shadow-lg"
-          : "bg-slate-800/30 border-slate-700/30 hover:border-blue-500/60 hover:bg-slate-800/50"
-      }`}
-    >
-      <div className="flex items-center gap-3">
-        <div
-          className={`w-10 h-10 rounded flex items-center justify-center ${
-            isActive
-              ? "bg-gradient-to-br from-blue-500 to-cyan-500"
-              : "bg-slate-700/50"
-          }`}
-        >
-          <IconComponent className="w-5 h-5 text-white" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3
-            className={`font-bold truncate ${
-              isActive ? "text-white" : "text-slate-300"
-            }`}
-          >
-            {week.title}
-          </h3>
-          <p className="text-xs text-slate-400">
-            {exerciseCount} {exercisesLabel}
-          </p>
-        </div>
-        {isActive && (
-          <div className="w-2 h-2 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full animate-pulse"></div>
-        )}
-      </div>
-    </button>
-  );
-});
+// Parse module syllabus content from raw text
+const parseModuleContent = (content) => {
+  if (!content) return { objective: "", topics: [], outcome: "" };
+  const lines = content.split("\n").map((l) => l.trim()).filter(Boolean);
 
-WeekButton.displayName = 'WeekButton';
+  let section = "objective";
+  let objective = "";
+  const topics = [];
+  let outcome = "";
 
-function BaiTap() {
-  const { t } = useTranslation();
-  const { isAdmin } = useAuth();
-  const { markAsViewed } = useViewedExercises();
-  const [weeks, setWeeks] = useState([]);
-  const [exercises, setExercises] = useState([]);
-  const [expandedWeek, setExpandedWeek] = useState(null);
-  const [viewMode, setViewMode] = useState("weeks");
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [showExerciseForm, setShowExerciseForm] = useState(false);
-  const [currentWeekId, setCurrentWeekId] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [selectedExercise, setSelectedExercise] = useState(null);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [exercisesPerPage] = useState(9); // 9 bài tập mỗi trang (3x3 grid)
-  
-  // Ref for content header to scroll to
-  const contentHeaderRef = React.useRef(null);
+  for (const line of lines) {
+    if (line.includes("Mục tiêu")) {
+      section = "objective";
+      const text = line.replace(/^.*Mục tiêu[:\s]*/i, "").trim();
+      if (text) objective += (objective ? " " : "") + text;
+    } else if (line.includes("Nội dung")) {
+      section = "topics";
+    } else if (line.includes("Kết quả")) {
+      section = "outcome";
+      const text = line.replace(/^.*Kết quả( đạt được)?[:\s]*/i, "").trim();
+      if (text) outcome += (outcome ? " " : "") + text;
+    } else {
+      if (section === "objective") {
+        objective += " " + line;
+      } else if (section === "topics") {
+        const cleaned = line
+          .replace(/^[•\-*\s\d.]+/, "")
+          .replace(/^\d*️⃣?\s*/u, "")
+          .trim();
+        if (cleaned) topics.push(cleaned);
+      } else if (section === "outcome") {
+        outcome += " " + line;
+      }
+    }
+  }
 
-  // Load all data in one request for better performance
+  return { objective, topics, outcome };
+};
+
+const BaiTap = () => {
+  const { language } = useLanguage();
+  const isEn = language === "en";
+
+  const [selectedModuleId, setSelectedModuleId] = useState(1);
+  const [previewImage, setPreviewImage] = useState(null);
+  const lightboxRef = useRef(null);
+  const triggerThumbRef = useRef(null);
+
+  // Focus trap, initial focus, and focus restoration for lightbox dialog
   useEffect(() => {
-    const loadData = async () => {
-      setIsInitialLoad(true);
-      try {
-        // Use combined API to reduce HTTP requests
-        const data = await baiTapAPI.getAllData();
-        setWeeks(data.weeks || []);
-        setExercises(data.exercises || []);
-      } catch (error) {
-        console.error("Error loading bai tap data:", error);
-        // Fallback to separate requests if combined API fails
-        try {
-          const [weeksData, exercisesData] = await Promise.all([
-            weeksAPI.getAll(),
-            exercisesAPI.getAll(),
-          ]);
-          setWeeks(weeksData || []);
-          setExercises(exercisesData || []);
-        } catch (fallbackError) {
-          console.error("Fallback loading also failed:", fallbackError);
-          setWeeks([]);
-          setExercises([]);
+    if (!previewImage) return;
+
+    const timer = setTimeout(() => {
+      const focusable = lightboxRef.current?.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable && focusable.length > 0) {
+        focusable[0].focus();
+      }
+    }, 50);
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setPreviewImage(null);
+      } else if (e.key === "Tab" && lightboxRef.current) {
+        const focusables = Array.from(
+          lightboxRef.current.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+        );
+        if (focusables.length === 0) return;
+
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
         }
-      } finally {
-        setIsInitialLoad(false);
       }
     };
-    loadData();
-  }, []);
 
-  // Load data functions for individual refresh
-  const loadWeeks = useCallback(async () => {
-    try {
-      const weeksData = await weeksAPI.getAll();
-      setWeeks(weeksData || []);
-    } catch (error) {
-      console.error("Error loading weeks:", error);
-      setWeeks([]);
-    }
-  }, []);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("keydown", handleKeyDown);
+      triggerThumbRef.current?.focus();
+    };
+  }, [previewImage]);
 
-  const loadExercises = useCallback(async () => {
-    try {
-      const exercisesData = await exercisesAPI.getAll();
-      setExercises(exercisesData || []);
-    } catch (error) {
-      console.error("Error loading exercises:", error);
-      setExercises([]);
-    }
-  }, []);
-
-  // Form handlers
-  const handleCreateWeek = useCallback(
-    async (e, weekFormData) => {
-      e.preventDefault();
-      setLoading(true);
-
-      try {
-        const weekData = {
-          ...weekFormData,
-          difficulty: weekFormData.difficulty.toUpperCase(),
-        };
-
-        await weeksAPI.create(weekData);
-        setShowCreateForm(false);
-        loadWeeks();
-        alert(t("exercises.createWeekSuccess"));
-      } catch (error) {
-        console.error("Error creating week:", error);
-        alert(t("exercises.createWeekError"));
-      } finally {
-        setLoading(false);
-      }
-    },
-    [loadWeeks]
-  );
-
-  const handleCreateExercise = useCallback(
-    async (e, exerciseFormData, weekId) => {
-      e.preventDefault();
-      setLoading(true);
-
-      try {
-        const exerciseData = {
-          ...exerciseFormData,
-          weekId: weekId,
-        };
-
-        // Nếu có selectedExercise thì update, không thì create
-        if (selectedExercise) {
-          await exercisesAPI.update(selectedExercise.id, exerciseData);
-          alert(t("exercises.updateExerciseSuccess"));
-        } else {
-          await exercisesAPI.create(exerciseData);
-          alert(t("exercises.createExerciseSuccess"));
-        }
-
-        setShowExerciseForm(false);
-        setCurrentWeekId(null);
-        setSelectedExercise(null);
-        loadExercises();
-      } catch (error) {
-        console.error("Error saving exercise:", error);
-        alert(t("exercises.saveExerciseError"));
-      } finally {
-        setLoading(false);
-      }
-    },
-    [loadExercises, selectedExercise]
-  );
-
-  // Get exercises for selected week
-  const currentWeekExercises = useMemo(() => {
-    if (!expandedWeek) return exercises;
-    return exercises.filter((ex) => ex.weekId === expandedWeek);
-  }, [exercises, expandedWeek]);
-
-  // Reset to page 1 when changing week
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [expandedWeek]);
-
-  // Pagination calculations
-  const totalPages = Math.ceil(currentWeekExercises.length / exercisesPerPage);
-  const indexOfLastExercise = currentPage * exercisesPerPage;
-  const indexOfFirstExercise = indexOfLastExercise - exercisesPerPage;
-  const currentExercises = currentWeekExercises.slice(
-    indexOfFirstExercise,
-    indexOfLastExercise
-  );
-
-  const handlePageChange = useCallback((pageNumber) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
-
-  // Get current week info
-  const currentWeek = useMemo(() => {
-    if (!expandedWeek) return null;
-    return weeks.find((w) => w.id === expandedWeek);
-  }, [weeks, expandedWeek]);
-
-  // Memoize exercise counts per week to avoid recalculation
+  // Exercise counts indexed by module ID
   const exerciseCountsByWeek = useMemo(() => {
     const counts = {};
-    exercises.forEach(ex => {
+    exercisesData.forEach((ex) => {
       counts[ex.weekId] = (counts[ex.weekId] || 0) + 1;
     });
     return counts;
-  }, [exercises]);
-
-  // Handle week selection with smooth scroll - Optimized
-  const handleWeekSelect = useCallback((weekId) => {
-    setExpandedWeek(prevWeek => prevWeek === weekId ? null : weekId);
   }, []);
 
-  // Memoized exercise handlers
-  const handleExerciseClick = useCallback((exercise) => {
-    setSelectedExercise(exercise);
-    setShowDetailModal(true);
-  }, []);
+  // Active module resolved from weeksData
+  const activeModule = useMemo(() => {
+    return weeksData.find((w) => w.id === selectedModuleId) || weeksData[0];
+  }, [selectedModuleId]);
 
-  const handleExerciseEdit = useCallback((exercise) => {
-    console.log("=== EDIT EXERCISE CLICKED ===");
-    console.log("Exercise:", exercise);
-    console.log("Exercise images:", exercise.images);
-    console.log("Images count:", exercise.images?.length || 0);
-    
-    setSelectedExercise(exercise);
-    setCurrentWeekId(exercise.weekId);
-    setShowExerciseForm(true);
-  }, []);
+  // Summary module info for bilingual chapter/title/topic
+  const activeSummaryModule = useMemo(() => {
+    return labSummaryData.modules.find((m) => m.id === activeModule?.id);
+  }, [activeModule]);
 
-  // Show loading skeleton on initial load
-  if (isInitialLoad) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/10 to-slate-900 -mt-24 pt-24">
-        <div className="px-6 py-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="h-32 bg-slate-800/50 rounded animate-pulse mb-6"></div>
-          </div>
-        </div>
-        <div className="px-6 pb-8">
-          <div className="lg:flex gap-6">
-            <div className="hidden lg:block w-80 shrink-0">
-              <div className="h-96 bg-slate-800/50 rounded animate-pulse"></div>
-            </div>
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="h-64 bg-slate-800/50 rounded animate-pulse"></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Parsed syllabus content
+  const parsedContent = useMemo(() => {
+    return parseModuleContent(activeModule?.content || "");
+  }, [activeModule]);
+
+  // Exercises belonging to active module
+  const activeExercises = useMemo(() => {
+    if (!activeModule) return [];
+    return exercisesData.filter((ex) => ex.weekId === activeModule.id);
+  }, [activeModule]);
+
+  const handleSelectModule = useCallback((id) => {
+    setSelectedModuleId(id);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900/10 to-slate-900 -mt-24 pt-24">
-      {/* Header */}
-      <div className="px-6 py-8">
-        <BaiTapHeader totalWeeks={weeks.length} totalExercises={exercises.length} />
-      </div>
+    <div className="w-full bg-slate-950 text-slate-100 min-h-screen">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-10">
+        {/* Navigation Breadcrumb */}
+        <div className="flex items-center gap-3 text-xs font-mono text-slate-400">
+          <Link
+            to="/"
+            className="hover:text-indigo-400 transition-colors flex items-center gap-1 focus:outline-none focus:ring-1 focus:ring-indigo-400 rounded"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>{isEn ? "Home" : "Trang Chủ"}</span>
+          </Link>
+          <span className="text-slate-600">/</span>
+          <Link
+            to="/myproject"
+            className="hover:text-indigo-400 transition-colors focus:outline-none focus:ring-1 focus:ring-indigo-400 rounded"
+          >
+            <span>{isEn ? "Projects Catalog" : "Danh Mục Dự Án"}</span>
+          </Link>
+          <span className="text-slate-600">/</span>
+          <span className="text-slate-200 font-semibold">
+            {isEn ? "Engineering Lab" : "Phòng Thí Nghiệm Kỹ Thuật"}
+          </span>
+        </div>
 
-      {/* Main Layout: Sidebar + Content */}
-      <div className="relative lg:flex gap-6 px-6 pb-8">
-        {/* Left Sidebar - Weeks Timeline (Desktop) */}
-        <aside className="hidden lg:block w-80 shrink-0 sticky top-4 self-start h-fit max-h-[calc(100vh-2rem)] transition-all duration-300">
-          <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-2 border-blue-600/25 hover:border-blue-500/50 transition-all duration-300 rounded p-6 backdrop-blur-xl shadow-2xl shadow-blue-500/10">
-            {/* Sidebar Header */}
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 mb-2">
-                {t("exercises.roadmap")}
-              </h2>
-              <p className="text-slate-400 text-sm">
-                {weeks.length} {t("exercises.weeksCount")} • {exercises.length} {t("exercises.exercisesCount")}
-              </p>
+        {/* Hero & Rationale Header */}
+        <header className="space-y-6">
+          <div className="space-y-3 max-w-4xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-indigo-950/70 border border-indigo-500/30 text-indigo-300 font-mono text-xs uppercase tracking-wider">
+              <Cpu className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>
+                {isEn ? labSummaryData.badge.en : labSummaryData.badge.vi}
+              </span>
             </div>
 
-            {/* Admin Controls */}
-            {isAdmin && (
-              <button
-                onClick={() => setShowCreateForm(true)}
-                className="w-full mb-4 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-emerald-500/20"
-              >
-                <Plus className="w-4 h-4" />
-                {t("exercises.addNewWeek")}
-              </button>
-            )}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
+              {isEn ? "Enterprise Java Fundamentals" : "Nền Tảng Java Web Doanh Nghiệp"}
+            </h1>
 
-            {/* Weeks List */}
-            {weeks.length === 0 ? (
-              <div className="text-center py-12">
-                <Brain className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-500 text-sm">{t("exercises.noWeeks")}</p>
-              </div>
-            ) : (
-              <div className="space-y-3 max-h-[calc(100vh-18rem)] overflow-y-auto custom-scrollbar pr-2">
-                {/* All Exercises Option */}
-                <button
-                  onClick={() => handleWeekSelect(null)}
-                  className={`w-full text-left p-4 rounded transition-all duration-300 border-2 ${
-                    !expandedWeek
-                      ? "bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border-blue-500/60 shadow-lg"
-                      : "bg-slate-800/30 border-slate-700/30 hover:border-blue-500/60"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        !expandedWeek
-                          ? "bg-gradient-to-br from-blue-500 to-cyan-500"
-                          : "bg-slate-700/50"
-                      }`}
-                    >
-                      <Library className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3
-                        className={`font-bold ${
-                          !expandedWeek ? "text-white" : "text-slate-300"
-                        }`}
-                      >
-                        {t("exercises.allExercises")}
-                      </h3>
-                      <p className="text-xs text-slate-400">
-                        {exercises.length} {t("exercises.exercisesCount")}
-                      </p>
-                    </div>
-                  </div>
-                </button>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs font-mono text-slate-400 pt-1">
+              <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300">
+                {labSummaryData.totalModules} {isEn ? "Curriculum Modules" : "Module Học Thuật"}
+              </span>
+              <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-300">
+                {labSummaryData.chapterCoverage}
+              </span>
+              <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-indigo-300">
+                HCMUTE Software Engineering
+              </span>
+            </div>
 
-                {/* Week Items */}
-                {weeks.map((week) => {
-                  const isActive = expandedWeek === week.id;
-
-                  return (
-                    <WeekButton
-                      key={week.id}
-                      week={week}
-                      isActive={isActive}
-                      exerciseCount={exerciseCountsByWeek[week.id] || 0}
-                      onClick={() => handleWeekSelect(week.id)}
-                      exercisesLabel={t("exercises.exercisesCount")}
-                    />
-                  );
-                })}
-              </div>
-            )}
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed pt-1">
+              {isEn
+                ? "These exercises build a foundational understanding of Java Web mechanisms that are later abstracted by frameworks such as Spring Boot."
+                : "Các bài thực hành giúp xây dựng hiểu biết nền tảng về những cơ chế Java Web mà các framework như Spring Boot sau này trừu tượng hóa."}
+            </p>
           </div>
-        </aside>
 
-        {/* Right Content - Exercises */}
-        <main className="flex-1 min-w-0">
-          {/* Mobile Week Selector */}
-          <div className="lg:hidden mb-6">
-            <select
-              value={expandedWeek || ""}
-              onChange={(e) =>
-                setExpandedWeek(
-                  e.target.value ? parseInt(e.target.value) : null
-                )
-              }
-              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none cursor-pointer"
+          {/* Strategic Rationale Callout Card */}
+          <div className="p-5 sm:p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+            <div className="flex items-center gap-2 text-indigo-400 font-mono text-xs font-bold uppercase tracking-wider">
+              <Terminal className="w-4 h-4" aria-hidden="true" />
+              <span>{isEn ? "Strategic Engineering Rationale" : "Định Hướng Kiến Trúc & Giá Trị Kỹ Thuật"}</span>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              {isEn
+                ? labSummaryData.strategicRationale.en
+                : labSummaryData.strategicRationale.vi}
+            </p>
+          </div>
+        </header>
+
+        {/* Main 2-Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Mobile Module Selector (< lg screens) */}
+          <div className="lg:hidden col-span-1 space-y-2">
+            <label
+              htmlFor="mobile-module-selector"
+              className="block text-xs font-mono font-semibold text-slate-400 uppercase tracking-wider"
             >
-              <option value="">{t("exercises.allExercises")} ({exercises.length})</option>
-              {weeks.map((week) => (
-                <option key={week.id} value={week.id}>
-                  {week.title} ({exerciseCountsByWeek[week.id] || 0} {t("exercises.exercisesCount")})
-                </option>
-              ))}
+              {isEn ? "Select Curriculum Module" : "Chọn Module Học Thuật"}
+            </label>
+            <select
+              id="mobile-module-selector"
+              value={selectedModuleId}
+              onChange={(e) => handleSelectModule(Number(e.target.value))}
+              className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              {weeksData.map((week) => {
+                const summaryMod = labSummaryData.modules.find((m) => m.id === week.id);
+                const titleText = summaryMod ? (isEn ? summaryMod.title.en : summaryMod.title.vi) : week.title;
+                const count = exerciseCountsByWeek[week.id] || 0;
+                return (
+                  <option key={week.id} value={week.id}>
+                    {summaryMod?.chapter || `Module ${week.id}`} - {titleText} ({count} {isEn ? "artifacts" : "bài tập"})
+                  </option>
+                );
+              })}
             </select>
           </div>
 
-          {/* Content Header */}
-          <div 
-            ref={contentHeaderRef} 
-            className="mb-6 scroll-mt-24"
+          {/* Left Column: Desktop Curriculum Modules Sidebar (lg:col-span-4) */}
+          <nav
+            aria-label={isEn ? "Curriculum Modules" : "Danh Sách Module"}
+            className="hidden lg:block lg:col-span-4 space-y-3 sticky top-6 self-start max-h-[calc(100vh-4rem)] overflow-y-auto pr-1"
           >
-            <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-2 border-blue-600/25 hover:border-blue-500/50 transition-all duration-300 rounded p-6 backdrop-blur-xl">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  {currentWeek ? (
-                    <>
-                      <h1 className="text-3xl font-bold text-white mb-2">
-                        {currentWeek.title}
-                      </h1>
-                      <p className="text-slate-300 mb-4">
-                        {currentWeek.description}
-                      </p>
-                      <div className="flex items-center gap-3 flex-wrap">
-                        <span className="px-3 py-1.5 bg-blue-500/20 text-blue-400 rounded-lg text-sm font-medium border border-blue-500/30">
-                          {currentWeek.difficulty}
+            <div className="px-2 py-1 flex items-center justify-between">
+              <h2 className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
+                {isEn ? "Curriculum Modules" : "Danh Sách Module"} ({weeksData.length})
+              </h2>
+              <span className="text-[11px] font-mono text-slate-500">
+                11 {isEn ? "Total Modules" : "Module"}
+              </span>
+            </div>
+
+            <div className="space-y-2">
+              {weeksData.map((week) => {
+                const isActive = week.id === selectedModuleId;
+                const summaryMod = labSummaryData.modules.find((m) => m.id === week.id);
+                const ModuleIcon = getModuleIcon(week.id);
+                const count = exerciseCountsByWeek[week.id] || 0;
+                const titleText = summaryMod ? (isEn ? summaryMod.title.en : summaryMod.title.vi) : week.title;
+
+                return (
+                  <button
+                    key={week.id}
+                    onClick={() => handleSelectModule(week.id)}
+                    aria-current={isActive ? "true" : undefined}
+                    className={`w-full text-left p-3.5 rounded-xl border transition-all duration-200 flex items-start gap-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 ${
+                      isActive
+                        ? "bg-indigo-950/40 border-indigo-500/60 shadow-lg shadow-indigo-950/50"
+                        : "bg-slate-900/60 border-slate-800/80 hover:bg-slate-900 hover:border-slate-700"
+                    }`}
+                  >
+                    <div
+                      className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                        isActive
+                          ? "bg-indigo-600 text-white"
+                          : "bg-slate-800 text-slate-400"
+                      }`}
+                    >
+                      <ModuleIcon className="w-4 h-4" aria-hidden="true" />
+                    </div>
+
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-mono font-semibold text-indigo-400 uppercase tracking-wide">
+                          {summaryMod?.chapter || `Module ${week.id}`}
                         </span>
-                        <span className="px-3 py-1.5 bg-slate-700/50 text-slate-300 rounded-lg text-sm flex items-center gap-2">
-                          <Calendar className="w-4 h-4" />
-                          {new Date(currentWeek.startDate).toLocaleDateString(
-                            "vi-VN"
-                          )}{" "}
-                          -{" "}
-                          {new Date(currentWeek.endDate).toLocaleDateString(
-                            "vi-VN"
-                          )}
-                        </span>
-                        <span className="px-3 py-1.5 bg-emerald-500/20 text-emerald-400 rounded-lg text-sm font-medium">
-                          {currentWeekExercises.length} {t("exercises.exercisesCount")}
-                        </span>
+                        {count > 0 ? (
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-emerald-950/80 border border-emerald-500/30 text-emerald-300">
+                            {count} {isEn ? "artifacts" : "minh chứng"}
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-mono text-slate-500">
+                            {isEn ? "Curriculum Topic" : "Chủ đề học thuật"}
+                          </span>
+                        )}
                       </div>
-                    </>
-                  ) : (
-                    <>
-                      <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-300 mb-2">
-                        {t("exercises.allExercises")}
-                      </h1>
-                      <p className="text-slate-300">
-                        {t("exercises.exploreAll")} {exercises.length}{" "}
-                        {t("exercises.exercisesCount")} {t("exercises.from")} {weeks.length} {t("exercises.weekStudy")}
-                      </p>
-                    </>
-                  )}
+
+                      <h3
+                        className={`text-xs font-bold leading-snug line-clamp-1 ${
+                          isActive ? "text-white" : "text-slate-300"
+                        }`}
+                      >
+                        {titleText}
+                      </h3>
+
+                      {summaryMod && (
+                        <p className="text-[11px] text-slate-400 line-clamp-1">
+                          {isEn ? summaryMod.topic.en : summaryMod.topic.vi}
+                        </p>
+                      )}
+                    </div>
+
+                    <ChevronRight
+                      className={`w-4 h-4 shrink-0 mt-2 transition-transform ${
+                        isActive ? "text-indigo-400 translate-x-0.5" : "text-slate-600"
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
+
+          {/* Right Column: Active Module Details & Exercises (lg:col-span-8) */}
+          <section
+            aria-label={isEn ? "Selected Module Content" : "Chi Tiết Module"}
+            className="lg:col-span-8 space-y-6"
+          >
+            {/* Active Module Header Card */}
+            <article className="p-6 sm:p-8 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-6">
+              {/* Module Metadata Badges */}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-2.5 py-1 rounded-md bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 font-mono text-xs font-semibold">
+                    {activeSummaryModule?.chapter || `Module ${activeModule.id}`}
+                  </span>
+
+                  <span
+                    className={`px-2.5 py-1 rounded-md font-mono text-xs font-semibold border ${
+                      activeModule.difficulty === "HARD"
+                        ? "bg-purple-950/60 text-purple-300 border-purple-500/40"
+                        : activeModule.difficulty === "MEDIUM"
+                        ? "bg-cyan-950/60 text-cyan-300 border-cyan-500/40"
+                        : "bg-slate-800 text-slate-300 border-slate-700"
+                    }`}
+                  >
+                    {activeModule.difficulty}
+                  </span>
                 </div>
 
-                {/* Admin Add Exercise Button */}
-                {isAdmin && currentWeek && (
-                  <button
-                    onClick={() => {
-                      setCurrentWeekId(currentWeek.id);
-                      setShowExerciseForm(true);
-                    }}
-                    className="ml-4 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-medium rounded-xl transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-blue-500/20"
-                  >
-                    <Plus className="w-4 h-4" />
-                    {t("exercises.addExercise")}
-                  </button>
+                {activeModule.startDate && activeModule.endDate && (
+                  <div className="flex items-center gap-1.5 text-xs font-mono text-slate-400">
+                    <Calendar className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
+                    <span>
+                      {activeModule.startDate} → {activeModule.endDate}
+                    </span>
+                  </div>
                 )}
               </div>
+
+              {/* Module Title & Core Topic */}
+              <div className="space-y-2">
+                <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                  {activeSummaryModule
+                    ? (isEn ? activeSummaryModule.title.en : activeSummaryModule.title.vi)
+                    : activeModule.title}
+                </h2>
+
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  {activeSummaryModule
+                    ? (isEn ? activeSummaryModule.topic.en : activeSummaryModule.topic.vi)
+                    : activeModule.description}
+                </p>
+              </div>
+
+              {/* Syllabus Breakdown: Objective, Topics, Outcome */}
+              <div className="space-y-4 pt-2">
+                {/* Objective */}
+                {parsedContent.objective && (
+                  <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5">
+                    <div className="flex items-center gap-2 text-indigo-400 font-mono text-xs font-bold uppercase tracking-wider">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400" aria-hidden="true" />
+                      <span>{isEn ? "Core Objective" : "Mục Tiêu Trọng Tâm"}</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      {parsedContent.objective}
+                    </p>
+                  </div>
+                )}
+
+                {/* Topics & Key Concepts */}
+                {parsedContent.topics.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
+                      {isEn ? "Syllabus Topics & Technical Concepts" : "Nội Dung & Kiến Thức Kỹ Thuật"}
+                    </h3>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      {parsedContent.topics.map((topic, idx) => (
+                        <li
+                          key={idx}
+                          className="p-3 rounded-lg bg-slate-950/60 border border-slate-800/80 text-slate-300 flex items-start gap-2.5 font-mono"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-1.5 shrink-0" />
+                          <span className="break-words leading-relaxed">{topic}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Outcome */}
+                {parsedContent.outcome && (
+                  <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5">
+                    <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs font-bold uppercase tracking-wider">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
+                      <span>{isEn ? "Verified Outcome" : "Kết Quả Đạt Được"}</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      {parsedContent.outcome}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </article>
+
+            {/* Exercises Section */}
+            <section
+              aria-label={isEn ? "Module Exercises and Artifacts" : "Bài Tập và Minh Chứng"}
+              className="space-y-4"
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-mono font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                  <Tag className="w-4 h-4 text-cyan-400" aria-hidden="true" />
+                  <span>
+                    {isEn ? "Hands-on Exercises & Artifacts" : "Bài Tập Thực Hành & Minh Chứng"}
+                  </span>
+                  <span className="text-xs font-normal text-slate-500">
+                    ({activeExercises.length})
+                  </span>
+                </h3>
+              </div>
+
+              {activeExercises.length > 0 ? (
+                <div className="grid grid-cols-1 gap-4">
+                  {activeExercises.map((exercise) => (
+                    <article
+                      key={exercise.id}
+                      className="p-5 sm:p-6 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-semibold">
+                              {exercise.category}
+                            </span>
+                            {exercise.completedDate && (
+                              <span className="text-[11px] font-mono text-slate-400">
+                                {isEn ? "Completed:" : "Hoàn thành:"} {exercise.completedDate}
+                              </span>
+                            )}
+                          </div>
+                          <h4 className="text-base font-bold text-white tracking-tight">
+                            {exercise.title}
+                          </h4>
+                        </div>
+
+                        {/* Action Links */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          {exercise.demoUrl && (
+                            <a
+                              href={exercise.demoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-mono text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                              aria-label={`${isEn ? "Open live demo for" : "Mở demo trực tiếp cho"} ${exercise.title}`}
+                            >
+                              <Globe className="w-3.5 h-3.5" aria-hidden="true" />
+                              <span>{isEn ? "Live Demo" : "Xem Demo"}</span>
+                              <ExternalLink className="w-3 h-3 opacity-70" aria-hidden="true" />
+                            </a>
+                          )}
+
+                          {exercise.githubUrl && (
+                            <a
+                              href={exercise.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                              aria-label={`${isEn ? "Open source code repository for" : "Mở mã nguồn cho"} ${exercise.title}`}
+                            >
+                              <Github className="w-3.5 h-3.5" aria-hidden="true" />
+                              <span>{isEn ? "Source Code" : "Mã Nguồn"}</span>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-mono">
+                        {exercise.description}
+                      </p>
+
+                      {/* Screenshot Previews */}
+                      {exercise.images && exercise.images.length > 0 && (
+                        <div className="space-y-2 pt-2 border-t border-slate-800/80">
+                          <span className="text-[11px] font-mono text-slate-400 block">
+                            {isEn ? "Screenshots & Execution Proof:" : "Minh chứng thực thi & Giao diện:"}
+                          </span>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            {exercise.images.map((img, imgIdx) => (
+                              <button
+                                key={imgIdx}
+                                type="button"
+                                onClick={(e) => {
+                                  triggerThumbRef.current = e.currentTarget;
+                                  setPreviewImage({
+                                    url: img.imageUrl,
+                                    caption: img.caption || exercise.title,
+                                  });
+                                }}
+                                className="group relative rounded-lg overflow-hidden border border-slate-800 hover:border-indigo-500/60 bg-slate-950 aspect-video flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all"
+                                aria-label={`${isEn ? "Enlarge image" : "Phóng to hình ảnh"} ${img.caption || ""}`}
+                              >
+                                <img
+                                  src={img.imageUrl}
+                                  alt={img.caption || exercise.title}
+                                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                  loading="lazy"
+                                />
+                                <div className="absolute inset-0 bg-slate-950/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-xs font-mono">
+                                  <Maximize2 className="w-4 h-4" aria-hidden="true" />
+                                  <span>{isEn ? "Preview" : "Xem"}</span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                /* Informational Panel when no standalone homework exists */
+                <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 text-center space-y-3">
+                  <div className="w-10 h-10 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-center mx-auto text-slate-400">
+                    <BookOpen className="w-5 h-5" aria-hidden="true" />
+                  </div>
+                  <div className="space-y-1 max-w-md mx-auto">
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      {isEn
+                        ? "No standalone demo artifact is linked for this module. The module focuses on the curriculum topics shown above."
+                        : "Module này không có demo độc lập được liên kết. Nội dung tập trung vào các chủ đề học tập được trình bày phía trên."}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </section>
+          </section>
+        </div>
+      </main>
+
+      {/* Accessible Screenshot Lightbox Modal */}
+      {previewImage && (
+        <div
+          ref={lightboxRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label={previewImage.caption || "Screenshot Preview"}
+          className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div
+            className="relative max-w-5xl w-full max-h-[90vh] bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-4 border-b border-slate-800 flex items-center justify-between gap-4">
+              <span className="text-xs font-mono font-medium text-slate-300 truncate">
+                {previewImage.caption}
+              </span>
+              <button
+                type="button"
+                onClick={() => setPreviewImage(null)}
+                className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                aria-label={isEn ? "Close preview modal" : "Đóng xem trước"}
+              >
+                <X className="w-5 h-5" aria-hidden="true" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto p-4 flex items-center justify-center bg-slate-950/60">
+              <img
+                src={previewImage.url}
+                alt={previewImage.caption}
+                className="max-h-[75vh] w-auto object-contain rounded-lg border border-slate-800"
+              />
             </div>
           </div>
-
-          {/* Exercises Grid - With Fade Animation */}
-          {currentWeekExercises.length === 0 ? (
-            <div className="bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-2 border-blue-600/25 rounded p-12 text-center backdrop-blur-xl">
-              <div className="mb-6">
-                <div className="w-24 h-24 mx-auto bg-gradient-to-br from-slate-800 to-slate-700 rounded-full flex items-center justify-center">
-                  <Flame className="w-12 h-12 text-slate-400" />
-                </div>
-              </div>
-              <h3 className="text-2xl font-bold text-slate-300 mb-2">
-                {t("exercises.noExercises")}
-              </h3>
-              <p className="text-slate-400 mb-6">
-                {currentWeek
-                  ? t("exercises.noExercisesDesc")
-                  : t("exercises.selectWeek")}
-              </p>
-              {isAdmin && currentWeek && (
-                <button
-                  onClick={() => {
-                    setCurrentWeekId(currentWeek.id);
-                    setShowExerciseForm(true);
-                  }}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-blue-500/20"
-                >
-                  <Plus className="w-4 h-4" />
-                  {t("exercises.addFirstExercise")}
-                </button>
-              )}
-            </div>
-          ) : (
-            <>
-              <div 
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-              >
-                {currentExercises.map((exercise, index) => (
-                  <ExerciseCard
-                    key={exercise.id}
-                    exercise={exercise}
-                    index={indexOfFirstExercise + index}
-                    onClick={handleExerciseClick}
-                    onEdit={handleExerciseEdit}
-                    isAdmin={isAdmin}
-                  />
-                ))}
-              </div>
-
-              {/* Pagination - Simplified */}
-              {totalPages > 1 && (
-                <div className="mt-8 flex items-center justify-center gap-4 bg-gradient-to-br from-slate-900/95 to-slate-800/95 border-2 border-blue-600/25 rounded p-4 backdrop-blur-xl">
-                  {/* Page Info */}
-                  <div className="text-slate-400 text-sm font-medium">
-                    {t("exercises.page")}{" "}
-                    <span className="text-blue-400 font-bold">{currentPage}</span>
-                    {" / "}
-                    <span className="text-slate-300">{totalPages}</span>
-                  </div>
-
-                  {/* Page Numbers */}
-                  <div className="flex items-center gap-2">
-                    {[...Array(totalPages)].map((_, index) => {
-                      const pageNumber = index + 1;
-                      const isCurrentPage = currentPage === pageNumber;
-
-                      return (
-                        <button
-                          key={pageNumber}
-                          onClick={() => handlePageChange(pageNumber)}
-                          className={`w-10 h-10 rounded font-semibold transition-all duration-300 ${
-                            isCurrentPage
-                              ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/20 scale-110 border-2 border-blue-400/60"
-                              : "border-2 border-slate-700/30 text-slate-400 hover:border-blue-500/60 hover:bg-blue-500/10 hover:text-blue-400"
-                          }`}
-                        >
-                          {pageNumber}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </main>
-      </div>
-
-      {/* Exercise Detail Modal */}
-      <ExerciseDetailModal
-        exercise={selectedExercise}
-        isOpen={showDetailModal}
-        onClose={() => {
-          setShowDetailModal(false);
-          setSelectedExercise(null);
-        }}
-      />
-
-      {/* Forms */}
-      <WeekForm
-        showCreateForm={showCreateForm}
-        setShowCreateForm={setShowCreateForm}
-        onSubmit={handleCreateWeek}
-        loading={loading}
-      />
-
-      <ExerciseForm
-        showExerciseForm={showExerciseForm}
-        setShowExerciseForm={setShowExerciseForm}
-        currentWeekId={currentWeekId}
-        exercise={selectedExercise}
-        onSubmit={handleCreateExercise}
-        loading={loading}
-      />
-
-      {/* Background Effects - Optimized */}
-      <div className="fixed inset-0 pointer-events-none -z-10">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-pulse"></div>
-        <div
-          className="absolute top-2/3 right-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "1000ms" }}
-        ></div>
-        <div
-          className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-blue-400/5 rounded-full blur-3xl animate-pulse"
-          style={{ animationDelay: "2000ms" }}
-        ></div>
-      </div>
-
-      {/* Custom Scrollbar Styles */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(15, 23, 42, 0.3);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: linear-gradient(180deg, #3b82f6 0%, #06b6d4 100%);
-          border-radius: 10px;
-          transition: all 0.3s ease;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(180deg, #2563eb 0%, #0891b2 100%);
-        }
-      `,
-        }}
-      />
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default BaiTap;

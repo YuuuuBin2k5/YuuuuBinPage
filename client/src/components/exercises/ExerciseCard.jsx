@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Clock,
   Globe,
@@ -14,7 +14,7 @@ import {
 import { useViewedExercises } from "../../hooks/useViewedExercises";
 import ImageCarousel from "../common/ImageCarousel";
 
-const ExerciseCard = ({ exercise, index, onClick, onEdit, isAdmin }) => {
+const ExerciseCard = ({ exercise, onClick, onEdit, isAdmin }) => {
   const [imageError, setImageError] = useState(false);
   const { isViewed, getViewCount, markAsViewed } = useViewedExercises();
 

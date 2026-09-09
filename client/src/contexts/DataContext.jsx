@@ -112,7 +112,7 @@ export const DataProvider = ({ children }) => {
     if (!hasCache) {
       fetchProjects();
     }
-  }, []);
+  }, [fetchProjects, loadFromCache]);
 
   // Refresh data manually
   const refreshData = useCallback(() => {

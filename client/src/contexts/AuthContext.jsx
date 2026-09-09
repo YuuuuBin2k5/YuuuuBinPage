@@ -21,38 +21,34 @@ export const AuthProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Đơn giản cho demo - trong thực tế sử dụng JWT token
-  const adminCredentials = {
-    username: "admin",
-    password: "admin123",
-  };
-
   useEffect(() => {
-    // Kiểm tra localStorage xem user đã login admin chưa
-    const adminLoggedIn = localStorage.getItem("isAdmin") === "true";
-    if (adminLoggedIn) {
-      setIsAdmin(true);
-      setIsAuthenticated(true);
+    // Purge any stale client-side demo auth flags from previous iterations
+    try {
+      if (localStorage.getItem("isAdmin")) {
+        localStorage.removeItem("isAdmin");
+      }
+    } catch {
+      // Ignore storage access errors
     }
   }, []);
 
-  const loginAsAdmin = useCallback((username, password) => {
-    if (
-      username === adminCredentials.username &&
-      password === adminCredentials.password
-    ) {
-      setIsAdmin(true);
-      setIsAuthenticated(true);
-      localStorage.setItem("isAdmin", "true");
-      return true;
-    }
+  const loginAsAdmin = useCallback(() => {
+    // Hardcoded client-side credentials removed for production security.
+    // Public exposure of admin capabilities is disabled until backend JWT authentication is implemented.
+    console.warn(
+      "Admin login is disabled: client-side authentication has been deactivated for production security. Backend authentication required."
+    );
     return false;
   }, []);
 
   const logout = useCallback(() => {
     setIsAdmin(false);
     setIsAuthenticated(false);
-    localStorage.removeItem("isAdmin");
+    try {
+      localStorage.removeItem("isAdmin");
+    } catch {
+      // Ignore storage access errors
+    }
   }, []);
 
   const value = useMemo(

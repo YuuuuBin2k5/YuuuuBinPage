@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { profileData } from "../../data/profileData";
@@ -22,6 +22,51 @@ function SideBar() {
 
   const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const drawerRef = useRef(null);
+  const triggerBtnRef = useRef(null);
+
+  // Focus trap, initial focus, and focus restoration for mobile drawer
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const timer = setTimeout(() => {
+      const focusable = drawerRef.current?.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable && focusable.length > 0) {
+        focusable[0].focus();
+      }
+    }, 50);
+
+    const handleTrapTab = (e) => {
+      if (e.key !== "Tab" || !drawerRef.current) return;
+      const focusables = Array.from(
+        drawerRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+      );
+      if (focusables.length === 0) return;
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    const triggerEl = triggerBtnRef.current;
+    window.addEventListener("keydown", handleTrapTab);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("keydown", handleTrapTab);
+      triggerEl?.focus();
+    };
+  }, [isMobileMenuOpen]);
 
   // Passive scroll listener for stable navbar styling
   useEffect(() => {
@@ -198,6 +243,7 @@ function SideBar() {
             {/* Mobile Hamburger Button (< 768px) */}
             <div className="flex md:hidden items-center gap-2">
               <button
+                ref={triggerBtnRef}
                 type="button"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="p-2 rounded-lg bg-slate-900 border border-slate-700/60 text-slate-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-indigo-400"
@@ -232,6 +278,7 @@ function SideBar() {
 
           {/* Drawer Panel */}
           <div
+            ref={drawerRef}
             id="mobile-navigation-drawer"
             role="dialog"
             aria-modal="true"

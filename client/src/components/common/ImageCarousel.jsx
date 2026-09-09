@@ -11,7 +11,26 @@ const ImageCarousel = ({ images = [], alt = "Image" }) => {
     setImageError(false);
   }, [images]);
 
-  if (!images || images.length === 0) {
+  const numImages = images?.length || 0;
+
+  const goToPrevious = React.useCallback((e) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === 0 ? numImages - 1 : prev - 1));
+    setImageError(false);
+  }, [numImages]);
+
+  const goToNext = React.useCallback((e) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === numImages - 1 ? 0 : prev + 1));
+    setImageError(false);
+  }, [numImages]);
+
+  const currentImage = React.useMemo(
+    () => (numImages > 0 && images ? images[currentIndex] : null),
+    [images, currentIndex, numImages]
+  );
+
+  if (!images || images.length === 0 || !currentImage) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-700">
         <div className="text-center">
@@ -21,20 +40,6 @@ const ImageCarousel = ({ images = [], alt = "Image" }) => {
       </div>
     );
   }
-
-  const goToPrevious = React.useCallback((e) => {
-    e.stopPropagation();
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-    setImageError(false);
-  }, [images.length]);
-
-  const goToNext = React.useCallback((e) => {
-    e.stopPropagation();
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-    setImageError(false);
-  }, [images.length]);
-
-  const currentImage = React.useMemo(() => images[currentIndex], [images, currentIndex]);
 
   return (
     <div className="relative w-full h-full group/carousel">
