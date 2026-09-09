@@ -1,5 +1,6 @@
 import React from "react";
 import HeroSection from "../components/home/HeroSection";
+import StatsGrid from "../components/home/StatsGrid";
 import FlagshipProject from "../components/home/FlagshipProject";
 import CapabilitiesMatrix from "../components/home/CapabilitiesMatrix";
 import ExperienceSection from "../components/home/ExperienceSection";
@@ -10,10 +11,13 @@ import LabSummarySection from "../components/home/LabSummarySection";
 function Home() {
   return (
     <div className="bg-slate-900 -mt-24 w-full">
-      {/* 1. Hero Section - Identity, System Spec & Immediate Positioning */}
+      {/* 1. Hero Section - Identity, Visual Halo & Immediate Positioning */}
       <HeroSection />
 
-      {/* 2. Flagship Project - Clothy Backend Showcase */}
+      {/* 2. Key Metrics Grid - High-Impact Proof Points */}
+      <StatsGrid />
+
+      {/* 3. Flagship Project - Clothy Backend Showcase */}
       <FlagshipProject />
 
       {/* 3. Capabilities Matrix - Verified Technical Competencies */}
