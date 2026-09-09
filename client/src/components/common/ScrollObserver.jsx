@@ -2,9 +2,6 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 /**
- * 2026 High-Performance Scroll Reveal Observer
- * Hardware-accelerated IntersectionObserver that automatically triggers
- * silky-smooth reveal animations on any element with the `.scroll-reveal` class.
  * 2026 High-Performance Bulletproof Scroll Reveal Observer
  * Features:
  * 1. Native IntersectionObserver with generous bottom margin (80px)
@@ -35,17 +32,11 @@ export default function ScrollObserver() {
         });
       },
       {
-        threshold: 0.08,
-        rootMargin: "0px 0px -40px 0px",
         threshold: 0.01,
         rootMargin: "0px 0px 80px 0px",
       }
     );
 
-    const timer = setTimeout(() => {
-      const elements = document.querySelectorAll(".scroll-reveal:not(.is-revealed)");
-      elements.forEach((el) => observer.observe(el));
-    }, 60);
     const checkAndObserve = () => {
       const pendingElements = document.querySelectorAll(".scroll-reveal:not(.is-revealed)");
       const viewportHeight = window.innerHeight;
@@ -93,7 +84,6 @@ export default function ScrollObserver() {
     }, 2500);
 
     return () => {
-      clearTimeout(timer);
       timers.forEach(clearTimeout);
       clearTimeout(failsafeTimer);
       window.removeEventListener("scroll", onScroll);

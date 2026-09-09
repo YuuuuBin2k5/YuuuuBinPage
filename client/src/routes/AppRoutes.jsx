@@ -3,8 +3,6 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import ScrollToTop from "../components/common/ScrollToTop";
 import { useLanguage } from "../contexts/LanguageContext";
 
-// Lazy-loaded page components for route-level code splitting
-const Home = React.lazy(() => import("../pages/Home"));
 // Homepage statically loaded for instantaneous first paint & immediate animation readiness
 import Home from "../pages/Home";
 
