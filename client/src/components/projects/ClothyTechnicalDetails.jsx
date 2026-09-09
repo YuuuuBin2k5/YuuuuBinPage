@@ -13,20 +13,13 @@ import {
 } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
 
-const domains = [
-  { name: "Product", desc: { en: "Product catalog and metadata management", vi: "Quản lý danh mục và thông tin sản phẩm" } },
-  { name: "Category", desc: { en: "Hierarchical category classification", vi: "Phân loại danh mục đa cấp" } },
-  { name: "Inventory", desc: { en: "Stock tracking and variant inventory control", vi: "Kiểm soát tồn kho và biến thể sản phẩm" } },
-  { name: "Order", desc: { en: "Order processing and order item records", vi: "Xử lý đơn hàng và chi tiết mục hàng" } },
-  { name: "Review", desc: { en: "Customer feedback and automated moderation", vi: "Phản hồi khách hàng và kiểm duyệt tự động" } },
-];
-
 const ClothyTechnicalDetails = ({ project }) => {
   const { language } = useLanguage();
   const isEn = language === "en";
 
-  if (!project) return null;
+  if (!project || !project.technicalDetails) return null;
   const content = isEn ? project.i18n.en : project.i18n.vi;
+  const details = project.technicalDetails;
 
   return (
     <div className="space-y-12">
@@ -42,9 +35,7 @@ const ClothyTechnicalDetails = ({ project }) => {
         </h2>
 
         <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
-          {isEn
-            ? "The platform manages over 20 relational entities in PostgreSQL, mapped via Spring Data JPA and Hibernate. Relational constraints and foreign keys maintain strict referential integrity across the catalog, order history, and inventory domains."
-            : "Hệ thống quản lý hơn 20 thực thể quan hệ trên PostgreSQL, được ánh xạ thông qua Spring Data JPA và Hibernate. Các ràng buộc quan hệ và khóa ngoại đảm bảo tính toàn vẹn tham chiếu chặt chẽ trên toàn bộ danh mục sản phẩm, đơn hàng và tồn kho."}
+          {isEn ? details.databaseScope.description.en : details.databaseScope.description.vi}
         </p>
 
         <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
@@ -53,7 +44,7 @@ const ClothyTechnicalDetails = ({ project }) => {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
             <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-center space-y-1">
-              <span className="text-xl font-bold text-indigo-400 block">20+</span>
+              <span className="text-xl font-bold text-indigo-400 block">{details.databaseScope.entityCount}</span>
               <span className="text-slate-400">{isEn ? "PostgreSQL Entities" : "Thực thể PostgreSQL"}</span>
             </div>
             <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-center space-y-1">
@@ -80,17 +71,11 @@ const ClothyTechnicalDetails = ({ project }) => {
         </div>
 
         <h2 id="clothy-api-heading" className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-          {isEn ? "5 Core REST API Domains" : "5 Phân Hệ REST API Cốt Lõi"}
+          {isEn ? "Core REST API Domains" : "Phân Hệ REST API Cốt Lõi"}
         </h2>
 
-        <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
-          {isEn
-            ? "Server endpoints are structured across five primary domains, encapsulating business rules for e-commerce transactions, inventory integrity, and customer interactions."
-            : "Hệ thống endpoint được cấu trúc theo năm phân hệ chính, đóng gói các quy tắc nghiệp vụ cho giao dịch thương mại điện tử, kiểm soát tồn kho và tương tác khách hàng."}
-        </p>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {domains.map((dom) => (
+          {details.apiDomains.map((dom) => (
             <div
               key={dom.name}
               className="p-4 rounded-xl bg-slate-900/90 border border-slate-800/80 space-y-1.5"
@@ -118,27 +103,22 @@ const ClothyTechnicalDetails = ({ project }) => {
           {isEn ? "SKU, Size, Color & Stock Hierarchy" : "Phân Cấp SKU, Kích Cỡ, Màu Sắc & Tồn Kho"}
         </h2>
 
-        <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
-          {isEn
-            ? "To support fashion merchandising requirements, the data model separates parent products from discrete purchasable variants. Each variant maintains its own SKU code, size, color attributes, and dedicated stock count."
-            : "Để đáp ứng yêu cầu kinh doanh ngành thời trang, mô hình dữ liệu tách biệt sản phẩm cha và các biến thể thương mại độc lập. Mỗi biến thể sở hữu mã SKU riêng, thuộc tính kích cỡ, màu sắc và số lượng tồn kho chuyên biệt."}
-        </p>
-
         <div className="p-6 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-4">
           <div className="max-w-md mx-auto space-y-2">
             <div className="p-3 rounded-xl bg-indigo-950/60 border border-indigo-500/30 text-indigo-200 font-mono font-bold text-center text-sm">
-              Product (Parent Entity)
+              {details.variantStructure.parent}
             </div>
             <div className="text-center text-slate-500 font-mono" aria-hidden="true">↓</div>
             <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
               <div className="text-amber-300 font-mono font-bold text-center text-xs">
-                Product Variant (Purchasable Unit)
+                {details.variantStructure.child}
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs font-mono">
-                <span className="p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">SKU</span>
-                <span className="p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">Size</span>
-                <span className="p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">Color</span>
-                <span className="p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">Stock</span>
+                {details.variantStructure.attributes.map((attr) => (
+                  <span key={attr} className="p-2 rounded-lg bg-slate-950 border border-slate-800 text-slate-300">
+                    {attr}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
@@ -159,9 +139,7 @@ const ClothyTechnicalDetails = ({ project }) => {
         </h2>
 
         <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
-          {isEn
-            ? "Implemented dynamic multi-criteria product filtering using Spring Data JPA Specifications. This approach avoids brittle string concatenation or rigid query methods, allowing flexible combinations of search filters at runtime."
-            : "Hiện thực bộ lọc sản phẩm động đa tiêu chí sử dụng Spring Data JPA Specifications. Giải pháp này loại bỏ việc nối chuỗi truy vấn thủ công hoặc các method cứng nhắc, cho phép kết hợp linh hoạt các tham số tìm kiếm tại thời điểm thực thi."}
+          {isEn ? details.filtering.en : details.filtering.vi}
         </p>
       </section>
 
@@ -183,14 +161,12 @@ const ClothyTechnicalDetails = ({ project }) => {
               <span>{isEn ? "Administration & Moderation" : "Quản Trị & Kiểm Duyệt"}</span>
             </h3>
             <ul className="space-y-1.5 text-xs text-slate-300 leading-relaxed">
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
-                <span>{isEn ? "Automated Review Moderation" : "Tự động kiểm duyệt đánh giá"}</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
-                <span>{isEn ? "Role-Based Administration" : "Phân quyền quản trị theo vai trò"}</span>
-              </li>
+              {details.operations.map((op, idx) => (
+                <li key={idx} className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
+                  <span>{isEn ? op.en : op.vi}</span>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -200,14 +176,12 @@ const ClothyTechnicalDetails = ({ project }) => {
               <span>{isEn ? "Analytics & Reporting" : "Thống Kê & Báo Cáo"}</span>
             </h3>
             <ul className="space-y-1.5 text-xs text-slate-300 leading-relaxed">
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" aria-hidden="true" />
-                <span>{isEn ? "Revenue tracking" : "Theo dõi doanh thu"}</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" aria-hidden="true" />
-                <span>{isEn ? "Bestseller product reporting" : "Báo cáo sản phẩm bán chạy"}</span>
-              </li>
+              {details.analytics.map((an, idx) => (
+                <li key={idx} className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" aria-hidden="true" />
+                  <span>{isEn ? an.en : an.vi}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

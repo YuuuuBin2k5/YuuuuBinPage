@@ -31,7 +31,7 @@ const ProjectDetailHeader = ({ project }) => {
         <div className="flex items-center gap-3 flex-wrap">
           {isFlagship ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-bold bg-indigo-950/80 border border-indigo-500/40 text-indigo-300">
-              <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" aria-hidden="true" />
+              <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse motion-reduce:animate-none" aria-hidden="true" />
               {isEn ? "Flagship Backend Project" : "Dự Án Backend Tiêu Biểu"}
             </span>
           ) : (

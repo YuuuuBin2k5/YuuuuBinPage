@@ -57,7 +57,7 @@ const ProjectCaseStudyCard = ({ project }) => {
             <div className="flex items-center gap-2.5 flex-wrap">
               {isFlagship ? (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-mono font-bold bg-indigo-950/80 border border-indigo-500/40 text-indigo-300">
-                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" aria-hidden="true" />
+                  <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse motion-reduce:animate-none" aria-hidden="true" />
                   {isEn ? "Flagship Backend Project" : "Dự Án Backend Tiêu Biểu"}
                 </span>
               ) : (
@@ -180,7 +180,7 @@ const ProjectCaseStudyCard = ({ project }) => {
         <div className="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" aria-hidden="true" />
-            <span>{isEn ? "Verified codebase & documentation" : "Mã nguồn & tài liệu đã xác thực"}</span>
+            <span>{isEn ? "Verified project evidence" : "Bằng chứng dự án đã đối soát"}</span>
           </div>
 
           <Link

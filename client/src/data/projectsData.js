@@ -79,7 +79,42 @@ export const projectsData = [
         label: { vi: "Phạm vi REST APIs", en: "REST API Domains" },
         value: "Product, Category, Inventory, Order, Review"
       }
-    ]
+    ],
+
+    // Centralized Technical Case Study Facts
+    technicalDetails: {
+      databaseScope: {
+        entityCount: "20+",
+        description: {
+          en: "The platform uses a PostgreSQL relational model with 20+ entities, with entity relationships mapped through JPA/Hibernate.",
+          vi: "Hệ thống sử dụng mô hình quan hệ PostgreSQL với hơn 20 thực thể, các mối quan hệ thực thể được ánh xạ qua JPA/Hibernate."
+        }
+      },
+      apiDomains: [
+        { name: "Product", desc: { en: "Product management", vi: "Quản lý sản phẩm" } },
+        { name: "Category", desc: { en: "Category management", vi: "Quản lý danh mục" } },
+        { name: "Inventory", desc: { en: "Inventory management", vi: "Quản lý tồn kho" } },
+        { name: "Order", desc: { en: "Order management", vi: "Quản lý đơn hàng" } },
+        { name: "Review", desc: { en: "Review management", vi: "Quản lý đánh giá" } }
+      ],
+      variantStructure: {
+        parent: "Product",
+        child: "Product Variant",
+        attributes: ["SKU", "Size", "Color", "Stock"]
+      },
+      filtering: {
+        en: "Implemented dynamic multi-criteria product filtering using Spring Data JPA Specifications. Filter conditions can be composed dynamically.",
+        vi: "Hiện thực bộ lọc sản phẩm động đa tiêu chí sử dụng Spring Data JPA Specifications. Các điều kiện lọc có thể được kết hợp linh hoạt."
+      },
+      operations: [
+        { en: "Automated Review Moderation", vi: "Tự động kiểm duyệt đánh giá" },
+        { en: "Role-Based Administration", vi: "Phân quyền quản trị theo vai trò" }
+      ],
+      analytics: [
+        { en: "Revenue tracking", vi: "Theo dõi doanh thu" },
+        { en: "Bestseller product reporting", vi: "Báo cáo sản phẩm bán chạy" }
+      ]
+    }
   },
   {
     id: 2,
@@ -111,7 +146,7 @@ export const projectsData = [
           "Xây dựng backend RESTful APIs bằng Spring Boot 3.2.0 và Spring Data JPA kết nối PostgreSQL trên Supabase.",
           "Cấu hình Application-level in-memory caching using Spring Cache + Caffeine (thời gian sống 5 phút, tối đa 1000 items).",
           "Cấu hình JDBC vô hiệu hóa bộ đệm prepared statement nhằm tương thích với cơ chế PgBouncer transaction pooling trên Supabase cùng HikariCP.",
-          "Đóng gói Docker multi-stage (Maven build sang Temurin-17 JRE Alpine runtime), chạy non-root user và Actuator healthcheck.",
+          "Đóng gói Docker multi-stage (Maven build sang Temurin-17 JRE Alpine runtime), chạy non-root runtime user: spring và Actuator healthcheck.",
           "Triển khai backend trên Render và frontend trên Vercel; hỗ trợ đa ngôn ngữ VI/EN và EmailJS."
         ]
       },
@@ -125,7 +160,7 @@ export const projectsData = [
           "Developed backend RESTful APIs using Spring Boot 3.2.0 and Spring Data JPA with PostgreSQL on Supabase.",
           "Configured application-level in-memory caching using Spring Cache + Caffeine (5-minute cache expiration, 1000 max size).",
           "Configured JDBC settings to disable prepared-statement caching for compatibility with Supabase PgBouncer transaction pooling with HikariCP.",
-          "Packaged multi-stage Docker build (Maven build to Temurin-17 JRE Alpine runtime) with non-root user and Actuator healthcheck.",
+          "Packaged multi-stage Docker build (Maven build to Temurin-17 JRE Alpine runtime) with non-root runtime user: spring and Actuator healthcheck.",
           "Deployed backend on Render and frontend on Vercel; integrated VI/EN i18n and EmailJS."
         ]
       }
@@ -155,7 +190,65 @@ export const projectsData = [
         label: { vi: "Triển khai", en: "Deployment" },
         value: "Render & Vercel"
       }
-    ]
+    ],
+
+    // Centralized Technical Case Study Facts
+    technicalDetails: {
+      backendArchitecture: {
+        description: {
+          en: "The platform operates a standalone Spring Boot 3.2 server structured into standard Controller, Service, and Repository layers. HikariCP connection pooling and Spring Data JPA provide persistence operations against PostgreSQL.",
+          vi: "Hệ thống vận hành máy chủ Spring Boot 3.2 độc lập được tổ chức theo kiến trúc phân tầng chuẩn Controller, Service và Repository. HikariCP connection pool cùng Spring Data JPA đảm nhiệm các thao tác dữ liệu với PostgreSQL."
+        }
+      },
+      databaseConnectivity: {
+        description: {
+          en: "PostgreSQL hosted on Supabase Cloud with JDBC configuration compatible with PgBouncer transaction pooling.",
+          vi: "Cơ sở dữ liệu PostgreSQL được lưu trữ trên nền tảng đám mây Supabase với cấu hình JDBC tương thích cơ chế pooling giao dịch của PgBouncer."
+        },
+        technicalNote: {
+          en: "Prepared-statement caching is disabled in JDBC configuration for transaction-pooler compatibility.",
+          vi: "Bộ đệm prepared-statement được vô hiệu hóa trong cấu hình JDBC để đảm bảo tương thích hoàn toàn với transaction pooler."
+        }
+      },
+      caching: {
+        ttl: { en: "5 Minutes", vi: "5 Phút" },
+        maxSize: "1,000",
+        groups: ["projects", "weeks", "exercises"],
+        description: {
+          en: "Application-level in-memory caching using Spring Cache + Caffeine (5-minute expiration, 1,000 max size, cache groups: projects, weeks, exercises).",
+          vi: "Bộ nhớ đệm in-memory tầng ứng dụng sử dụng Spring Cache + Caffeine (thời gian sống 5 phút, tối đa 1.000 mục, các nhóm cache: projects, weeks, exercises)."
+        }
+      },
+      dockerPackaging: {
+        summary: {
+          en: "Multi-stage Docker build separates build and runtime stages.",
+          vi: "Quy trình đóng gói Docker multi-stage phân tách môi trường build và runtime."
+        },
+        runtimeUser: "Non-root runtime user: spring",
+        flow: [
+          { step: "01", name: "Maven Build Stage", desc: { en: "Multi-stage Maven compilation and package step", vi: "Biên dịch và đóng gói Maven multi-stage" } },
+          { step: "02", name: "Temurin 17 JRE", desc: { en: "Lightweight Eclipse Temurin Java 17 runtime", vi: "Runtime Eclipse Temurin Java 17 tinh gọn" } },
+          { step: "03", name: "Alpine Runtime Image", desc: { en: "Alpine-based Java runtime image", vi: "Image runtime Java nền tảng Alpine" } },
+          { step: "04", name: "Non-Root User", desc: { en: "Non-root runtime user: spring", vi: "Thực thi với người dùng non-root: spring" } },
+          { step: "05", name: "Actuator Health Check", desc: { en: "Actuator Health Check", vi: "Kiểm tra trạng thái Actuator Health Check" } },
+          { step: "06", name: "Render Deployment", desc: { en: "Backend deployed on Render", vi: "Backend triển khai trên Render" } }
+        ]
+      },
+      hostingAndClient: {
+        backend: {
+          en: "Backend deployed on Render connected to Supabase PostgreSQL.",
+          vi: "Backend triển khai trên Render kết nối PostgreSQL Supabase."
+        },
+        frontend: {
+          en: "Frontend deployed on Vercel.",
+          vi: "Frontend triển khai trên Vercel."
+        },
+        clientDetails: {
+          en: "React 19, Vite, Tailwind CSS, EmailJS integration, and bilingual Vietnamese/English localization.",
+          vi: "React 19, Vite, Tailwind CSS, tích hợp EmailJS và hỗ trợ đa ngôn ngữ Tiếng Việt/Tiếng Anh."
+        }
+      }
+    }
   }
 ];
 

@@ -8,29 +8,17 @@ import {
   Layout,
   CheckCircle2,
   Github,
-  ExternalLink,
-  ShieldCheck,
-  Cpu
+  ExternalLink
 } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
-
-const dockerFlow = [
-  { step: "01", name: "Maven Build Stage", desc: { en: "Multi-stage Maven compilation and package step", vi: "Biên dịch và đóng gói Maven multi-stage" } },
-  { step: "02", name: "Temurin 17 JRE", desc: { en: "Lightweight Eclipse Temurin Java 17 runtime", vi: "Runtime Eclipse Temurin Java 17 tinh gọn" } },
-  { step: "03", name: "Alpine Runtime", desc: { en: "Minimal Alpine base image reducing attack surface", vi: "Base image Alpine tối giản bề mặt tấn công" } },
-  { step: "04", name: "Non-Root User", desc: { en: "Least privilege execution under appuser", vi: "Thực thi với đặc quyền tối thiểu qua appuser" } },
-  { step: "05", name: "Actuator Health Check", desc: { en: "Spring Boot Actuator /health probes", vi: "Đầu dò trạng thái Spring Boot Actuator /health" } },
-  { step: "06", name: "Render Cloud Hosting", desc: { en: "Automated containerized deployment on Render", vi: "Triển khai container tự động trên Render" } },
-];
-
-const cacheGroups = ["projects", "weeks", "exercises"];
 
 const PortfolioPlatformTechnicalDetails = ({ project }) => {
   const { language } = useLanguage();
   const isEn = language === "en";
 
-  if (!project) return null;
+  if (!project || !project.technicalDetails) return null;
   const content = isEn ? project.i18n.en : project.i18n.vi;
+  const details = project.technicalDetails;
 
   return (
     <div className="space-y-12">
@@ -46,9 +34,7 @@ const PortfolioPlatformTechnicalDetails = ({ project }) => {
         </h2>
 
         <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
-          {isEn
-            ? "The platform operates a standalone Spring Boot 3.2 server structured into standard Controller, Service, and Repository layers. HikariCP connection pooling and Spring Data JPA provide persistence operations against PostgreSQL."
-            : "Hệ thống vận hành máy chủ Spring Boot 3.2 độc lập được tổ chức theo kiến trúc phân tầng chuẩn Controller, Service và Repository. HikariCP connection pool cùng Spring Data JPA đảm nhiệm các thao tác dữ liệu với PostgreSQL."}
+          {isEn ? details.backendArchitecture.description.en : details.backendArchitecture.description.vi}
         </p>
       </section>
 
@@ -65,17 +51,13 @@ const PortfolioPlatformTechnicalDetails = ({ project }) => {
 
         <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3">
           <p className="text-sm text-slate-300 leading-relaxed">
-            {isEn
-              ? "PostgreSQL hosted on Supabase Cloud with JDBC configuration compatible with PgBouncer transaction pooling."
-              : "Cơ sở dữ liệu PostgreSQL được lưu trữ trên nền tảng đám mây Supabase với cấu hình JDBC tương thích cơ chế pooling giao dịch của PgBouncer."}
+            {isEn ? details.databaseConnectivity.description.en : details.databaseConnectivity.description.vi}
           </p>
 
           <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-400 font-mono space-y-1">
             <span className="text-cyan-400 font-bold block">{isEn ? "Technical Note:" : "Ghi chú kỹ thuật:"}</span>
             <span>
-              {isEn
-                ? "Prepared-statement caching is disabled in JDBC configuration for transaction-pooler compatibility."
-                : "Bộ đệm prepared-statement được vô hiệu hóa trong cấu hình JDBC để đảm bảo tương thích hoàn toàn với transaction pooler."}
+              {isEn ? details.databaseConnectivity.technicalNote.en : details.databaseConnectivity.technicalNote.vi}
             </span>
           </div>
         </div>
@@ -93,24 +75,22 @@ const PortfolioPlatformTechnicalDetails = ({ project }) => {
         </h2>
 
         <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
-          {isEn
-            ? "To minimize redundant database round-trips for read-heavy portfolio resources, in-memory caching is implemented using Spring Cache integrated with Caffeine."
-            : "Để giảm thiểu các truy vấn cơ sở dữ liệu dư thừa cho các tài nguyên đọc thường xuyên, hệ thống tích hợp bộ nhớ đệm in-memory thông qua Spring Cache và thư viện Caffeine."}
+          {isEn ? details.caching.description.en : details.caching.description.vi}
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
             <div className="text-xs font-mono text-slate-400">{isEn ? "Cache Expiration (TTL)" : "Thời gian sống (TTL)"}</div>
-            <div className="text-lg font-bold text-white font-mono">{isEn ? "5 Minutes" : "5 Phút"}</div>
+            <div className="text-lg font-bold text-white font-mono">{isEn ? details.caching.ttl.en : details.caching.ttl.vi}</div>
           </div>
           <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
             <div className="text-xs font-mono text-slate-400">{isEn ? "Maximum Capacity" : "Dung lượng tối đa"}</div>
-            <div className="text-lg font-bold text-white font-mono">{isEn ? "1,000 Items" : "1.000 Mục"}</div>
+            <div className="text-lg font-bold text-white font-mono">{details.caching.maxSize} {isEn ? "Items" : "Mục"}</div>
           </div>
           <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
             <div className="text-xs font-mono text-slate-400">{isEn ? "Active Cache Groups" : "Nhóm Cache"}</div>
             <div className="flex items-center gap-1.5 pt-1">
-              {cacheGroups.map((grp) => (
+              {details.caching.groups.map((grp) => (
                 <span key={grp} className="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-950 border border-slate-800 text-amber-300">
                   {grp}
                 </span>
@@ -132,13 +112,11 @@ const PortfolioPlatformTechnicalDetails = ({ project }) => {
         </h2>
 
         <p className="text-sm text-slate-300 leading-relaxed max-w-3xl">
-          {isEn
-            ? "Container packaging follows security and size minimization practices, splitting the build and runtime environments."
-            : "Đóng gói container tuân thủ các quy tắc bảo mật và tối ưu kích thước, phân tách môi trường build và runtime."}
+          {isEn ? details.dockerPackaging.summary.en : details.dockerPackaging.summary.vi}
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {dockerFlow.map((step) => (
+          {details.dockerPackaging.flow.map((step) => (
             <div
               key={step.step}
               className="p-4 rounded-xl bg-slate-900/90 border border-slate-800/80 space-y-1.5"
@@ -173,9 +151,10 @@ const PortfolioPlatformTechnicalDetails = ({ project }) => {
               <span>{isEn ? "Decoupled Cloud Hosting" : "Lưu Trữ Đám Mây Tách Biệt"}</span>
             </h3>
             <p className="text-xs text-slate-300 leading-relaxed">
-              {isEn
-                ? "Backend container hosted on Render connected to Supabase PostgreSQL. Static frontend build deployed globally on Vercel."
-                : "Container backend được lưu trữ trên Render kết nối PostgreSQL Supabase. Bản build frontend tĩnh được phân phối trên Vercel."}
+              {isEn ? details.hostingAndClient.backend.en : details.hostingAndClient.backend.vi}
+            </p>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              {isEn ? details.hostingAndClient.frontend.en : details.hostingAndClient.frontend.vi}
             </p>
           </div>
 
@@ -190,9 +169,7 @@ const PortfolioPlatformTechnicalDetails = ({ project }) => {
               </span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              {isEn
-                ? "React 19, Vite, Tailwind CSS, EmailJS integration, and bilingual Vietnamese/English localization."
-                : "React 19, Vite, Tailwind CSS, tích hợp EmailJS và hỗ trợ đa ngôn ngữ Tiếng Việt/Tiếng Anh."}
+              {isEn ? details.hostingAndClient.clientDetails.en : details.hostingAndClient.clientDetails.vi}
             </p>
           </div>
         </div>
