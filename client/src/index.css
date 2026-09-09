@@ -14,10 +14,34 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  /* Design Tokens 2.0 — Precision Engineering & Editorial Motion */
+  --dt-bg: #07090e;
+  --dt-surface: #0d1117;
+  --dt-surface-elevated: #151b23;
+  --dt-surface-overlay: #1c2430;
+  --dt-border-subtle: rgba(255, 255, 255, 0.08);
+  --dt-border-strong: rgba(255, 255, 255, 0.16);
+  --dt-border-highlight: rgba(255, 255, 255, 0.28);
+  --dt-text-primary: #f8fafc;
+  --dt-text-secondary: #94a3b8;
+  --dt-text-muted: #64748b;
+  --dt-accent-primary: #6366f1;
+  --dt-accent-system: #10b981;
+  --dt-accent-metric: #38bdf8;
+  --dt-accent-success: #10b981;
+
+  /* Motion Tokens */
+  --motion-fast: 160ms;
+  --motion-base: 200ms;
+  --motion-medium: 300ms;
+  --motion-route: 360ms;
+  --ease-precision: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-precision: cubic-bezier(0.65, 0, 0.35, 1);
+
   /* Approved Professional Dark Tech Design Tokens */
-  --bg-canvas: #090d16;
-  --bg-surface: #0f172a;
-  --bg-surface-elevated: #1e293b;
+  --bg-canvas: #07090e;
+  --bg-surface: #0d1117;
+  --bg-surface-elevated: #151b23;
   --border-subtle: rgba(255, 255, 255, 0.08);
   --color-primary: #6366f1;
   --color-secondary: #06b6d4;
@@ -623,8 +647,100 @@
   }
 }
 
-.animate-shimmer {
-  animation: shimmer 2.5s ease-in-out infinite;
+/* ==================================================
+   PRECISION ENGINEERING × EDITORIAL MOTION (Phase 8.5A)
+   ================================================== */
+
+@keyframes reveal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes line-reveal {
+  from {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* Restrained Entry Sequencing (Total settle time <= 640ms) */
+.animate-reveal-up-1 {
+  animation: reveal-up var(--motion-medium) var(--ease-precision) 40ms both;
+}
+
+.animate-reveal-up-2 {
+  animation: reveal-up var(--motion-medium) var(--ease-precision) 100ms both;
+}
+
+.animate-reveal-up-3 {
+  animation: reveal-up var(--motion-medium) var(--ease-precision) 160ms both;
+}
+
+.animate-reveal-up-4 {
+  animation: reveal-up var(--motion-medium) var(--ease-precision) 220ms both;
+}
+
+.animate-reveal-up-5 {
+  animation: reveal-up var(--motion-medium) var(--ease-precision) 280ms both;
+}
+
+.animate-reveal-up-6 {
+  animation: reveal-up var(--motion-medium) var(--ease-precision) 340ms both;
+}
+
+.animate-line-reveal {
+  animation: line-reveal var(--motion-base) var(--ease-precision) 200ms both;
+}
+
+/* Precision Interaction Feedback (120-180ms) */
+.btn-precision {
+  transition: transform var(--motion-fast) var(--ease-precision),
+              background-color var(--motion-fast) var(--ease-precision),
+              border-color var(--motion-fast) var(--ease-precision),
+              box-shadow var(--motion-fast) var(--ease-precision),
+              color var(--motion-fast) var(--ease-precision);
+}
+
+.btn-precision:hover {
+  transform: translateY(-1.5px);
+}
+
+.btn-precision:active {
+  transform: translateY(0) scale(0.985);
+}
+
+/* Precision Engineering Hairline Surface Containers */
+.surface-solid {
+  background-color: var(--dt-surface);
+  border: 1px solid var(--dt-border-subtle);
+}
+
+.surface-elevated {
+  background-color: var(--dt-surface-elevated);
+  border: 1px solid var(--dt-border-strong);
+}
+
+.border-hairline {
+  border-color: var(--dt-border-subtle);
 }
 
 /* Accessibility: Respect user reduced motion preferences */
