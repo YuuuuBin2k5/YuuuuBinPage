@@ -20,6 +20,11 @@ import { exercisesAPI, weeksAPI } from "../../services";
 import { Link } from "react-router-dom";
 import { useViewedExercises } from "../../hooks/useViewedExercises";
 
+/**
+ * @deprecated Deprecated in Phase 6 in favor of LabSummarySection.
+ * Kept for historical reference. No longer mounted in Home.jsx.
+ * Detailed coursework remains available under /baitap.
+ */
 const FeaturedExercises = () => {
   const { t } = useTranslation();
   const [exercises, setExercises] = useState([]);

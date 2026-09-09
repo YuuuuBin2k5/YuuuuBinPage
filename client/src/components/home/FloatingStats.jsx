@@ -16,8 +16,11 @@ import {
 import { useTranslation } from "../../hooks/useTranslation";
 import { useScrollReveal } from "../../hooks/useScrollReveal";
 import { useParallax } from "../../hooks/useParallax";
-import FeaturedProjects from "./FeaturedProjects";
 
+/**
+ * @deprecated Deprecated in Phase 6 in favor of EducationSection and ExperienceSection.
+ * Kept for historical reference. No longer mounted in Home.jsx.
+ */
 const FloatingStats = () => {
   const { t } = useTranslation();
   const [activeTimeline, setActiveTimeline] = useState(0);
@@ -357,9 +360,6 @@ const FloatingStats = () => {
             </div>
           </div>
         </div>
-
-        {/* Featured Projects Showcase */}
-        <FeaturedProjects />
       </div>
     </div>
   );

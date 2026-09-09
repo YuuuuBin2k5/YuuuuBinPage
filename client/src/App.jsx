@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 import SideBar from "./components/layout/SideBar";
 import AppRoutes from "./routes/AppRoutes";

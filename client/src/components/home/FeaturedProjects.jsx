@@ -11,6 +11,10 @@ import {
 import { useTranslation } from "../../hooks/useTranslation";
 import { useData } from "../../contexts/DataContext";
 
+/**
+ * @deprecated Deprecated in Phase 4 in favor of dedicated FlagshipProject and SecondaryProjects showcases.
+ * Preserved for backward compatibility.
+ */
 const FeaturedProjects = () => {
   const { t } = useTranslation();
   const { projects: allProjects, loading } = useData();

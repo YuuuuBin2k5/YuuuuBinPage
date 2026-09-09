@@ -1,309 +1,240 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Github, Linkedin, Mail, MapPin, Code, Sparkles } from "lucide-react";
-import { useTranslation } from "../../hooks/useTranslation";
-import { useParallax } from "../../hooks/useParallax";
+import React from "react";
+import { Github, Linkedin, Mail, Download, ArrowRight } from "lucide-react";
+import { useLanguage } from "../../contexts/LanguageContext";
+import { profileData } from "../../data/profileData";
 import avatarImg from "../../images/avatar.jpg";
 
 const HeroSection = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [isVisible, setIsVisible] = useState(false);
-
-  // Parallax effects with different speeds
-  const parallaxSlow = useParallax(0.3);
-  const parallaxMedium = useParallax(0.5);
-  const parallaxFast = useParallax(0.7);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
+  const { language } = useLanguage();
+  const isEn = language === "en";
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Gradient Orbs with Parallax */}
-        <div
-          className="absolute top-1/3 left-1/3 w-[600px] h-[600px] bg-indigo-600/15 rounded-full blur-3xl transition-transform duration-0"
-          style={{ transform: `translateY(${parallaxSlow}px)` }}
-        />
-        <div
-          className="absolute bottom-1/4 right-1/3 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-3xl transition-transform duration-0"
-          style={{ transform: `translateY(${parallaxMedium}px)` }}
-        />
-
-        {/* Floating Particles */}
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-indigo-400/30 rounded-full animate-float"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${5 + Math.random() * 10}s`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Main Content */}
+    <section 
+      className="relative min-h-[85vh] flex items-center justify-center pt-24 pb-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 overflow-hidden"
+      aria-label={isEn ? "Candidate Introduction" : "Giới thiệu ứng viên"}
+    >
+      {/* Subtle Static Background Grid */}
       <div
-        className={`relative z-10 w-full px-6 transition-all duration-1000 ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-        }`}
-      >
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Avatar & Visual */}
-          <div className="relative flex justify-center lg:justify-end">
-            {/* Decorative Ring */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-[450px] h-[450px] border border-indigo-500/20 rounded-full animate-spin-slow" />
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
+                           linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px)`,
+          backgroundSize: "32px 32px",
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Subtle Ambient Radial Glow */}
+      <div
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"
+        aria-hidden="true"
+      />
+
+      <div className="relative z-10 w-full max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8">
+          {/* Left Column (~60% desktop): Identity, Stack, Copy & CTAs */}
+          <div className="w-full lg:w-7/12 text-left space-y-6">
+            {/* Availability Badge */}
+            <div className="inline-flex flex-wrap items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-700/60 shadow-sm">
+              <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-40 motion-reduce:hidden" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+              </span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-300 font-mono">
+                {isEn ? profileData.availabilityStatus.en : profileData.availabilityStatus.vi}
+              </span>
+              <span className="text-slate-600 font-mono" aria-hidden="true">•</span>
+              <span className="text-xs text-slate-400 font-mono">
+                {isEn ? profileData.location.en : profileData.location.vi}
+              </span>
             </div>
 
-            {/* Avatar Container */}
-            <div className="relative z-10 group">
-              {/* Glow Effect */}
-              <div className="absolute -inset-4 bg-indigo-600/40 rounded-full opacity-60 blur-2xl group-hover:opacity-80 transition-opacity duration-700" />
+            {/* Page-level Primary H1 */}
+            <div className="space-y-2">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                {isEn ? profileData.fullName.en : profileData.fullName.vi}
+                <span className="block text-xl sm:text-2xl lg:text-3xl font-semibold text-indigo-400 mt-2 font-mono">
+                  {isEn ? profileData.professionalTitle.en : profileData.professionalTitle.vi}
+                </span>
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-400 font-mono">
+                {isEn ? profileData.studentStatus.en : profileData.studentStatus.vi} • {isEn ? profileData.university.en : profileData.university.vi} (GPA: {profileData.gpa})
+              </p>
+            </div>
 
-              {/* Main Avatar */}
-              <div className="relative w-80 h-80 rounded-full overflow-hidden border-4 border-white/10 shadow-2xl group-hover:scale-105 transition-transform duration-500">
-                <img
-                  src={avatarImg}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
+            {/* Primary Backend Stack Badges */}
+            <div className="space-y-2 pt-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs uppercase font-mono tracking-wider text-slate-400">
+                  {isEn ? "Core Stack:" : "Stack Chính:"}
+                </span>
+                {["Java", "Spring Boot", "PostgreSQL", "RESTful APIs"].map((tech) => (
+                  <span
+                    key={tech}
+                    className="px-2.5 py-1 rounded-md text-xs font-mono font-semibold bg-indigo-950/70 text-indigo-300 border border-indigo-500/30 shadow-sm"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 flex-wrap text-xs font-mono">
+                <span className="text-slate-500">Supporting:</span>
+                <span className="px-2 py-0.5 rounded text-xs bg-slate-800/60 text-slate-300 border border-slate-700/40">
+                  Spring Data JPA
+                </span>
+                <span className="px-2 py-0.5 rounded text-xs bg-slate-800/60 text-slate-300 border border-slate-700/40">
+                  Hibernate
+                </span>
+              </div>
+            </div>
+
+            {/* Value Proposition Description */}
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
+              {isEn ? profileData.summary.en : profileData.summary.vi}
+            </p>
+
+            {/* CTA Buttons Row */}
+            <div className="flex flex-wrap gap-4 pt-2">
+              <a
+                href={profileData.cvPath}
+                download="Dao-Nguyen-Nhat-Anh-Backend-Intern.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950"
+                aria-label={isEn ? "Download Dao Nguyen Nhat Anh's CV in PDF format" : "Tải hồ sơ CV của Đào Nguyễn Nhật Anh định dạng PDF"}
+              >
+                <Download className="w-4 h-4" aria-hidden="true" />
+                <span>{isEn ? "Download CV (PDF)" : "Tải CV (PDF)"}</span>
+              </a>
+
+              <a
+                href="#clothy"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 hover:text-white font-semibold text-sm border border-slate-700/60 hover:border-slate-500 transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-950"
+              >
+                <span>{isEn ? "View Clothy Project" : "Xem dự án Clothy"}</span>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </a>
+            </div>
+
+            {/* Social Links & Direct Email */}
+            <div className="flex items-center gap-3 pt-2">
+              <a
+                href={profileData.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950"
+                aria-label="GitHub Profile"
+              >
+                <Github className="w-4 h-4" aria-hidden="true" />
+              </a>
+              <a
+                href={profileData.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950"
+                aria-label="LinkedIn Profile"
+              >
+                <Linkedin className="w-4 h-4" aria-hidden="true" />
+              </a>
+              <a
+                href={`mailto:${profileData.email}`}
+                className="p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 text-slate-400 hover:text-white hover:border-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950"
+                aria-label="Send Email"
+              >
+                <Mail className="w-4 h-4" aria-hidden="true" />
+              </a>
+              <span className="text-xs text-slate-500 font-mono ml-2 hidden sm:inline">
+                {profileData.email}
+              </span>
+            </div>
+          </div>
+
+          {/* Right Column (~40% desktop): System Spec Technical Card */}
+          <div className="w-full lg:w-5/12 flex justify-center lg:justify-end">
+            <div className="w-full max-w-md rounded-2xl bg-slate-900/90 backdrop-blur-xl border border-slate-800/80 shadow-2xl shadow-indigo-950/20 overflow-hidden">
+              {/* Terminal / Panel Header */}
+              <div className="flex items-center justify-between px-4 py-2.5 bg-slate-950/80 border-b border-slate-800/80">
+                <div className="flex items-center gap-1.5" aria-hidden="true">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
+                </div>
+                <span className="text-[11px] font-mono text-slate-400 tracking-wider">
+                  candidate-spec.json
+                </span>
+                <div className="w-10" aria-hidden="true" />
               </div>
 
-              {/* Floating Badge */}
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-6 py-3 rounded-full shadow-lg shadow-indigo-500/30">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={16} />
-                  <span className="font-bold text-sm">
-                    {t("hero.availableForWork")}
-                  </span>
-                  <Sparkles size={16} />
+              {/* Card Body */}
+              <div className="p-5 space-y-4">
+                {/* Profile Header Row */}
+                <div className="flex items-center gap-3.5 pb-4 border-b border-slate-800/60">
+                  <img
+                    src={avatarImg}
+                    alt={isEn ? "Dao Nguyen Nhat Anh - Avatar" : "Đào Nguyễn Nhật Anh - Ảnh đại diện"}
+                    className="w-16 h-16 sm:w-18 sm:h-18 rounded-xl object-cover border border-indigo-500/30 shadow-md"
+                  />
+                  <div className="space-y-1">
+                    <div className="text-sm font-bold text-white">
+                      {isEn ? profileData.fullName.en : profileData.fullName.vi}
+                    </div>
+                    <div className="text-xs text-indigo-300 font-mono">
+                      {profileData.studentStatus[isEn ? "en" : "vi"]}
+                    </div>
+                    <div className="text-xs text-slate-400 font-mono">
+                      {profileData.university.short} • GPA {profileData.gpa}
+                    </div>
+                  </div>
+                </div>
+
+                {/* JSON Spec Display */}
+                <div 
+                  className="p-3.5 rounded-lg bg-slate-950/80 border border-slate-800/60 font-mono text-xs leading-relaxed space-y-1 text-slate-300 overflow-x-auto"
+                  aria-label={isEn ? "Candidate specification summary" : "Thông số tóm tắt ứng viên"}
+                >
+                  <div>
+                    <span className="text-slate-500">&#123;</span>
+                  </div>
+                  <div className="pl-3">
+                    <span className="text-cyan-400">"focus"</span>:{" "}
+                    <span className="text-emerald-300">"Java Backend"</span>,
+                  </div>
+                  <div className="pl-3">
+                    <span className="text-cyan-400">"education"</span>:{" "}
+                    <span className="text-emerald-300">"HCMUTE (2023 - 2027)"</span>,
+                  </div>
+                  <div className="pl-3">
+                    <span className="text-cyan-400">"gpa"</span>:{" "}
+                    <span className="text-amber-300">3.17</span>,
+                  </div>
+                  <div className="pl-3">
+                    <span className="text-cyan-400">"primary_stack"</span>: [
+                    <span className="text-indigo-300">"Java"</span>,{" "}
+                    <span className="text-indigo-300">"Spring Boot"</span>,{" "}
+                    <span className="text-indigo-300">"PostgreSQL"</span>],
+                  </div>
+                  <div className="pl-3">
+                    <span className="text-cyan-400">"clothy.database"</span>:{" "}
+                    <span className="text-emerald-300">"20+ entities"</span>,
+                  </div>
+                  <div className="pl-3">
+                    <span className="text-cyan-400">"clothy.query"</span>:{" "}
+                    <span className="text-emerald-300">"JPA Specifications"</span>,
+                  </div>
+                  <div className="pl-3">
+                    <span className="text-cyan-400">"experience"</span>:{" "}
+                    <span className="text-slate-300">"Test IO (Freelance Tester)"</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">&#125;</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Right: Text Content */}
-          <div className="text-center lg:text-left space-y-8">
-            {/* Greeting */}
-            <div className="space-y-2">
-              <p className="text-slate-400 font-semibold text-lg tracking-wider uppercase animate-fade-in">
-                {t("hero.greeting")}
-              </p>
-              <h1 className="text-6xl md:text-7xl font-black text-white mb-4 animate-slide-up">
-                <span className="bg-gradient-to-br from-slate-100 via-indigo-300 to-indigo-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(129,140,248,0.3)]">
-                  {t("hero.name").split(" ")[0]} {t("hero.name").split(" ")[1]}
-                </span>
-                <br />
-                <span className="bg-gradient-to-br from-indigo-300 via-violet-400 to-slate-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(129,140,248,0.3)]">
-                  {t("hero.name").split(" ")[2]} {t("hero.name").split(" ")[3]}
-                </span>
-              </h1>
-
-              {/* Role Text */}
-              <div className="h-8 flex items-center justify-center lg:justify-start">
-                <p className="text-xl md:text-2xl text-indigo-300 font-light">
-                  {t("hero.role")}
-                </p>
-              </div>
-            </div>
-
-            {/* Location & Summary */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-slate-300 justify-center lg:justify-start">
-                <MapPin size={20} className="text-indigo-400" />
-                <span>{t("hero.location")}</span>
-              </div>
-
-              <p className="text-slate-400 text-lg leading-relaxed max-w-2xl">
-                {t("hero.description")}
-              </p>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-              <button 
-                onClick={() => navigate('/contact')}
-                className="group relative px-8 py-4 bg-indigo-600 text-white font-semibold rounded-full overflow-hidden shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:bg-indigo-500 transition-all duration-300"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  <Code size={20} />
-                  {t("hero.ctaConsulting")}
-                </span>
-              </button>
-
-              <button 
-                onClick={() => navigate('/myproject')}
-                className="px-8 py-4 bg-white/5 backdrop-blur-sm text-white font-semibold rounded-full border border-white/10 hover:bg-white/10 hover:border-indigo-500/50 transition-all duration-300"
-              >
-                {t("hero.ctaPortfolio")}
-              </button>
-            </div>
-
-            {/* Social Links */}
-            <div className="flex gap-4 justify-center lg:justify-start">
-              {[
-                {
-                  icon: Github,
-                  href: "https://github.com/YuuuuBin2k5",
-                  color: "hover:text-indigo-400",
-                },
-                {
-                  icon: Linkedin,
-                  href: "https://www.linkedin.com/in/anh-nh%E1%BA%ADt-0b3ba0353/",
-                  color: "hover:text-indigo-300",
-                },
-                {
-                  icon: Mail,
-                  href: "mailto:daonguyennhatanh0910@gmail.com",
-                  color: "hover:text-violet-400",
-                },
-              ].map(({ icon: Icon, href, color }, i) => (
-                <a
-                  key={i}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`p-3 bg-white/5 backdrop-blur-sm rounded-full border border-white/10 text-slate-400 ${color} hover:scale-110 hover:border-current transition-all duration-300`}
-                >
-                  <Icon size={24} />
-                </a>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-purple-400/50 rounded-full flex justify-center pt-2">
-          <div className="w-1 h-2 bg-purple-400 rounded-full animate-scroll" />
-        </div>
-      </div>
-
-      <style>{`
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0) translateX(0);
-          }
-          50% {
-            transform: translateY(-20px) translateX(10px);
-          }
-        }
-
-        @keyframes spin-slow {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        @keyframes spin-reverse {
-          from {
-            transform: rotate(360deg);
-          }
-          to {
-            transform: rotate(0deg);
-          }
-        }
-
-        @keyframes bounce-slow {
-          0%,
-          100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-
-        @keyframes blink {
-          0%,
-          100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0;
-          }
-        }
-
-        @keyframes scroll {
-          0% {
-            transform: translateY(0);
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(20px);
-            opacity: 0;
-          }
-        }
-
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes slide-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-float {
-          animation: float 15s infinite ease-in-out;
-        }
-        .animate-spin-slow {
-          animation: spin-slow 20s linear infinite;
-        }
-        .animate-spin-reverse {
-          animation: spin-reverse 15s linear infinite;
-        }
-        .animate-bounce-slow {
-          animation: bounce-slow 3s infinite ease-in-out;
-        }
-        .animate-blink {
-          animation: blink 1s infinite;
-        }
-        .animate-scroll {
-          animation: scroll 2s infinite;
-        }
-        .animate-fade-in {
-          animation: fade-in 1s ease-out;
-        }
-        .animate-slide-up {
-          animation: slide-up 1s ease-out;
-        }
-        .delay-500 {
-          animation-delay: 0.5s;
-        }
-        .delay-700 {
-          animation-delay: 0.7s;
-        }
-        .delay-1000 {
-          animation-delay: 1s;
-        }
-      `}</style>
-    </div>
+    </section>
   );
 };
 

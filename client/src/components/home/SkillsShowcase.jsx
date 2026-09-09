@@ -3,6 +3,10 @@ import { Code2, Download, Sparkles } from "lucide-react";
 import { useTranslation } from "../../hooks/useTranslation";
 import { useScrollReveal } from "../../hooks/useScrollReveal";
 
+/**
+ * @deprecated Deprecated in Phase 5 in favor of CapabilitiesMatrix.
+ * Kept for historical reference. No longer mounted in Home.jsx.
+ */
 const SkillsShowcase = () => {
   const { t } = useTranslation();
   const [visibleIcons, setVisibleIcons] = useState([]);

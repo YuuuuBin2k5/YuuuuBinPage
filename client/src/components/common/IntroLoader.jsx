@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Database, Sparkles } from "lucide-react";
 import logo from "../../assets/logo.svg";
 
+/**
+ * @deprecated Deprecated in Phase 2 in favor of immediate homepage rendering.
+ * Preserved for backward compatibility.
+ */
 const IntroLoader = ({ isLoading, onComplete }) => {
   const [progress, setProgress] = useState(0);
   const [currentText, setCurrentText] = useState(0);
