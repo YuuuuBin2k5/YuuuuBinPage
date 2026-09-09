@@ -34,7 +34,7 @@ const CapabilitiesMatrix = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto space-y-10">
         {/* Section Header */}
-        <div className="space-y-3 text-left">
+        <div className="scroll-reveal space-y-3 text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-indigo-950/70 border border-indigo-500/30 text-indigo-300 font-mono text-xs uppercase tracking-wider">
             <span className="w-2 h-2 rounded-full bg-indigo-400" aria-hidden="true" />
             <span>{isEn ? "Backend Engineering Capabilities" : "Năng Lực Kỹ Thuật Backend"}</span>
@@ -56,14 +56,15 @@ const CapabilitiesMatrix = () => {
 
         {/* Capabilities Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {capabilitiesData.map((group) => {
+          {capabilitiesData.map((group, idx) => {
             const IconComponent = categoryIcons[group.id] || Server;
             const isSupporting = group.id === "supporting-client";
+            const delayClass = idx === 0 ? "delay-100" : idx === 1 ? "delay-150" : idx === 2 ? "delay-200" : idx === 3 ? "delay-250" : "delay-300";
 
             return (
               <div
                 key={group.id}
-                className={`p-6 rounded-2xl flex flex-col justify-between transition-colors duration-200 ${
+                className={`scroll-reveal ${delayClass} p-6 rounded-2xl flex flex-col justify-between transition-colors duration-200 ${
                   isSupporting
                     ? "bg-slate-900/60 border border-slate-800/60 lg:col-span-2"
                     : "bg-slate-900/90 border border-slate-800/80 hover:border-slate-700"

@@ -25,7 +25,7 @@ const ExperienceSection = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto space-y-10">
         {/* Section Header */}
-        <div className="space-y-3 text-left">
+        <div className="scroll-reveal space-y-3 text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-950/70 border border-blue-500/30 text-blue-300 font-mono text-xs uppercase tracking-wider">
             <Briefcase className="w-3.5 h-3.5" aria-hidden="true" />
             <span>{isEn ? "Work Experience & Quality Discipline" : "Kinh Nghiệm Thực Tế & Kỷ Luật Chất Lượng"}</span>
@@ -46,7 +46,7 @@ const ExperienceSection = () => {
         </div>
 
         {/* Experience Card */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-slate-950/80 border border-slate-800 shadow-xl space-y-8">
+        <div className="scroll-reveal delay-100 p-6 sm:p-8 rounded-2xl bg-slate-950/80 border border-slate-800 shadow-xl space-y-8">
           {/* Card Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800/80">
             <div className="space-y-1.5">

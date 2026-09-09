@@ -134,7 +134,7 @@ const FlagshipProject = ({ project }) => {
         {/* ============================================================
             1. TOP STORYTELLING HIERARCHY (Precision Editorial Style)
             ============================================================ */}
-        <div className="space-y-6 text-left max-w-5xl">
+        <div className="scroll-reveal space-y-6 text-left max-w-5xl">
           {/* Eyebrow Index */}
           <div className="flex items-center gap-2 font-mono text-xs text-indigo-400 uppercase tracking-wider">
             <span className="px-2 py-0.5 rounded bg-indigo-950/80 border border-indigo-500/30 font-semibold">
@@ -182,7 +182,7 @@ const FlagshipProject = ({ project }) => {
             2. SPATIAL TYPOGRAPHY & TECHNICAL TELEMETRY BAND
             (Verified facts only, open columns with hairline dividers)
             ============================================================ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 p-6 rounded-xl bg-slate-950 border border-slate-800/80 divide-y sm:divide-y-0 sm:divide-x divide-slate-800/80">
+        <div className="scroll-reveal delay-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 p-6 rounded-xl bg-slate-950 border border-slate-800/80 divide-y sm:divide-y-0 sm:divide-x divide-slate-800/80">
           
           {/* Column 1: Database Scale */}
           <div className="lg:px-6 py-2 space-y-2">
@@ -264,7 +264,7 @@ const FlagshipProject = ({ project }) => {
             3. CLOTHY TECHNICAL REQUEST-FLOW VISUALIZATION
             (Safe conceptual stages: REST API -> Application Logic -> JPA Specs -> ORM -> PostgreSQL)
             ============================================================ */}
-        <div className="rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shadow-xl">
+        <div className="scroll-reveal delay-150 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shadow-xl">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border-b border-slate-800 bg-slate-900/60 gap-2">
             <div className="flex items-center gap-2 font-mono text-xs">
@@ -342,7 +342,7 @@ const FlagshipProject = ({ project }) => {
         {/* ============================================================
             4. CORE ARCHITECTURE & DETAILS GRID
             ============================================================ */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="scroll-reveal delay-200 grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column (7 cols): Tech Stack, API Scope & Backend Responsibilities */}
           <div className="lg:col-span-7 space-y-6 text-left">
             {/* Backend Tech Stack Badges */}

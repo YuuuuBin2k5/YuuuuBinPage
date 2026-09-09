@@ -49,14 +49,14 @@ const HeroSection = () => {
           <div className="lg:col-span-6 xl:col-span-7 text-left space-y-6">
             
             {/* 1. Eyebrow Tag Pill (Reference: I'M A WEB DEVELOPER) */}
-            <div>
+            <div className="animate-reveal-up-1">
               <span className="inline-block px-3.5 py-1.5 rounded-md bg-[#181332] text-[#9D8DF9] font-mono text-xs font-semibold tracking-wider uppercase">
                 {isEn ? "I'M A JAVA BACKEND DEVELOPER" : "LẬP TRÌNH VIÊN BACKEND JAVA"}
               </span>
             </div>
 
             {/* 2. Bold Headline (Reference: Hi, I'm Alex / I build things for the web.) */}
-            <div className="space-y-1">
+            <div className="animate-reveal-up-2 space-y-1">
               <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.08]">
                 {isEn ? (
                   <>
@@ -83,7 +83,7 @@ const HeroSection = () => {
             </div>
 
             {/* 3. Bio Paragraph (Clean, accurate, NO duplicate / 4.0) */}
-            <div className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-xl font-sans">
+            <div className="animate-reveal-up-3 text-slate-400 text-sm sm:text-base leading-relaxed max-w-xl font-sans">
               <p>
                 {isEn ? (
                   <>
@@ -98,7 +98,7 @@ const HeroSection = () => {
             </div>
 
             {/* 4. Action Buttons (Exact form: View My Work ↗ & Download CV 📥) */}
-            <div className="flex flex-wrap items-center gap-4 pt-2">
+            <div className="animate-reveal-up-4 flex flex-wrap items-center gap-4 pt-2">
               <a
                 href="#clothy"
                 className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-[#5A4FE6] hover:bg-[#4C40DB] text-white font-semibold text-sm shadow-lg shadow-indigo-950/40 transition-all duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-400"
@@ -121,7 +121,7 @@ const HeroSection = () => {
             </div>
 
             {/* 5. Horizontal Technologies Strip (Exact form from reference image) */}
-            <div className="pt-4 space-y-3">
+            <div className="animate-reveal-up-5 pt-4 space-y-3">
               <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
                 {isEn ? "TECHNOLOGIES I WORK WITH" : "CÔNG NGHỆ CHUYÊN SÂU"}
               </div>

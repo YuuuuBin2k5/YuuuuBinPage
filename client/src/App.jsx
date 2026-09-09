@@ -11,6 +11,7 @@ import {
 } from "./utils/background";
 import { TEXT_DARK_MODE, TEXT_LIGHT_MODE } from "./utils/text-font";
 import Footer from "./components/layout/Footer";
+import ScrollObserver from "./components/common/ScrollObserver";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -36,6 +37,7 @@ function App() {
     <AuthProvider>
       <DataProvider>
         <BrowserRouter>
+          <ScrollObserver />
           <div
             className="app-container min-h-screen relative"
             style={finalStyle}

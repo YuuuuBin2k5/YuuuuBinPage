@@ -60,12 +60,13 @@ const StatsGrid = () => {
       className="relative z-20 -mt-8 sm:-mt-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {stats.map((item) => {
+        {stats.map((item, idx) => {
           const Icon = item.icon;
+          const delayClass = idx === 0 ? "delay-100" : idx === 1 ? "delay-200" : idx === 2 ? "delay-300" : "delay-400";
           return (
             <div
               key={item.id}
-              className={`group relative p-5 sm:p-6 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-800/90 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-950/30 ${item.glowColor}`}
+              className={`scroll-reveal ${delayClass} group relative p-5 sm:p-6 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-800/90 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-950/30 ${item.glowColor}`}
             >
               {/* Subtle top inner glow */}
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-700/40 to-transparent" />

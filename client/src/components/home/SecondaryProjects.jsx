@@ -48,7 +48,7 @@ const SecondaryProjects = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto space-y-10">
         {/* Section Header */}
-        <div className="space-y-3 text-left">
+        <div className="scroll-reveal space-y-3 text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-slate-800/80 border border-slate-700/60 text-slate-300 font-mono text-xs uppercase tracking-wider">
             <Server className="w-3.5 h-3.5 text-blue-400" aria-hidden="true" />
             <span>{isEn ? "Secondary Backend Architecture" : "Kiến Trúc Backend Thứ Hai"}</span>
@@ -67,7 +67,7 @@ const SecondaryProjects = () => {
         </div>
 
         {/* Project Card */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-8">
+        <div className="scroll-reveal delay-100 p-6 sm:p-8 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-8">
           {/* Card Top: Title, Role & Links */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-slate-800">
             <div className="space-y-2">

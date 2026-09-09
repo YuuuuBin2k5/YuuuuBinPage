@@ -45,7 +45,7 @@ const LabSummarySection = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto space-y-8">
         {/* Section Header */}
-        <div className="space-y-2.5 text-left">
+        <div className="scroll-reveal space-y-2.5 text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-slate-800/80 border border-slate-700/60 text-slate-300 font-mono text-xs uppercase tracking-wider">
             <BookOpen className="w-3.5 h-3.5 text-blue-400" aria-hidden="true" />
             <span>{isEn ? labSummaryData.badge.en : labSummaryData.badge.vi}</span>
@@ -73,7 +73,7 @@ const LabSummarySection = () => {
         </div>
 
         {/* Representative Topics Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="scroll-reveal delay-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {labSummaryData.representativeTopics.map((topic) => {
             const Icon = topicIcons[topic.id] || Server;
             return (

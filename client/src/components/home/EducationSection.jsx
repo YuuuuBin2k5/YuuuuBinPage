@@ -15,7 +15,7 @@ const EducationSection = () => {
     >
       <div className="relative z-10 max-w-7xl mx-auto space-y-8">
         {/* Section Header */}
-        <div className="space-y-2.5 text-left">
+        <div className="scroll-reveal space-y-2.5 text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-indigo-950/70 border border-indigo-500/30 text-indigo-300 font-mono text-xs uppercase tracking-wider">
             <GraduationCap className="w-3.5 h-3.5" aria-hidden="true" />
             <span>{isEn ? "Academic Foundation" : "Nền Tảng Học Vấn"}</span>
@@ -36,7 +36,7 @@ const EducationSection = () => {
         </div>
 
         {/* Compact Credential Card */}
-        <div className="p-6 sm:p-7 rounded-2xl bg-slate-950/80 border border-slate-800 shadow-lg space-y-6">
+        <div className="scroll-reveal delay-100 p-6 sm:p-7 rounded-2xl bg-slate-950/80 border border-slate-800 shadow-lg space-y-6">
           {/* Main Degree Row */}
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 pb-6 border-b border-slate-800/80">
             <div className="flex items-start gap-4">
