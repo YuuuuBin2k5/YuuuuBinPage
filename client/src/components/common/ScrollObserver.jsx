@@ -2,23 +2,25 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 /**
- * 2026 High-Performance Bulletproof Scroll Reveal Observer
- * Features:
- * 1. Native IntersectionObserver with generous bottom margin (80px)
- * 2. MutationObserver that dynamically binds to newly mounted/lazy-loaded nodes
- * 3. Pre-check for elements already in or near viewport upon mount
- * 4. Passive scroll listener as active fallback
- * 5. Failsafe timeout to guarantee no content ever stays invisible (>2.5s)
+ * 2026 Bulletproof Zero-Fail Scroll Reveal Engine
+ * Multi-layer resilience:
+ * 1. Immediate rect check on mount
+ * 2. Native IntersectionObserver with 0 threshold + 100px bottom lookahead
+ * 3. MutationObserver for dynamic/lazy components
+ * 4. Passive scroll & resize listeners for real-time viewport tracking
+ * 5. 1.2s failsafe timeout guaranteeing 0% blank screen under any circumstances
  */
 export default function ScrollObserver() {
   const location = useLocation();
 
   useEffect(() => {
-    // If IntersectionObserver is not supported, reveal immediately
+    const revealElement = (el) => {
+      el.classList.add("is-revealed");
+    };
+
+    // If IntersectionObserver is not supported, reveal everything immediately
     if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
-      document.querySelectorAll(".scroll-reveal").forEach((el) => {
-        el.classList.add("is-revealed");
-      });
+      document.querySelectorAll(".scroll-reveal").forEach(revealElement);
       return;
     }
 
@@ -26,67 +28,64 @@ export default function ScrollObserver() {
       (entries, obs) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("is-revealed");
+            revealElement(entry.target);
             obs.unobserve(entry.target);
           }
         });
       },
       {
-        threshold: 0.01,
-        rootMargin: "0px 0px 80px 0px",
+        threshold: 0,
+        rootMargin: "0px 0px 100px 0px",
       }
     );
 
-    const checkAndObserve = () => {
-      const pendingElements = document.querySelectorAll(".scroll-reveal:not(.is-revealed)");
-      const viewportHeight = window.innerHeight;
+    const scan = () => {
+      const elements = document.querySelectorAll(".scroll-reveal:not(.is-revealed)");
+      const viewportBottom = window.innerHeight + 100;
 
-      pendingElements.forEach((el) => {
-        // If element is already in or near viewport upon mount, reveal immediately
+      elements.forEach((el) => {
         const rect = el.getBoundingClientRect();
-        if (rect.top < viewportHeight + 100 && rect.bottom > -50) {
-          el.classList.add("is-revealed");
+        // If element is already within or near viewport, reveal immediately!
+        if (rect.top <= viewportBottom && rect.bottom >= -100) {
+          revealElement(el);
+          observer.unobserve(el);
         } else {
           observer.observe(el);
         }
       });
     };
 
-    // 1. Immediate scan on mount / route transition
-    checkAndObserve();
+    // 1. Initial scan immediately
+    scan();
 
-    // 2. MutationObserver captures dynamically mounted or lazy-loaded components
-    const mutationObserver = new MutationObserver(() => {
-      checkAndObserve();
-    });
-
+    // 2. Scan on DOM mutations (catches route transitions and async mounts)
+    const mutationObserver = new MutationObserver(scan);
     mutationObserver.observe(document.body, {
       childList: true,
       subtree: true,
     });
 
-    // 3. Staggered timers to catch delayed render passes
-    const timers = [50, 150, 300, 600, 1200].map((delay) =>
-      setTimeout(checkAndObserve, delay)
-    );
+    // 3. Scan on window scroll and resize (passive for 60fps performance)
+    window.addEventListener("scroll", scan, { passive: true });
+    window.addEventListener("resize", scan, { passive: true });
 
-    // 4. Passive scroll listener as immediate fallback during active user scrolling
-    const onScroll = () => {
-      checkAndObserve();
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
+    // 4. Staggered backup ticks
+    const t1 = setTimeout(scan, 50);
+    const t2 = setTimeout(scan, 150);
+    const t3 = setTimeout(scan, 400);
 
-    // 5. Ultimate failsafe: ensure all content is visible after 2.5s regardless of conditions
-    const failsafeTimer = setTimeout(() => {
-      document.querySelectorAll(".scroll-reveal:not(.is-revealed)").forEach((el) => {
-        el.classList.add("is-revealed");
-      });
-    }, 2500);
+    // 5. Ultimate Failsafe: After 1.2s, reveal ALL remaining elements
+    const failsafe = setTimeout(() => {
+      document.querySelectorAll(".scroll-reveal:not(.is-revealed)").forEach(revealElement);
+    }, 1200);
 
     return () => {
-      timers.forEach(clearTimeout);
-      clearTimeout(failsafeTimer);
-      window.removeEventListener("scroll", onScroll);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(failsafe);
+      window.removeEventListener("scroll", scan);
+      window.removeEventListener("resize", scan);
       mutationObserver.disconnect();
       observer.disconnect();
     };
@@ -94,5 +93,6 @@ export default function ScrollObserver() {
 
   return null;
 }
+
 
 
